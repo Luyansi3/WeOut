@@ -2,7 +2,8 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3000:3000"
+      - "3000:3000"  # ton app Node.js
+      - "5555:5555"  # Prisma Studio
     volumes:
       - /app/node_modules
     environment:
@@ -22,18 +23,10 @@ services:
       - "5432:5432"
 
   pgadmin:
-    # build: ./backend/pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
       PGADMIN_DEFAULT_PASSWORD: "admin"
-      # # Connexion automatique à la base de données
-      # PGADMIN_CONFIG_SERVER_MODE: "False"
-      # PGADMIN_CONFIG_SERVER_1_NAME: "MyServer"
-      # PGADMIN_CONFIG_SERVER_1_HOST: "db"
-      # PGADMIN_CONFIG_SERVER_1_PORT: "5432"
-      # PGADMIN_CONFIG_SERVER_1_USERNAME: "postgres"
-      # PGADMIN_CONFIG_SERVER_1_PASSWORD: "postgres"
     ports:
       - "5050:80"
     depends_on:
