@@ -5,6 +5,7 @@ services:
       - "3000:3000"  # ton app Node.js
       - "5555:5555"  # Prisma Studio
     volumes:
+      - ./backend:/app
       - /app/node_modules
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/mydb
