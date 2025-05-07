@@ -1,5 +1,6 @@
 //TODO  Voir les types de lieux et les compléter
 //      Voir les tag à compléter
+//      Voir quel attributs ajouter aux profil
 
 
 
@@ -36,6 +37,12 @@ model User {
     prenom String
     nom String
     genre Genre
+    naissance DateTime 
+
+    //Date creation
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
+
 
     //Geolocalisation
     longitude Float
@@ -67,11 +74,24 @@ model User {
     //Compte associé
     compte Compte @relation(fields: [compteId], references: [id])
     compteId String @unique
+
+    //Notes temporaires données
+    notesTemp NoteTemp[]
+
+    //Caractérisation Profil
+    noteAlcool Int
+    noteDance Int
+    noteSociale Int
+    
 }
 model Organisme {
     id String @id @default(uuid())
     nom String @unique
     note Float
+
+    //Data date
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
 
     //Soirees organisees
     soirees Soiree[]
@@ -98,6 +118,11 @@ model Lieux{
     nom String
     type TypeLieux
     note Float
+
+    //Data date
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
+
 
     //adresse
     adresse String @unique
@@ -127,6 +152,11 @@ model Soiree{
     description String
     photoCouverturePath String
 
+    //Data date
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
+
+
     //date
     debut DateTime
     fin DateTime
@@ -150,12 +180,20 @@ model Soiree{
 
     //Tags associés
     tags Tag[]
+
+    //Notes temporaires
+    notesTemp NoteTemp[]
 }
 model Groupe{
     id String @id @default(uuid())
 
     //Users composants le groupe (peut être un seul)
     users User[]
+
+    //Data date
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
+
 
     //Soirée à laquelle le groupe participe
     soiree Soiree @relation(fields: [soireeId], references: [id], "Participe")
@@ -164,6 +202,9 @@ model Groupe{
 model Photo{
     id Int @id @default(autoincrement())
     path String @unique
+
+    //Date de poste
+    date DateTime @default(now())
 
     //Soirée de la photo
     soiree Soiree @relation(fields: [soireeId], references: [id])
@@ -178,10 +219,29 @@ model Commentaire{
     id Int @id @default(autoincrement())
     contenu String
 
+    //Data date
+    dateCreation DateTime @default(now())
+    dateModification DateTime @updatedAt()
+
+
     //Soiree associée au commentaire
     soiree Soiree @relation(fields: [soireeId], references: [id])
     soireeId Int
     //User qui a posté le commentaire
     createur User @relation(fields: [userId], references: [id])
     userId String
+}
+model NoteTemp{
+    id Int @id @default(autoincrement())
+    note Int
+
+    updatedAt DateTime @updatedAt
+
+    //User qui a noté
+    user User @relation(fields: [userId], references: [id])
+    userId String
+
+    //Soirée noté
+    soiree Soiree @relation(fields: [soireeId], references: [id])
+    soireeId Int
 }
