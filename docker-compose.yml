@@ -2,7 +2,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3000:3000"  # ton app Node.js
+      - "3000:3000"  # App Node.js
       - "5555:5555"  # Prisma Studio
     volumes:
       - ./backend:/app
