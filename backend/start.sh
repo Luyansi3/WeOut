@@ -2,6 +2,9 @@
 
 echo "=== Lancement du script ==="
 
+echo "Compilation des fichiers TS"
+npm run build
+
 echo "Migration Prisma..."
 npx prisma migrate deploy
 
