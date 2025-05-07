@@ -1,187 +1,178 @@
-//TODO  Voir les types de lieux et les compléter
+// TODO  Voir les types de lieux et les compléter
 //      Voir les tag à compléter
 
-
-
-
-
-//Génération du client
+// Génération du client
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL") //Use the env variabl
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Use the env variabl
 }
 
-
-//Model de tout ce qui concerne les comptes
-enum Genre{
-    HOMME
-    FEMME
-    AUTRE
+// Model de tout ce qui concerne les comptes
+enum Genre {
+  HOMME
+  FEMME
+  AUTRE
 }
-model Compte { //Compte qui regroupe organisateur et user
-    id  String @id @default(uuid())
-    hashedMdp String
-    email String @unique
+model Compte {
+// Compte qui regroupe organisateur et user
+  id        String @id @default(uuid())
+  hashedMdp String
+  email     String @unique
 
-    //A vérifier dans le code que uniquement un des deux soit NULL
-    user User?
-    organisme Organisme?
+  // A vérifier dans le code que uniquement un des deux soit NULL
+  user      User?
+  organisme Organisme?
 }
 model User {
-    id String @id @default(uuid())
-    prenom String
-    nom String
-    genre Genre
+  id     String @id @default(uuid())
+  prenom String
+  nom    String
+  genre  Genre
 
-    //Geolocalisation
-    longitude Float
-    latitude Float
-    dateActualisation DateTime
+  // Geolocalisation
+  longitude         Float
+  latitude          Float
+  dateActualisation DateTime
 
-    //Relation d'amities
-    ami User[] @relation("Amis")
-    amiDe User[] @relation("Amis")
+  // Relation d'amities
+  ami   User[] @relation("Amis")
+  amiDe User[] @relation("Amis")
 
-    //Relatoin de blockage
-    bloque User[] @relation("Bloque")
-    bloquant User[] @relation("Bloque")
+  // Relatoin de blockage
+  bloque   User[] @relation("Bloque")
+  bloquant User[] @relation("Bloque")
 
-    //Demandes envoyées et reçues
-    demandeEnvoye User[] @relation("Demande")
-    demandeRecue User[] @relation("Demande")
+  // Demandes envoyées et reçues
+  demandeEnvoye User[] @relation("Demande")
+  demandeRecue  User[] @relation("Demande")
 
-    //Groupes d'appartenance
-    groupes Groupe[]
+  // Groupes d'appartenance
+  groupes Groupe[]
 
-    //Commentaires rédigés 
-    commentaires Commentaire[]
+  // Commentaires rédigés 
+  commentaires Commentaire[]
 
-    //Photos (likés et postés)
-    likes Photo[] @relation("Likes")
-    photos Photo[] 
+  // Photos (likés et postés)
+  likes  Photo[] @relation("Likes")
+  photos Photo[]
 
-    //Compte associé
-    compte Compte @relation(fields: [compteId], references: [id])
-    compteId String @unique
+  // Compte associé
+  compte   Compte @relation(fields: [compteId], references: [id])
+  compteId String @unique
 }
 model Organisme {
-    id String @id @default(uuid())
-    nom String @unique
-    note Float
+  id   String @id @default(uuid())
+  nom  String @unique
+  note Float
 
-    //Soirees organisees
-    soirees Soiree[]
+  // Soirees organisees
+  soirees Soiree[]
 
-    //Tag de l'organsime
-    tags Tag[]
+  // Tag de l'organsime
+  tags Tag[]
 
-    //Compte associé
-    compte Compte @relation(fields: [compteId], references: [id])
-    compteId String @unique
+  // Compte associé
+  compte   Compte @relation(fields: [compteId], references: [id])
+  compteId String @unique
 }
 
-
-
-//Model et enum concernant les lieux
-enum TypeLieux{
-    BOITE
-    BAR
-    BARDANSANT
-    CAFE
+// Model et enum concernant les lieux
+enum TypeLieux {
+  BOITE
+  BAR
+  BARDANSANT
+  CAFE
 }
-model Lieux{
-    id Int @id @default(autoincrement())
-    nom String
-    type TypeLieux
-    note Float
+model Lieux {
+  id   Int       @id @default(autoincrement())
+  nom  String
+  type TypeLieux
+  note Float
 
-    //adresse
-    adresse String @unique
-    longitude Float
-    latitude Float
-    
+  // adresse
+  adresse   String @unique
+  longitude Float
+  latitude  Float
 
-    //Tags associés
-    tags Tag[]
+  // Tags associés
+  tags Tag[]
 
-    //Soirees hebergees
-    soirees Soiree[]
+  // Soirees hebergees
+  soirees Soiree[]
 }
 
-
-
-//Model et enums soirées
+// Model et enums soirées
 enum Tag {
-    ELECTRO
-    HOUSE
-    TECHNO
-    COMMERCIAL
+  ELECTRO
+  HOUSE
+  TECHNO
+  COMMERCIAL
 }
-model Soiree{
-    id Int @id @default(autoincrement())
-    nom String
-    description String
-    photoCouverturePath String
+model Soiree {
+  id                  Int    @id @default(autoincrement())
+  nom                 String
+  description         String
+  photoCouverturePath String
 
-    //date
-    debut DateTime
-    fin DateTime
-    
-    //Lieu de soirée
-    lieu Lieux @relation(fields: [lieuId], references: [id])
-    lieuId Int
+  // date
+  debut DateTime
+  fin   DateTime
 
-    //Organisme organisant
-    organsime Organisme @relation(fields: [organismeId], references: [id])
-    organismeId String
+  // Lieu de soirée
+  lieu   Lieux @relation(fields: [lieuId], references: [id])
+  lieuId Int
 
-    //Groupes participants à la soirée
-    groupes Groupe[] @relation("Participe")
+  // Organisme organisant
+  organsime   Organisme @relation(fields: [organismeId], references: [id])
+  organismeId String
 
-    //Photos postées de la soirée
-    photos Photo[]
+  // Groupes participants à la soirée
+  groupes Groupe[] @relation("Participe")
 
-    //Commentaires de la soirée
-    commentaires Commentaire[]
+  // Photos postées de la soirée
+  photos Photo[]
 
-    //Tags associés
-    tags Tag[]
+  // Commentaires de la soirée
+  commentaires Commentaire[]
+
+  // Tags associés
+  tags Tag[]
 }
-model Groupe{
-    id String @id @default(uuid())
+model Groupe {
+  id String @id @default(uuid())
 
-    //Users composants le groupe (peut être un seul)
-    users User[]
+  // Users composants le groupe (peut être un seul)
+  users User[]
 
-    //Soirée à laquelle le groupe participe
-    soiree Soiree @relation(fields: [soireeId], references: [id], "Participe")
-    soireeId Int
+  // Soirée à laquelle le groupe participe
+  soiree   Soiree @relation(fields: [soireeId], references: [id], "Participe")
+  soireeId Int
 }
-model Photo{
-    id Int @id @default(autoincrement())
-    path String @unique
+model Photo {
+  id   Int    @id @default(autoincrement())
+  path String @unique
 
-    //Soirée de la photo
-    soiree Soiree @relation(fields: [soireeId], references: [id])
-    soireeId Int
+  // Soirée de la photo
+  soiree   Soiree @relation(fields: [soireeId], references: [id])
+  soireeId Int
 
-    //User qui a posté la photo 
-    createur User @relation(fields: [userId], references: [id])
-    userId String
-    likedBy User[] @relation("Likes")
+  // User qui a posté la photo 
+  createur User   @relation(fields: [userId], references: [id])
+  userId   String
+  likedBy  User[] @relation("Likes")
 }
-model Commentaire{
-    id Int @id @default(autoincrement())
-    contenu String
+model Commentaire {
+  id      Int    @id @default(autoincrement())
+  contenu String
 
-    //Soiree associée au commentaire
-    soiree Soiree @relation(fields: [soireeId], references: [id])
-    soireeId Int
-    //User qui a posté le commentaire
-    createur User @relation(fields: [userId], references: [id])
-    userId String
+  // Soiree associée au commentaire
+  soiree   Soiree @relation(fields: [soireeId], references: [id])
+  soireeId Int
+  // User qui a posté le commentaire
+  createur User   @relation(fields: [userId], references: [id])
+  userId   String
 }
