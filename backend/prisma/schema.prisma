@@ -1,20 +1,187 @@
+//TODO  Voir les types de lieux et les compléter
+//      Voir les tag à compléter
+
+
+
+
+
+//Génération du client
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url = env("DATABASE_URL") //Use the env variabl
 }
 
+
+//Model de tout ce qui concerne les comptes
+enum Genre{
+    HOMME
+    FEMME
+    AUTRE
+}
+model Compte { //Compte qui regroupe organisateur et user
+    id  String @id @default(uuid())
+    hashedMdp String
+    email String @unique
+
+    //A vérifier dans le code que uniquement un des deux soit NULL
+    user User?
+    organisme Organisme?
+}
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+    id String @id @default(uuid())
+    prenom String
+    nom String
+    genre Genre
+
+    //Geolocalisation
+    longitude Float
+    latitude Float
+    dateActualisation DateTime
+
+    //Relation d'amities
+    ami User[] @relation("Amis")
+    amiDe User[] @relation("Amis")
+
+    //Relatoin de blockage
+    bloque User[] @relation("Bloque")
+    bloquant User[] @relation("Bloque")
+
+    //Demandes envoyées et reçues
+    demandeEnvoye User[] @relation("Demande")
+    demandeRecue User[] @relation("Demande")
+
+    //Groupes d'appartenance
+    groupes Groupe[]
+
+    //Commentaires rédigés 
+    commentaires Commentaire[]
+
+    //Photos (likés et postés)
+    likes Photo[] @relation("Likes")
+    photos Photo[] 
+
+    //Compte associé
+    compte Compte @relation(fields: [compteId], references: [id])
+    compteId String @unique
+}
+model Organisme {
+    id String @id @default(uuid())
+    nom String @unique
+    note Float
+
+    //Soirees organisees
+    soirees Soiree[]
+
+    //Tag de l'organsime
+    tags Tag[]
+
+    //Compte associé
+    compte Compte @relation(fields: [compteId], references: [id])
+    compteId String @unique
 }
 
-model Etablissement {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+
+
+//Model et enum concernant les lieux
+enum TypeLieux{
+    BOITE
+    BAR
+    BARDANSANT
+    CAFE
+}
+model Lieux{
+    id Int @id @default(autoincrement())
+    nom String
+    type TypeLieux
+    note Float
+
+    //adresse
+    adresse String @unique
+    longitude Float
+    latitude Float
+    
+
+    //Tags associés
+    tags Tag[]
+
+    //Soirees hebergees
+    soirees Soiree[]
+}
+
+
+
+//Model et enums soirées
+enum Tag {
+    ELECTRO
+    HOUSE
+    TECHNO
+    COMMERCIAL
+}
+model Soiree{
+    id Int @id @default(autoincrement())
+    nom String
+    description String
+    photoCouverturePath String
+
+    //date
+    debut DateTime
+    fin DateTime
+    
+    //Lieu de soirée
+    lieu Lieux @relation(fields: [lieuId], references: [id])
+    lieuId Int
+
+    //Organisme organisant
+    organsime Organisme @relation(fields: [organismeId], references: [id])
+    organismeId String
+
+    //Groupes participants à la soirée
+    groupes Groupe[] @relation("Participe")
+
+    //Photos postées de la soirée
+    photos Photo[]
+
+    //Commentaires de la soirée
+    commentaires Commentaire[]
+
+    //Tags associés
+    tags Tag[]
+}
+model Groupe{
+    id String @id @default(uuid())
+
+    //Users composants le groupe (peut être un seul)
+    users User[]
+
+    //Soirée à laquelle le groupe participe
+    soiree Soiree @relation(fields: [soireeId], references: [id], "Participe")
+    soireeId Int
+}
+model Photo{
+    id Int @id @default(autoincrement())
+    path String @unique
+
+    //Soirée de la photo
+    soiree Soiree @relation(fields: [soireeId], references: [id])
+    soireeId Int
+
+    //User qui a posté la photo 
+    createur User @relation(fields: [userId], references: [id])
+    userId String
+    likedBy User[] @relation("Likes")
+}
+model Commentaire{
+    id Int @id @default(autoincrement())
+    contenu String
+
+    //Soiree associée au commentaire
+    soiree Soiree @relation(fields: [soireeId], references: [id])
+    soireeId Int
+    //User qui a posté le commentaire
+    createur User @relation(fields: [userId], references: [id])
+    userId String
 }
