@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';  // Remplacer require par import
 import { PrismaClient } from '@prisma/client';
 import routes from './routes';  // Assurer que 'routes' est bien exporté en TypeScript
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const port = process.env.NODE_PORT || 3000;
 
 const app = express();
 const prisma = new PrismaClient();
@@ -12,6 +17,6 @@ app.use(express.json());
 app.use('/api', routes);
 
 // Démarrer le serveur
-app.listen(3000, () => {
-  console.log('Backend is running on port 3000');
+app.listen(port, () => {
+  console.log('Backend is running on port ', port);
 });
