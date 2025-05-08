@@ -1,10 +1,10 @@
-import { render } from '@testing-library/react-native';
+import { renderWithTamagui } from '@/utils/tests/renderWithTamagui'; 
 
-import HomeScreen, { CustomText } from '@/app/index';
+import HomeScreen from '@/app/index';
 
 describe('<HomeScreen />', () => {
   test('Text renders correctly on HomeScreen', () => {
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = renderWithTamagui(<HomeScreen />);
 
     getByText('Welcome!');
   });
