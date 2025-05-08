@@ -1,15 +1,21 @@
-import { Text, View } from "react-native";
+import { StyleSheet } from 'react-native';
+import { View, Button  } from 'tamagui'
 
-export default function Index() {
+
+export default function HomeScreen() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View style={styles.container}>
+      <Button >Welcome!</Button >
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
