@@ -1,37 +1,38 @@
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"  # App Node.js
-      - "5553:5553"  # Prisma Studio
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/mydb
-    depends_on:
-      - db
-
   db:
     image: postgres:15
+    container_name: weout-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
+      - "${DB_PORT}:${DB_PORT}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  backend:
+    build: ./backend
+    container_name: weout-backend
     ports:
-      - "5050:80"
+      - "${NODE_PORT}:${NODE_PORT}"  # App Node.js
+      - "5553:5553"  # Prisma Studio
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_PORT=${NODE_PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=development
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  
+
 
 volumes:
   pgdata:
