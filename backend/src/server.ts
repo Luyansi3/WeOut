@@ -11,9 +11,9 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Middleware pour parser le JSON
-app.use(express.json());
+app.use(express.json());          
 
-// Routes de l'API
+// Routes de l'API         
 app.use('/api', routes);
 
 // Démarrer le serveur
