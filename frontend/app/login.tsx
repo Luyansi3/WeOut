@@ -60,11 +60,11 @@ const SignInScreen: React.FC = () => {
             <Switch
               checked={remember}
               onCheckedChange={setRemember}
-              size="$4"
+              size="$3"
               backgroundColor={remember ? customColors.purple : "#E5E5E5"}
             >
               <XStack alignItems="center"  padding={2}>
-                <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$3" />
+                <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$2" />
               </XStack>
             </Switch>
             <Text fontSize="$3" color={customColors.textMain}>Remember Me</Text>
@@ -82,13 +82,14 @@ const SignInScreen: React.FC = () => {
         <XStack justifyContent="center" alignItems="center" >
           <CustomButton
             backgroundColor={customColors.pink}
-            title="Sign in"
+            title="SIGN IN"
             endIcon={<ArrowRight size={16} color={customColors.textMain} />}
             minWidth={250}
             minHeight={60}
             borderRadius={15}
-            fontSize={22}
-            fontWeight="500"
+            fontSize={15}
+            fontFamily={"Raleway-SemiBold"}
+    
             endCircle={true}
             // to do le onPress
             onPress={() => {

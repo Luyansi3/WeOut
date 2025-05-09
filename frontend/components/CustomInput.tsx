@@ -1,5 +1,11 @@
 // IMPORTS
-import { MaterialIcons } from '@expo/vector-icons';
+import {
+  LockKeyhole,
+  Mail,
+  Eye,
+  EyeOff,
+  TextCursorInput,
+} from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -17,11 +23,11 @@ import { CustomInputType } from '../types/CustomTypeInput';
 
 // global var
 const customColors = {
-  background : "#F5F5F7",
-  pink : "#FF3C78",
-  purple : "#8F00FF",
-  textSecond : "#747688",
-  textMain : "#1A1B41"
+  background: "#F5F5F7",
+  pink: "#FF3C78",
+  purple: "#8F00FF",
+  textSecond: "#747688",
+  textMain: "#1A1B41"
 };
 
 const styles = StyleSheet.create({
@@ -41,6 +47,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: customColors.textSecond,
+    fontFamily: 'Raleway-Regular',
   },
   iconRight: {
     marginLeft: 8,
@@ -58,7 +65,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
   const [showPassword, setShowPassword] = useState(false);
 
   // Configure per-type
-  let iconName: string;
+  let IconLeft = TextCursorInput;
   let placeholder: string;
   let secure: boolean = false;
 
@@ -66,22 +73,22 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
 
   switch (inputType) {
     case 'email':
-      iconName = 'mail-outline';
+      IconLeft = Mail;
       placeholder = 'Your email';
       break;
     case 'password':
-      iconName = 'lock-outline';
+      IconLeft = LockKeyhole;
       placeholder = 'Your password';
       secure = true;
       break;
     default:
-      iconName = 'text-fields';
+      IconLeft = TextCursorInput;
       placeholder = rest.placeholder || '';
   }
 
   return (
     <View style={[styles.container, style] as any}>
-      <MaterialIcons name={iconName} size={20} color={customColors.textSecond} style={styles.iconLeft} />
+      <IconLeft size={20} color={customColors.textSecond} style={styles.iconLeft} marginRight={10}/>
       <TextInput
         style={styles.input}
         placeholder={placeholder}
@@ -94,12 +101,11 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
       />
       {inputType === 'password' && (
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <MaterialIcons
-            name={showPassword ? 'visibility' : 'visibility-off'}
-            size={20}
-            color={customColors.textSecond}
-            style={styles.iconRight}
-          />
+          {showPassword ? (
+            <Eye size={20} color={customColors.textSecond} style={styles.iconRight} />
+          ) : (
+            <EyeOff size={20} color={customColors.textSecond} style={styles.iconRight} />
+          )}
         </TouchableOpacity>
       )}
     </View>
