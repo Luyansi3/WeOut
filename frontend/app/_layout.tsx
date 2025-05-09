@@ -9,6 +9,7 @@ import { useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen';
 
 
+import NavigationBar from "@/components/NavBar/NavBar";
 
 const config = createTamagui(defaultConfig)
 
@@ -41,7 +42,7 @@ export default function RootLayout() {
     <TamaguiProvider config={config}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}/>
         </View>
       </SafeAreaView>
     </TamaguiProvider>
