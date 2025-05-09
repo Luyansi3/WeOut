@@ -61,7 +61,7 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
         if (result.success)
             res.status(200);
         else
-            res.status(400).json({error : 'bad IDs'})
+            res.status(400).json(result);
     }
     catch(error) {
         res.status(500).json({error : 'Server error'});
