@@ -14,7 +14,7 @@ const prisma : PrismaClient = new PrismaClient();
 app.use(express.json());          
 
 // Routes de l'API  
-app.use('/api', Userroutes);
+app.use('/api/user', Userroutes);
 
 // Démarrer le serveur
 app.listen(port, () => {

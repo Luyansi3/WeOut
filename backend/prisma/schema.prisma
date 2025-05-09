@@ -40,7 +40,7 @@ model User {
 
   // Relation d'amities
   ami   User[] @relation("Amis")
-  amiDe User[] @relation("Amis")
+  amiDe User[] @relation("Amis")   //N"cessité de bidirectionnalité, mais nous l'ignorerons !
 
   // Relatoin de blockage
   bloque   User[] @relation("Bloque")
