@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
 
 // Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
-import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Expo vector icons for social login
 import { FontAwesome } from '@expo/vector-icons';
+import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
 import { Button, Switch, Text, XStack, YStack } from 'tamagui';
 
 // Custom components
-import CustomInput from '../components/customInput';
+import CustomButton from '../components/CustomButton';
+import CustomInput from '../components/CustomInput';
 
 
 
@@ -23,11 +24,11 @@ const SignInScreen: React.FC = () => {
 
   // Custom colors:
   const customColors = {
-    background : "#F5F5F7",
-    pink : "#FF3C78",
-    purple : "#8F00FF",
-    textSecond : "#747688",
-    textMain : "#1A1B41"
+    background: "#F5F5F7",
+    pink: "#FF3C78",
+    purple: "#8F00FF",
+    textSecond: "#747688",
+    textMain: "#1A1B41"
   };
 
 
@@ -46,6 +47,8 @@ const SignInScreen: React.FC = () => {
       </Text>
 
       <YStack width="100%" space={16}>
+
+        {/* Email et Password */}
         <CustomInput inputType="email" />
         <CustomInput inputType="password" />
 
@@ -55,28 +58,31 @@ const SignInScreen: React.FC = () => {
             <Text fontSize="$3" color="#000">Remember Me</Text>
           </XStack>
 
-          <Pressable onPress={() => {/* TODO: forgot password */}}>
+          <Pressable onPress={() => {/* TODO: forgot password */ }}>
             <Text fontSize="$3" color="#3B82F6">
               Forgot Password?
             </Text>
           </Pressable>
         </XStack>
 
-        <Button
-          onPress={() => {/* TODO: sign in */}}
-          size="$5"
-          borderRadius="$6"
-          alignItems="center"
-          height={52}
-          backgroundColor="#FF4C70"
-        >
-          <XStack flex={1} alignItems="center" justifyContent="center" space={8}>
-            <Text fontSize="$4" fontWeight="700" color="#FFF">
-              SIGN IN
-            </Text>
-            <ArrowRight size={20} color="#FFF" />
-          </XStack>
-        </Button>
+
+
+        <XStack justifyContent="center" alignItems="center" >
+          <CustomButton
+            backgroundColor={customColors.pink}
+            title="Sign in"
+            endIcon = {<ArrowRight size={16} color={customColors.textMain} />}
+            minWidth={250}
+            minHeight={60}
+            borderRadius={15}
+            endCircle={true}
+          />  
+        </XStack>
+
+
+
+
+
 
         <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16}>
           <YStack flex={1} height={1} backgroundColor="#CCC" />
@@ -87,7 +93,7 @@ const SignInScreen: React.FC = () => {
         </XStack>
 
         <Button
-          onPress={() => {/* TODO: google login */}}
+          onPress={() => {/* TODO: google login */ }}
           size="$5"
           borderRadius="$6"
           borderWidth={1}
@@ -104,7 +110,7 @@ const SignInScreen: React.FC = () => {
         </Button>
 
         <Button
-          onPress={() => {/* TODO: facebook login */}}
+          onPress={() => {/* TODO: facebook login */ }}
           size="$5"
           borderRadius="$6"
           borderWidth={1}
@@ -122,7 +128,7 @@ const SignInScreen: React.FC = () => {
 
         <XStack justifyContent="center" alignItems="center" marginTop={24}>
           <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
-          <Pressable onPress={() => {/* TODO: go to SignUp */}}>
+          <Pressable onPress={() => {/* TODO: go to SignUp */ }}>
             <Text fontSize="$3" color="#3B82F6">
               Sign up
             </Text>
@@ -130,7 +136,7 @@ const SignInScreen: React.FC = () => {
         </XStack>
       </YStack>
     </YStack>
-    
+
   );
 };
 

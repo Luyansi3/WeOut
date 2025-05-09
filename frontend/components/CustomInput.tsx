@@ -1,24 +1,51 @@
+// IMPORTS
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    StyleSheet,
-    TextInput,
-    TextInputProps,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-// type
+// COMPONENTS:
 import { CustomInputType } from '../types/CustomTypeInput';
+
+
+
 
 // global var
 const customColors = {
-    background : "#F5F5F7",
-    pink : "#FF3C78",
-    purple : "#8F00FF",
-    textSecond : "#747688",
-    textMain : "#1A1B41"
-  };
+  background : "#F5F5F7",
+  pink : "#FF3C78",
+  purple : "#8F00FF",
+  textSecond : "#747688",
+  textMain : "#1A1B41"
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: "white",
+    borderRadius: 8,
+    marginVertical: 8,
+    paddingHorizontal: 12,
+    height: 50,
+  },
+  iconLeft: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: customColors.textSecond,
+  },
+  iconRight: {
+    marginLeft: 8,
+  },
+});
 
 
 interface CustomInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
@@ -81,27 +108,6 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
 
 
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: "white",
-    borderRadius: 8,
-    marginVertical: 8,
-    paddingHorizontal: 12,
-    height: 50,
-  },
-  iconLeft: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: customColors.textSecond,
-  },
-  iconRight: {
-    marginLeft: 8,
-  },
-});
+
 
 export default CustomInput;
