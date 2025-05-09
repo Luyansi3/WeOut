@@ -3,6 +3,7 @@
     "prisma": "^6.7.0"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0"
+    "@prisma/client": "^6.7.0",
+    "@tamagui/tabs": "^1.126.9"
   }
 }
