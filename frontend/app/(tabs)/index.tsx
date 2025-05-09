@@ -1,7 +1,6 @@
-import { View, Button, Text, XStack, Image, YStack, ScrollView } from 'tamagui';
+import { View, Text, XStack, Image, YStack, ScrollView } from 'tamagui';
 import { MapPin, Calendar } from '@tamagui/lucide-icons'
-import { useRouter } from 'expo-router';
-import Header from '@/components/Header';
+import Header from '@/components/Header/Header';
 
 export default function IndexScreen() {
     return (

@@ -30,6 +30,12 @@ export interface SlidingSliderProps {
   onValueChange?: (value: number) => void;
 }
 
+export const calculateValueFromPageX = (pageX: number, trackX: number, width: number, max: number) => {
+  const relativeX = pageX - trackX;
+  const clampedX = Math.max(0, Math.min(width, relativeX));
+  return Math.round((clampedX / width) * max);
+};
+
 const SlidingSlider: React.FC<SlidingSliderProps> = ({
   value,
   max,
@@ -68,15 +74,14 @@ const SlidingSlider: React.FC<SlidingSliderProps> = ({
 
   // Calculate and set new value based on gesture X
   const handlePan = (pageX: number) => {
-    const relativeX = pageX - trackX;
-    const clampedX = Math.max(0, Math.min(width, relativeX));
-    const newValue = Math.round((clampedX / width) * max);
+    const newValue = calculateValueFromPageX(pageX, trackX, width, max);
     setInternalValue(newValue);
     onValueChange?.(newValue);
   };
 
   return (
     <XStack
+      testID="slider-container"
       position="relative"
       width={width}
       height={size}
@@ -125,6 +130,7 @@ const SlidingSlider: React.FC<SlidingSliderProps> = ({
 
       {/* Cercle draggable aligné sur fin de remplissage */}
       <YStack
+        testID="slider-thumb"
         position="absolute"
         left={fillWidth - size / 2}
         top={0}

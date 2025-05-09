@@ -34,6 +34,7 @@ const Header: React.FC = () => {
       >
         {/* Logo blanc */}
         <Image
+          testID='LogoImage'
           source={require('@/assets/images/WeOutLogo.png')}
           alt="Logo"
           position="absolute"
@@ -59,12 +60,13 @@ const Header: React.FC = () => {
           zIndex={3}
         >
           {/* Bell icon positioned at center with highest z-index */}
-          <Bell width={20} height={20} color="#FFFFFF" />
+          <Bell testID='BellIcon' width={20} height={20} color="#FFFFFF" />
         </YStack>
 
         {/* Photo de profil circulaire */}
         <Image
-          source={require('../assets/profile_pictures/hamza_wirane.png')}
+          testID='ProfileImage'
+          source={require('@/assets/profile_pictures/hamza_wirane.png')}
           alt="Profile"
           position="absolute"
           right={profileRight}

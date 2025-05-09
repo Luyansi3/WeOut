@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen';
 
 
-import NavigationBar from "@/components/NavBar";
+import NavigationBar from "@/components/NavBar/NavBar";
 
 const config = createTamagui(defaultConfig)
 

@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import { createTamagui,TamaguiProvider, View } from 'tamagui'
 import { defaultConfig } from '@tamagui/config/v4' // for quick config install this
 import { SafeAreaView } from 'react-native';
-import NavigationBar from "@/components/NavBar";
+import NavigationBar from "@/components/NavBar/NavBar";
 
 const config = createTamagui(defaultConfig)
 
