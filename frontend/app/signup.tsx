@@ -12,12 +12,12 @@ export default function SignupScreen() {
             <Input placeholder="Email" />
             <Input placeholder="Password" secureTextEntry />
             <Input placeholder="Confirm Password" secureTextEntry />
-            <Button onPress={() => router.push('/home')}>Sign Up</Button>
+            <Button color="white" backgroundColor="#FF3C78" onPress={() => router.push('/login')}>Sign Up</Button>
             <Text fontSize="$4">
                 Already have an account?{' '}
                 <Text 
                     fontSize="$4" 
-                    color="blue" 
+                    color="#FF3C78" 
                     onPress={() => router.push('/login')}
                 >
                     Login

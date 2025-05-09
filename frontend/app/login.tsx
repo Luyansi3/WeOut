@@ -9,12 +9,12 @@ export default function LoginScreen() {
             <Text fontSize="$6">Login</Text>
             <Input placeholder="Username" />
             <Input placeholder="Password" secureTextEntry />
-            <Button onPress={() => router.push('/home')}>Login</Button>
+            <Button color="white" backgroundColor="#FF3C78"  onPress={() => router.push('/home')}>Login</Button>
             <Text fontSize="$4">
                 Don't have an account?{' '}
                 <Text 
                     fontSize="$4" 
-                    color="blue" 
+                    color="#FF3C78" 
                     onPress={() => router.push('/signup')}
                 >
                     Sign Up
