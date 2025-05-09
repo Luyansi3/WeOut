@@ -16,18 +16,10 @@ COPY . .
 COPY prisma ./prisma
 RUN npx prisma generate
 
-#Compile les fichiers TS 
-RUN npm run build
-
-#Fait la migration initiale de la base pg (construit la base)
-# RUN npx prisma migrate dev --name init
-
-#Ouvre le port 5553 pour observer la bd
-# RUN npx prisma studio -p 5553 &
 
 # on expose le port 3000
 EXPOSE ${NODE_PORT}
 
 #Run the dev version
 # CMD ["npm", "run", "dev"] 
-CMD npx prisma migrate dev --name init && npx prisma studio -p 5553 & npm run dev
+CMD /bin/sh start.sh
