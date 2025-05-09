@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { View, Button  } from 'tamagui'
 import { NavigationBar } from '@/components/NavBar'
-
+import Header from '@/components/Header'
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
+      <Header />
       <Button>Welcome!</Button>
       <NavigationBar active="home" onPress={(name) => console.log(name)} />
     </View>

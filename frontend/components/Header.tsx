@@ -24,14 +24,14 @@ const Header: React.FC = () => {
       position="absolute"
       top={0}
       left={0}
-      width={375}
-      height={101}
+      width="100%"
+      height={120}
       backgroundColor="#FF3C78"
       zIndex={1}
     >
       {/* Logo blanc */}
       <Image
-        source={require('../../assets/images/white_logo.png')}
+        source={require('@/assets/images/white_logo.png')}
         alt="Logo"
         position="absolute"
         left={24}
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
 
       {/* Photo de profil circulaire */}
       <Image
-        source={require('../../assets/images/default-avatar.png')}
+        source={require('@/assets/images/default-avatar.png')}
         alt="Profile"
         position="absolute"
         right={profileRight}
