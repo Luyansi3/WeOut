@@ -6,16 +6,8 @@ const prisma = new PrismaClient();
 
 export const getAllSoirees = async (req: Request, res: Response) => {
     try {
-        const soirees = await prisma.soiree.findMany({
-            include: {
-                lieu: true,
-                organisme: true,
-                tags: true,
-                groupes: true,
-                photos: true,
-                commentaires: true,
-            },
-        });
+        const soirees = await prisma.soiree.findMany();
+
 
         res.status(200).json(soirees);
     } catch (error) {
