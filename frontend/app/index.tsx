@@ -2,16 +2,14 @@ import { NavigationBar } from '@/components/NavBar';
 import { Calendar, MapPin } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { Button, Image, ScrollView, Text, View, XStack, YStack } from 'tamagui';
+import Header from '@/components/Header';
 
 export default function IndexScreen() {
-    const router = useRouter();
-
     return (
         <View flex={1} justifyContent="center" alignItems="center"
             backgroundColor="#ECECEC">
+            <Header />
 
-            <HeaderBar />
-            
             <ScrollView
                 width="100%"
                 backgroundColor="#F2F2F2"
@@ -35,41 +33,6 @@ export default function IndexScreen() {
 
             <NavigationBar active="home" onPress={(name) => console.log(name)} />
         </View>
-    );
-}
-
-const HeaderBar = () => {
-    const router = useRouter();
-    return (
-        <XStack
-                width="100%"
-                height={100}
-                backgroundColor="#FF3C78"
-                justifyContent="space-between"
-                alignItems="center"
-                padding="$4"
-            >
-
-                <Image
-                    source={require('../assets/images/WeOutLogo.png')}
-                    style={{ width: 40, height: 40 }}
-                />
-
-                <Button
-                    onPress={() => router.push('/userprofile')}
-                    width={40}
-                    height={40}
-                    icon={
-                        <Image
-                            source={require('../assets/profile_pictures/hamza_wirane.png')}
-                            style={{ width: 40, height: 40, borderRadius: 20 }}
-                        />
-                    }
-                    backgroundColor="transparent"
-                    padding={0}
-                    margin={0}
-                />
-            </XStack>
     );
 }
 
