@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonProps, Text, XStack } from 'tamagui';
+import { Button, ButtonProps, Text, XStack } from 'tamagui'; 
 
 
 interface CustomButtonProps extends ButtonProps {
@@ -7,6 +7,10 @@ interface CustomButtonProps extends ButtonProps {
     startIcon?: React.ReactNode;
     endIcon?: React.ReactNode;
     endCircle?: boolean;
+    textColor?: string;
+    fontSize?: number;
+    fontWeight?: string;
+
 }
 
 // global var
@@ -27,6 +31,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     startIcon,
     endIcon,
     endCircle = false,
+    textColor = "white",
+    fontSize = 16,
+    fontWeight = "500",
     ...rest
 }) => {
 
@@ -71,7 +78,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             {startIcon}
             <XStack alignItems="center" justifyContent="center">
 
-                <Text fontSize="$7" fontWeight="500" color="white">
+                <Text fontSize={fontSize} fontWeight={fontWeight} color={textColor}>
                     {title}
                 </Text>
 

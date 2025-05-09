@@ -52,84 +52,113 @@ const SignInScreen: React.FC = () => {
         <CustomInput inputType="email" />
         <CustomInput inputType="password" />
 
+
+
+
         <XStack justifyContent="space-between" alignItems="center">
           <XStack alignItems="center" space={8}>
-            <Switch checked={remember} onCheckedChange={setRemember} size="$4" />
-            <Text fontSize="$3" color="#000">Remember Me</Text>
+            <Switch
+              checked={remember}
+              onCheckedChange={setRemember}
+              size="$4"
+              backgroundColor={remember ? customColors.purple : "#E5E5E5"}
+            >
+              <XStack alignItems="center"  padding={2}>
+                <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$3" />
+              </XStack>
+            </Switch>
+            <Text fontSize="$3" color={customColors.textMain}>Remember Me</Text>
           </XStack>
 
           <Pressable onPress={() => {/* TODO: forgot password */ }}>
-            <Text fontSize="$3" color="#3B82F6">
+            <Text fontSize="$3" color={customColors.purple}>
               Forgot Password?
             </Text>
           </Pressable>
         </XStack>
 
 
-
+        {/* Bouton Sign in */}
         <XStack justifyContent="center" alignItems="center" >
           <CustomButton
             backgroundColor={customColors.pink}
             title="Sign in"
-            endIcon = {<ArrowRight size={16} color={customColors.textMain} />}
+            endIcon={<ArrowRight size={16} color={customColors.textMain} />}
             minWidth={250}
             minHeight={60}
             borderRadius={15}
+            fontSize={22}
+            fontWeight="500"
             endCircle={true}
-          />  
+            // to do le onPress
+            onPress={() => {
+              console.log('Sign in button pressed');
+            }}
+            pressStyle={{ backgroundColor: customColors.pink }}
+            focusStyle={{ backgroundColor: customColors.pink }}
+            hoverStyle={{ backgroundColor: customColors.pink }}
+          />
         </XStack>
 
 
 
 
 
-
-        <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16}>
-          <YStack flex={1} height={1} backgroundColor="#CCC" />
-          <Text fontSize="$3" color="#888">
+        {/* Le OR et les deux barres */}
+        <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16} >
+          <YStack flex={1} height={1} backgroundColor={customColors.textSecond} maxWidth={150} opacity={0.5} />
+          <Text fontSize="$3" color={customColors.textSecond} fontWeight={"200"}>
             OR
           </Text>
-          <YStack flex={1} height={1} backgroundColor="#CCC" />
+          <YStack flex={1} height={1} opacity={0.5} backgroundColor={customColors.textSecond} maxWidth={150} />
         </XStack>
 
-        <Button
-          onPress={() => {/* TODO: google login */ }}
-          size="$5"
-          borderRadius="$6"
-          borderWidth={1}
-          borderColor="#CCC"
-          backgroundColor="#FFF"
-          height={52}
-        >
-          <XStack alignItems="center" space={8}>
-            <FontAwesome name="google" size={20} color={customColors.purple} />
-            <Text fontSize="$4" fontWeight="500" color="#000">
-              Login with Google
-            </Text>
-          </XStack>
-        </Button>
 
-        <Button
-          onPress={() => {/* TODO: facebook login */ }}
-          size="$5"
+
+
+        {/* Google et Facebook */}
+        <CustomButton
+          title="Login with Google"
+          startIcon={
+            <FontAwesome name="google" size={20} color={customColors.purple} />
+          }
+          height={52}
           borderRadius="$6"
           borderWidth={1}
           borderColor="#CCC"
           backgroundColor="#FFF"
-          height={52}
-        >
-          <XStack alignItems="center" space={8}>
+          color="#000"
+          onPress={() => {
+            // TODO: google login
+          }}
+          textColor={customColors.textMain}
+        />
+
+        <CustomButton
+          title="Login with Facebook"
+          startIcon={
             <FontAwesome name="facebook-square" size={20} color={customColors.purple} />
-            <Text fontSize="$4" fontWeight="500" color="#000">
-              Login with Facebook
-            </Text>
-          </XStack>
-        </Button>
+          }
+          height={52}
+          borderRadius="$6"
+          borderWidth={1}
+          borderColor="#CCC"
+          backgroundColor="#FFF"
+          color="#000"
+          onPress={() => {
+            // TODO: facebook login
+          }}
+          textColor={customColors.textMain}
+        />
+
+
+
+
 
         <XStack justifyContent="center" alignItems="center" marginTop={24}>
           <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
           <Pressable onPress={() => {/* TODO: go to SignUp */ }}>
-            <Text fontSize="$3" color="#3B82F6">
+            <Text fontSize="$3" color={customColors.purple}>
               Sign up
             </Text>
           </Pressable>
