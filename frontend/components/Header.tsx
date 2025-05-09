@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     >
       {/* Logo blanc */}
       <Image
-        source={require('@/assets/images/white_logo.png')}
+        source={require('@/assets/images/WeOutLogo.png')}
         alt="Logo"
         position="absolute"
         left={24}
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
 
       {/* Photo de profil circulaire */}
       <Image
-        source={require('@/assets/images/default-avatar.png')}
+        source={require('../assets/profile_pictures/hamza_wirane.png')}
         alt="Profile"
         position="absolute"
         right={profileRight}
