@@ -1,7 +1,6 @@
-import { NavigationBar } from '@/components/NavBar';
-import { Calendar, MapPin } from '@tamagui/lucide-icons';
+import { View, Button, Text, XStack, Image, YStack, ScrollView } from 'tamagui';
+import { MapPin, Calendar } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router';
-import { Button, Image, ScrollView, Text, View, XStack, YStack } from 'tamagui';
 import Header from '@/components/Header';
 
 export default function IndexScreen() {
@@ -30,8 +29,6 @@ export default function IndexScreen() {
                 </YStack>
 
             </ScrollView>
-
-            <NavigationBar active="home" onPress={(name) => console.log(name)} />
         </View>
     );
 }
@@ -51,7 +48,7 @@ const EventCard = () => {
             >
                 <Image 
                     alignSelf='center'
-                    source={require('../assets/images/eventsimages/eventimage.png')}
+                    source={require('@/assets/images/eventsimages/eventimage.png')}
                     borderRadius={15}
                 />
 

@@ -1,40 +1,66 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
-import { XStack } from 'tamagui';
+import { StyleSheet, Platform, View, TouchableOpacity} from 'react-native';
+import { XStack, Text, TabsContentProps } from 'tamagui';
 import { Compass, Map, PlusCircle } from '@tamagui/lucide-icons';
-import { TouchableOpacity } from 'react-native';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
-type IconName = 'home' | 'map' | 'post'
+export default function NavigationBar ({ state, descriptors, navigation }: BottomTabBarProps) {
+  return (
+    <XStack style={styles.navbar}>
+      {state.routes.map((route, index) => {
+        const iconMap = {
+          index: Compass,
+          map: Map,
+          post: PlusCircle,
+        };
+        
+        const { options } = descriptors[route.key];
 
-type NavbarProps = {
-    active: IconName
-    onPress?: (name: IconName) => void
-  }
+        const isFocused = state.index === index;
 
-export const NavigationBar = ({ active, onPress }: NavbarProps) => {
-    const icons: { name: IconName; Icon: React.ElementType }[] = [
-      { name: 'home', Icon: Compass },
-      { name: 'map', Icon: Map },
-      { name: 'post', Icon: PlusCircle },
-    ]
+        const Icon = iconMap[route.name as keyof typeof iconMap];
 
-    return (
-        <XStack 
-          style={styles.navbar}
-        >
-            {
-                icons.map(({ name, Icon }) => (
-                    <TouchableOpacity accessibilityRole="button" key={name} onPress={() => onPress?.(name)}>
-                        <Icon testID={`icon-${name}`} color={active === name ? '#8F00FF' : '#747688'} size={30} />
-                    </TouchableOpacity>
-                ))
-            }
-        </XStack>
-    ) 
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name, route.params);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarButtonTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+          >
+            <Icon color={isFocused ? "#8F00FF" : "#747688" } size={30}/>
+          </TouchableOpacity>
+        );
+      })}
+    </XStack>
+  )
 };
 
 const styles = StyleSheet.create({
     navbar: {
+      elevation: 10,
+      zIndex: 1,
       position:'absolute',
       height:90,
       bottom:0,
@@ -50,7 +76,6 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: -3 },
       shadowOpacity: 0.15,
       shadowRadius: 8,
-      elevation: 100,
       ...Platform.select({
         web: {
           boxShadow: '0px -3px 8px rgb(157, 178, 214, 0.1)',
