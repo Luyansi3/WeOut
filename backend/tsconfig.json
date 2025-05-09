@@ -1,4 +1,7 @@
-{    
+{    "watchOptions": {
+    "watchFile": "fixedpollinginterval",
+    "watchDirectory": "fixedpollinginterval"
+  },
     "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -14,4 +17,5 @@
     },
     "include": ["./src/**/*.ts"],
     "exclude": ["./dist"]
+
 }
