@@ -1,68 +1,137 @@
-import { useState } from 'react'
-import { Button, Checkbox, Input, Label, Text, XStack, YStack } from 'tamagui'
+import React, { useState } from 'react';
+import { Image, Pressable } from 'react-native';
 
-export default function LoginRegister() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [remember, setRemember] = useState(false)
+// Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
+import { ArrowRight } from '@tamagui/lucide-icons';
+
+// Expo vector icons for social login
+import { FontAwesome } from '@expo/vector-icons';
+
+// Logo asset import (local image)
+import { Button, Switch, Text, XStack, YStack } from 'tamagui';
+
+// Custom components
+import CustomInput from '../components/customInput';
+
+
+
+const SignInScreen: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Custom colors:
+  const customColors = {
+    background : "#F5F5F7",
+    pink : "#FF3C78",
+    purple : "#8F00FF",
+    textSecond : "#747688",
+    textMain : "#1A1B41"
+  };
+
+
 
   return (
-    <YStack f={1} jc="center" ai="center" bg="#fff" p="$4" space>
-      {/* Logo */}
-      <Text fontSize={36} fontWeight="bold" color="#FF2D7A" mb="$4">WE{'\n'}OUT</Text>
 
-      {/* Sign in title */}
-      <Text fontSize={24} fontWeight="600" mb="$2">Sign in</Text>
-
-      {/* Email input */}
-      <Input
-        placeholder="Your mail/Username"
-        value={email}
-        onChangeText={setEmail}
-        width={260}
-        mb="$2"
+    <YStack flex={1} justifyContent="center" alignItems="center" padding={20} backgroundColor={customColors.background}>
+      {/* App logo using local asset */}
+      <Image
+        source={require('../assets/images/we-out-logo-pink.png')}
+        style={{ width: 120, height: 120, marginBottom: 24, resizeMode: 'contain' }}
       />
 
-      {/* Password input */}
-      <Input
-        placeholder="Your password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        width={260}
-        mb="$2"
-      />
+      <Text fontSize={28} fontWeight="700" marginBottom={24} color={customColors.textMain}>
+        Sign in
+      </Text>
 
-      {/* Remember me & Forgot password */}
-      <XStack jc="space-between" ai="center" width={260} mb="$2">
-        <XStack ai="center">
-          <Checkbox checked={remember} onCheckedChange={setRemember} id="remember" mr="$1" />
-          <Label htmlFor="remember" fontSize={14}>Remember Me</Label>
+      <YStack width="100%" space={16}>
+        <CustomInput inputType="email" />
+        <CustomInput inputType="password" />
+
+        <XStack justifyContent="space-between" alignItems="center">
+          <XStack alignItems="center" space={8}>
+            <Switch checked={remember} onCheckedChange={setRemember} size="$4" />
+            <Text fontSize="$3" color="#000">Remember Me</Text>
+          </XStack>
+
+          <Pressable onPress={() => {/* TODO: forgot password */}}>
+            <Text fontSize="$3" color="#3B82F6">
+              Forgot Password?
+            </Text>
+          </Pressable>
         </XStack>
-        <Text fontSize={14} color="#888">Forgot Password?</Text>
-      </XStack>
 
-      {/* Sign in button */}
-      <Button width={260} bg="#FF2D7A" color="#fff" fontWeight="bold" fontSize={16} mb="$2">
-        SIGN IN
-      </Button>
+        <Button
+          onPress={() => {/* TODO: sign in */}}
+          size="$5"
+          borderRadius="$6"
+          alignItems="center"
+          height={52}
+          backgroundColor="#FF4C70"
+        >
+          <XStack flex={1} alignItems="center" justifyContent="center" space={8}>
+            <Text fontSize="$4" fontWeight="700" color="#FFF">
+              SIGN IN
+            </Text>
+            <ArrowRight size={20} color="#FFF" />
+          </XStack>
+        </Button>
 
-      {/* OR */}
-      <Text color="#888" mb="$2">OR</Text>
+        <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16}>
+          <YStack flex={1} height={1} backgroundColor="#CCC" />
+          <Text fontSize="$3" color="#888">
+            OR
+          </Text>
+          <YStack flex={1} height={1} backgroundColor="#CCC" />
+        </XStack>
 
-      {/* Social logins */}
-      <Button width={260} bg="#fff" borderColor="#ddd" borderWidth={1} color="#222" mb="$2">
-        Login with Google
-      </Button>
-      <Button width={260} bg="#fff" borderColor="#ddd" borderWidth={1} color="#222" mb="$2">
-        Login with Facebook
-      </Button>
+        <Button
+          onPress={() => {/* TODO: google login */}}
+          size="$5"
+          borderRadius="$6"
+          borderWidth={1}
+          borderColor="#CCC"
+          backgroundColor="#FFF"
+          height={52}
+        >
+          <XStack alignItems="center" space={8}>
+            <FontAwesome name="google" size={20} color={customColors.purple} />
+            <Text fontSize="$4" fontWeight="500" color="#000">
+              Login with Google
+            </Text>
+          </XStack>
+        </Button>
 
-      {/* Register link */}
-      <XStack jc="center" mt="$2">
-        <Text color="#888">Don’t have an account yet? </Text>
-        <Text color="#FF2D7A" fontWeight="bold">Sign up</Text>
-      </XStack>
+        <Button
+          onPress={() => {/* TODO: facebook login */}}
+          size="$5"
+          borderRadius="$6"
+          borderWidth={1}
+          borderColor="#CCC"
+          backgroundColor="#FFF"
+          height={52}
+        >
+          <XStack alignItems="center" space={8}>
+            <FontAwesome name="facebook-square" size={20} color={customColors.purple} />
+            <Text fontSize="$4" fontWeight="500" color="#000">
+              Login with Facebook
+            </Text>
+          </XStack>
+        </Button>
+
+        <XStack justifyContent="center" alignItems="center" marginTop={24}>
+          <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
+          <Pressable onPress={() => {/* TODO: go to SignUp */}}>
+            <Text fontSize="$3" color="#3B82F6">
+              Sign up
+            </Text>
+          </Pressable>
+        </XStack>
+      </YStack>
     </YStack>
-  )
-}
+    
+  );
+};
+
+export default SignInScreen;
