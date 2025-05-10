@@ -8,9 +8,6 @@ import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen';
 
-
-import NavigationBar from "@/components/NavBar/NavBar";
-
 const config = createTamagui(defaultConfig)
 
 
@@ -19,12 +16,12 @@ export default function RootLayout() {
   SplashScreen.preventAutoHideAsync();
   // Loading custom fonts
   const [loaded, error] = useFonts({
-    'Raleway-Regular': require('../assets/fonts/Raleway-Regular.ttf'),
-    'Raleway-Bold': require('../assets/fonts/Raleway-Bold.ttf'),
-    'Raleway-Medium': require('../assets/fonts/Raleway-Medium.ttf'),
-    'Raleway-Light': require('../assets/fonts/Raleway-Light.ttf'),
-    'Raleway-Black': require('../assets/fonts/Raleway-Black.ttf'),
-    'Raleway-SemiBold': require('../assets/fonts/Raleway-SemiBold.ttf'),
+    'Raleway-Regular': require('@/assets/fonts/Raleway-Regular.ttf'),
+    'Raleway-Bold': require('@/assets/fonts/Raleway-Bold.ttf'),
+    'Raleway-Medium': require('@/assets/fonts/Raleway-Medium.ttf'),
+    'Raleway-Light': require('@/assets/fonts/Raleway-Light.ttf'),
+    'Raleway-Black': require('@/assets/fonts/Raleway-Black.ttf'),
+    'Raleway-SemiBold': require('@/assets/fonts/Raleway-SemiBold.ttf'),
     // add more variants as needed
   })
 
