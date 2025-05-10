@@ -59,7 +59,7 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
     try {
         const result = await serviceSendFriendRequest(senderId, receiverId);
         if (result.success)
-            res.status(200);
+            res.status(201);
         else
             res.status(400).json(result);
     }
