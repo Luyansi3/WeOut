@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import {
     getUserById,
-    sendFriendRequest
+    sendFriendRequest,
+    declineFriendRequest
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -11,7 +12,11 @@ const router : Router = Router();
 router.get('/:id', getUserById);
 
 
-// POST /user/addFrienship/:id - ajouter une relation d'amitié
-router.post('/addFriendship/:id', sendFriendRequest);
+// POST /user/sendFrienshipRequest/:id - ajouter une demande d'amitié
+router.post('/sendFriendRequest/:id', sendFriendRequest);
+
+
+// POST /user/declineFriendRequest/:id - refuser relation d'amitié
+router.post('/declineFriendRequest/:id', declineFriendRequest);
 
 export default router;
