@@ -9,8 +9,91 @@ const router : Router = Router();
 
 
 // GET /soirees/:id - récupérer un utilisateur par ID
+
+/**
+ * @openapi
+ * /api/soirees/id/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Récupère une soirée par son ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique de la soirée
+ *     responses:
+ *       200:
+ *         description: Soirée trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Soiree'
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/id/:id', getSoireeById);
+
+/**
+ * @openapi
+ * /api/soirees:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Récupère toutes les soirées
+ *     description: Renvoie toutes les soirées enregistrées. Peut filtrer celles à venir avec le paramètre `active=true`.
+ *     parameters:
+ *       - in: query
+ *         name: active
+ *         schema:
+ *           type: boolean
+ *         required: false
+ *         description: Si `true`, retourne uniquement les soirées futures.
+ *     responses:
+ *       200:
+ *         description: Liste des soirées récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Soiree'
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', getSoirees);
+
+/**
+ * @openapi
+ * /api/soirees/name/{name}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Récupère les soirées par nom
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nom recherché de la soirée
+ *     responses:
+ *       200:
+ *         description: Liste des soirées correspondant au nom
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Soiree'
+ *       500:
+ *         description: Erreur serveur
+ */
+
 router.get('/name/:name', getSoireeByName);
 
 
