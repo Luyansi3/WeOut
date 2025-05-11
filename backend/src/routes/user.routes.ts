@@ -41,7 +41,7 @@ const router : Router = Router();
 router.get('/:id', getUserById);
 
 
-// POST /user/sendFrienshipRequest/:id - ajouter une demande d'amitié
+// POST /user/sendFriendRequest/:id - ajouter une demande d'amitié
 /**
  * @openapi
  * /api/users/sendFriendRequest/{id}:
@@ -82,14 +82,83 @@ router.post('/sendFriendRequest/:id', sendFriendRequest);
 
 
 // POST /user/declineFriendRequest/:id - refuser relation d'amitié
+/**
+ * @openapi
+ * /api/users/declineFriendRequest/{id}:
+ *   post:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Refuser une demande d’amitié reçue par un autre utilisateur
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l’utilisateur qui refuse la demande
+ *       - in: query
+ *         name: senderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l’utilisateur ayant envoyé la demande
+ *     responses:
+ *       200:
+ *         description: Demande d’amitié refusée ou statut retourné
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: already_friends
+ *       400:
+ *         description: Paramètre manquant ou invalide
+ *       500:
+ *         description: Erreur serveur
+ */
 router.post('/declineFriendRequest/:id', declineFriendRequest);
-// POST /user/addFrienship/:id - ajouter une relation d'amitié
-
-
 
 
 
 //POST /user/acceptFriendRequest/:id - accepter demande d'amis
+/**
+ * @openapi
+ * /api/users/acceptFriendRequest/{id}:
+ *   post:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Accepter une demande d’amitié reçue par un autre utilisateur
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l’utilisateur qui accepte la demande
+ *       - in: query
+ *         name: senderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l’utilisateur ayant envoyé la demande
+ *     responses:
+ *       200:
+ *         description: Demande d’amitié acceptée ou statut retourné
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: already_friends
+ *       400:
+ *         description: Paramètre manquant ou invalide
+ *       500:
+ *         description: Erreur serveur
+ */
 router.post('/acceptFriendRequest/:id', acceptFriendRequest);
 
 export default router;
