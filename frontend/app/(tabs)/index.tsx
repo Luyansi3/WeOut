@@ -1,26 +1,40 @@
 import { View, YStack, ScrollView } from 'tamagui';
 import Header from '@/components/Header/Header';
 import EventCard from '@/components/EventCard/EventCard';
-import { fetchEvents } from '@/services/eventService';
+import { fetchAllEvents } from '@/services/eventService';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
-import { Event } from '@/types/Event';
+import { EventResponse } from '@/types/Event';
+import { fetchLocationById } from '@/services/locationService';
+import { LocationResponse } from '@/types/Location';
 
 export default function IndexScreen() {
-    const [events, setEvents] = useState([] as Event[]);
+    const [events, setEvents] = useState([] as EventResponse[]);
+    const [locations, setLocations] = useState([] as LocationResponse[]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    fetchEvents()
-        .then((data) => {
-            console.log(data);
-            setEvents(data);
+        const fetchEventsWithLocations = async () => {
+            try {
+            const eventsData = await fetchAllEvents({});
+            setEvents(eventsData);
+
+            const locationPromises = eventsData.map((event) =>
+                fetchLocationById(event.lieuId)
+            );
+
+            const locationsData = await Promise.all(locationPromises);
+            setLocations(locationsData);
+            } catch (err) {
+            console.log("Error fetching events or locations:", err);
+            } finally {
             setLoading(false);
-        })
-        .catch((err) => {
-            setLoading(false);
-        });
+            }
+        };
+
+        fetchEventsWithLocations();
     }, []);
+
     if (loading) return <ActivityIndicator size="large" />;
     
     return (
@@ -36,16 +50,20 @@ export default function IndexScreen() {
 
                 <YStack
                     gap={"$4"}>
-                    {events.map((event: Event, index) => (
-                        <EventCard
+                    {events.map((event: EventResponse, index) => {
+                        const location = locations[index]; // assuming order matches
+
+                        return (
+                            <EventCard
                             key={index}
                             image={require("@/assets/images/eventsimages/eventimage.png")}
                             title={event.nom}
                             description={event.description}
                             date={new Date(event.debut).toLocaleDateString().replace(/-/g, "/")}
-                            location={"TEMP LOCATION"}
-                        />
-                    ))}
+                            location={location ? location.adresse : "Unknown location"}
+                            />
+                        );
+                    })}
                 </YStack>
 
             </ScrollView>

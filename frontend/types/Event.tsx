@@ -11,7 +11,7 @@ export type EventResponse = {
     tags: string[]
 };
 
-export type EventParams = {
+export type AllEventParams = {
     active?: boolean;
 }
 
