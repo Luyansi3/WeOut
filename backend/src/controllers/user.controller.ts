@@ -99,7 +99,7 @@ export const declineFriendRequest = async(req: Request, res: Response) => {
     try {
         const result = await serviceDeclineFriendRequest(senderId, receiverId);
         if (result.success)
-            res.status(200).json(result);
+            res.status(201).json(result);
         else
             res.status(400).json(result);
         

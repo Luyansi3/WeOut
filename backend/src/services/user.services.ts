@@ -145,8 +145,10 @@ export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: 
         return {success: false, reason: 'someone is blocked'};
     if (relationStatus == 'already_friends')
         return {success: false, reason: 'already friends'};
-    if (relationStatus == 'already_sent')
+    if (relationStatus == 'already_received')
         return {success: false, reason: 'friend request sent and not received'};
+    if (relationStatus == 'no_relation')
+        return {success: false, reason: 'no friend request received'};
 
     //Make the transaction so the friend request is sent
     try {

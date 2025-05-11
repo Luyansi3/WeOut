@@ -136,3 +136,7 @@ dist
 .pnp.*
 
 node_modules
+
+
+#The exec for seeding the database
+backend/prisma/seedExec.ts
