@@ -3,7 +3,8 @@ import {
     getUserById,
     sendFriendRequest,
     declineFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    getListFriends
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -160,5 +161,38 @@ router.post('/declineFriendRequest/:id', declineFriendRequest);
  *         description: Erreur serveur
  */
 router.post('/acceptFriendRequest/:id', acceptFriendRequest);
+
+
+
+
+// GET /users/getListFriends/:id - récupérer un utilisateur par ID
+
+/**
+ * @openapi
+ * /api/users/{id}:
+ *   get:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Récupère la liste d'amis par ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur dont on veut récupérer les amis
+ *     responses:
+ *       200:
+ *         description: Données utilisateur trouvées
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/getListFriends/:id', getListFriends);
 
 export default router;

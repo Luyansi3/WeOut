@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { connect } from "http2";
+import { userInfo } from "os";
 const prisma : PrismaClient = new PrismaClient();
 
 
@@ -83,6 +84,18 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
     return 'no_relation'
 
 }
+
+
+
+export const serviceGetUserById = async(id: string) => {
+    try {
+            return await prisma.user.findUnique({
+                where: {id},
+            });
+        } catch(error) {
+            throw (error)
+        }        
+};
 
 
 export const serviceSendFriendRequest = async (senderId: string, receiverId: string) => {
@@ -227,5 +240,22 @@ export const serviceAcceptFriendRequest = async(senderId: string, receiverId: st
         throw error;
     }
     return {success: true};
+}
+
+
+export const serviceGetListFriends = async(id: string) => {
+
+    try {
+        const friends = await prisma.user.findMany({
+        where: {
+            ami: {
+                some : {id: id}
+            },
+        },
+    });
+        return friends;    
+    } catch(error) {
+        throw(error);
+    }   
 }
 
