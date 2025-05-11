@@ -2,7 +2,8 @@ import { Router } from 'express';
 import {
     getUserById,
     sendFriendRequest,
-    declineFriendRequest
+    declineFriendRequest,
+    acceptFriendRequest
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -86,5 +87,9 @@ router.post('/declineFriendRequest/:id', declineFriendRequest);
 
 
 
+
+
+//POST /user/acceptFriendRequest/:id - accepter demande d'amis
+router.post('/acceptFriendRequest/:id', acceptFriendRequest);
 
 export default router;

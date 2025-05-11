@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { 
     serviceSendFriendRequest,
-    serviceDeclineFriendRequest
+    serviceDeclineFriendRequest,
+    serviceAcceptFriendRequest
  } from "../services/user.services"
 
 
@@ -78,12 +79,6 @@ export const declineFriendRequest = async(req: Request, res: Response) => {
     const receiverId : string = req.params.id;
     const senderIdRaw = req.query.senderId;
 
-    //Verify the receiver Id is valid
-    if (!receiverId || typeof receiverId != 'string') {
-        res.status(400).json({ error: 'the receiver id is not valid'});
-        return;
-    }
-
     //Verify the senderId is valid
     if (!senderIdRaw || typeof senderIdRaw != 'string') {
         res.status(400).json({ error: 'the sender id is not valid'});
@@ -108,4 +103,35 @@ export const declineFriendRequest = async(req: Request, res: Response) => {
     }
 
     return;
+};
+
+
+
+export const acceptFriendRequest = async (req: Request, res: Response) => {
+    const receiverId : string = req.params.id;
+    const senderIdRaw = req.query.senderId;
+
+    //Verify the senderId is valid
+    if (!senderIdRaw || typeof senderIdRaw != 'string') {
+        res.status(400).json({ error: 'the sender id is not valid'});
+        return;
+    }
+    const senderId : string = senderIdRaw;
+
+    if (receiverId==senderId) {
+        res.status(400).json({error: 'the sender and receiver Id can\'t be the sames'});
+        return;
+    }
+
+    try {
+        const result = await serviceAcceptFriendRequest(senderId, receiverId);
+        if (result.success) {
+            res.status(201);
+        } else {
+            res.status(400);
+        }
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({error :"Server error"});
+    }
 };
