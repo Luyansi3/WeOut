@@ -49,7 +49,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
     const hasReceived = sender.demandeRecue.some((user : any) => user.id == receiverId);
     const hasBlocked = sender.bloque.some((user: any)=> user.id == receiverId);
     const isBlocked = sender.bloquant.some((user: any)=> user.id == receiverId);
-    const isFriend = sender.bloquant.some((user: any) => user.id == receiverId);
+    const isFriend = sender.ami.some((user: any) => user.id == receiverId);
 
 
     //Voir toutes les configuration possibles mais à l'envers
@@ -57,7 +57,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
     const hasReceivedReverse = receiver.demandeRecue.some((user : any) => user.id == senderId);
     const hasBlockedReverse = receiver.bloque.some((user: any)=> user.id == senderId);
     const isBlockedReverse = receiver.bloquant.some((user: any)=> user.id == senderId);
-    const isFriendReverse = receiver.bloquant.some((user: any) => user.id == senderId);
+    const isFriendReverse = receiver.ami.some((user: any) => user.id == senderId);
 
 
     //En fonction des ocnfigurations, voir le statut
@@ -73,7 +73,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
         return 'blocked';
     if (isBlocked && hasBlockedReverse)
         return 'blocked_by'
-    if (isFriend && isBlockedReverse)
+    if (isFriend && isFriendReverse)
         return 'already_friends'
     if (hasSent && hasReceivedReverse)
         return 'already_sent'
@@ -175,5 +175,57 @@ export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: 
     }
     return {success: true};
         
+}
+
+
+export const serviceAcceptFriendRequest = async(senderId: string, receiverId: string) => {
+    //Get the status of the relationship
+    const relationStatus : FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
+
+    //Regarding the status, return all the errors possible
+    if (!relationStatus)
+        return {success: false, reason: 'invalid IDs'};
+    if (relationStatus == 'non_valid_status')
+        return {success: false, reason: 'invalid database'};
+    if (relationStatus == 'blocked' || relationStatus == 'blocked_by')
+        return {success: false, reason: 'someone is blocked'};
+    if (relationStatus == 'already_friends')
+        return {success: false, reason: 'already friends'};
+    if (relationStatus == 'already_received')
+        return {success: false, reason: 'friend request sent and not received'};
+    if (relationStatus == 'no_relation')
+        return {success: false, reason: 'no friend request received'};
+
+
+    //Make the transaction so the friend request is sent
+    try {
+        await prisma.$transaction([prisma.user.update({
+            where: {id : senderId},
+            data: {
+                demandeEnvoye: {
+                    disconnect: {id : receiverId},
+                },
+                ami: {
+                    connect: {id: receiverId},
+                }
+            },
+        }),
+    prisma.user.update({
+            where: {id : receiverId},
+            data: {
+                demandeRecue: {
+                    disconnect: {id : senderId},
+                },
+                ami: {
+                    connect: {id: senderId},
+                }
+            },
+        })
+    ]);
+    
+    } catch(error) {
+        throw error;
+    }
+    return {success: true};
 }
 
