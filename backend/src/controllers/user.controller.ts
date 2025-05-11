@@ -3,7 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import { 
     serviceSendFriendRequest,
     serviceDeclineFriendRequest,
-    serviceAcceptFriendRequest
+    serviceAcceptFriendRequest,
+    serviceGetUserById,
+    serviceGetListFriends
  } from "../services/user.services"
 
 
@@ -16,22 +18,17 @@ export const getUserById = async (req: Request, res: Response) => {
         res.status(400).json({error: 'non valid ID'});
         return;
     }
-        
 
     try {
-        const user = await prisma.user.findUnique({
-            where: {id},
-        });
-
+        const user = await serviceGetUserById(id);
         if (!user) {
             res.status(404).json({error : 'No user associated to the ID'});
             return;
-        } 
-   
+        }
         res.status(200).json(user);
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({error : 'Server error'});
-    }
+    }    
 
     return;
 };
@@ -135,3 +132,22 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
         res.status(500).json({error :"Server error"});
     }
 };
+
+
+export const getListFriends = async (req: Request, res: Response) => {
+    const id : string = req.params.id;
+
+    try {
+        const friends = await serviceGetListFriends(id);
+
+        if (!friends) {
+            res.status(400).json({error : 'the given id is not valid'});
+        } else {
+            res.status(200).json(friends);
+        }
+
+
+    } catch(error) {
+        res.status(500).json({error: "Server error"});
+    }
+}
