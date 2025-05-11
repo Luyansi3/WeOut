@@ -3,5 +3,5 @@ export default eventCardMock = {
     description: 'Event Description',
     date: '2023-10-01',
     location: 'Event Location',
-    image: require('@/assets/images/eventsimages/eventimage.png')
+    image: '@/assets/images/eventsimages/eventimage.png'
 }

@@ -52,11 +52,11 @@ export default function IndexScreen() {
                     gap={"$4"}>
                     {events.map((event: EventResponse, index) => {
                         const location = locations[index]; // assuming order matches
-
+                        console.log(`${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${event.photoCouverturePath}`)
                         return (
                             <EventCard
                             key={index}
-                            image={require("@/assets/images/eventsimages/eventimage.png")}
+                            image={event.photoCouverturePath}
                             title={event.nom}
                             description={event.description}
                             date={new Date(event.debut).toLocaleDateString().replace(/-/g, "/")}

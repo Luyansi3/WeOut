@@ -19,8 +19,10 @@ const EventCard = (props: EventCardProps) => {
                 <Image 
                     testID='EventImage'
                     alignSelf='center'
-                    source={props.image}
+                    source={{ uri: `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${props.image}` }}
                     borderRadius={15}
+                    width="100%"
+                    height={200}
                 />
 
                 <Text fontWeight={600} fontSize={"$8"}>{props.title}</Text>
