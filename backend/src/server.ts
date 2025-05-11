@@ -20,6 +20,7 @@ app.use(express.json());
 // Routes de l'API  
 app.use('/api/users', UserRoutes);
 app.use('/api/soirees', SoireeRoutes);
+app.use('/api/lieux', SoireeRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {
