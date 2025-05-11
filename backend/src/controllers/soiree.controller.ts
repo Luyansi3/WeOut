@@ -63,7 +63,12 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 export const getSoirees = async (req: Request, res: Response) => {
 
     try {
-        const soirees = await prisma.soiree.findMany();
+        const { active } = req.query;
+        const now = new Date();
+
+        const soirees = await prisma.soiree.findMany({
+            where: active === 'true' ? { fin: { gt: now } } : {},
+        });
         res.status(200).json(soirees)
     }
     catch(error) {
