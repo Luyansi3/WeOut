@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from 'express';  // Remplacer require par import
 import { PrismaClient } from '@prisma/client';
 import UserRoutes from './routes/user.routes';  // Assurer que 'routes' est bien exporté en TypeScript
-import SoireeRoutes from './routes/soiree.routes';  
+import SoireeRoutes from './routes/soiree.routes';
+import LieuRoutes from './routes/lieu.routes';
 import dotenv from 'dotenv';
 import { setupSwagger } from './swagger';
 
@@ -20,7 +21,7 @@ app.use(express.json());
 // Routes de l'API  
 app.use('/api/users', UserRoutes);
 app.use('/api/soirees', SoireeRoutes);
-app.use('/api/lieux', SoireeRoutes);
+app.use('/api/lieux', LieuRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {
