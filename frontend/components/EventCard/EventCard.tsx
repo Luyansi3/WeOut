@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, XStack, Image, YStack } from "tamagui";
 import { MapPin, Calendar } from '@tamagui/lucide-icons'
+import { EventCardProps } from '@/types/Event';
 
-const EventCard = () => {
+const EventCard = (props: EventCardProps) => {
     return (
         <View
             width="100%"
@@ -18,15 +19,13 @@ const EventCard = () => {
                 <Image 
                     testID='EventImage'
                     alignSelf='center'
-                    source={require('@/assets/images/eventsimages/eventimage.png')}
+                    source={props.image}
                     borderRadius={15}
                 />
 
-                <Text fontWeight={600} fontSize={"$8"}>International Band Music Festival</Text>
+                <Text fontWeight={600} fontSize={"$8"}>{props.title}</Text>
                 <Text flexWrap='wrap'>
-                    {`Join us for an electrifying night at the International Band Music Concert, where global rhythms jzhfaiuzgfkauzegfaufzyegfkauyzgefuyfazegfkezuyfagfeoufaygfzkfauyzgfzkfuyg`.length > 100
-                        ? `Join us for an electrifying night at the International Band Music Concert, where global rhythms`.slice(0, 100) + '...'
-                        : `Join us for an electrifying night at the International Band Music Concert, where global rhythms jzhfaiuzgfkauzegfaufzyegfkauyzgefuyfazegfkezuyfagfeoufaygfzkfauyzgfzkfuyg`}
+                    {props.description.slice(0, 100).length > 100 ? props.description.slice(0, 100) + '...': props.description.slice(0, 100)}
                 </Text>
                 
                 <XStack
@@ -35,14 +34,14 @@ const EventCard = () => {
                     alignItems="flex-start">
                     
                     <Calendar width={20} height={20} color={"black"} />
-                    <Text color="gray">June 10 2025</Text>
+                    <Text color="gray">{props.date}</Text>
                 </XStack>
                 <XStack
                     testID='EventLocation'
                     gap={"$2"}
                     alignItems="flex-start">
                     <MapPin width={20} height={20} color={"black"} />
-                    <Text color={"gray"}>36 Guild Street, London, UK</Text>
+                    <Text color={"gray"}>{props.location}</Text>
                 </XStack>
             </YStack>
             
