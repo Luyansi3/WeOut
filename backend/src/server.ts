@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';  // Remplacer require par import
 import { PrismaClient } from '@prisma/client';
-import Userroutes from './routes/user.routes';  // Assurer que 'routes' est bien exporté en TypeScript
+import UserRoutes from './routes/user.routes';  // Assurer que 'routes' est bien exporté en TypeScript
+import SoireeRoutes from './routes/soiree.routes';  
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,10 +12,11 @@ const app : Application = express();
 const prisma : PrismaClient = new PrismaClient();
 
 // Middleware pour parser le JSON
-app.use(express.json());          
+app.use(express.json());
 
 // Routes de l'API  
-app.use('/api/user', Userroutes);
+app.use('/api/users', UserRoutes);
+app.use('/api/soirees', SoireeRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {
