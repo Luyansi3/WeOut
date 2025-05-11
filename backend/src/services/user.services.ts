@@ -17,6 +17,7 @@ type FriendshipStatus =
   
 
 const checkFriendshipStatus = async (senderId: string, receiverId: string) : Promise<FriendshipStatus> => {
+    //Get the sener (or active person)
     const sender = await prisma.user.findUnique({
         where : {id: senderId},
         include: {
@@ -27,6 +28,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
             ami : true
         },
     });
+    //Get the receiver (or passive person)
     const receiver = await prisma.user.findUnique({
         where : {id: receiverId},
         include: {
@@ -38,6 +40,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
         },
     });
 
+    //Check for null
     if (!sender || !receiver)
         return null;
 
@@ -56,6 +59,8 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
     const isBlockedReverse = receiver.bloquant.some((user: any)=> user.id == senderId);
     const isFriendReverse = receiver.bloquant.some((user: any) => user.id == senderId);
 
+
+    //En fonction des ocnfigurations, voir le statut
     if ((hasSent && hasReceived)
         || (hasReceivedReverse && hasSentReverse)
         || (isFriend != isFriendReverse)
@@ -81,8 +86,11 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
 
 
 export const serviceSendFriendRequest = async (senderId: string, receiverId: string) => {
+    //Get the status of the relationship
     const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
 
+
+    //Regarding the status, return all the errors possible
     if (!relationStatus)
         return {success: false, reason: 'invalid IDs'};
     if (relationStatus == 'non_valid_status')
@@ -94,6 +102,8 @@ export const serviceSendFriendRequest = async (senderId: string, receiverId: str
     if (relationStatus == 'already_received' || relationStatus=='already_sent')
         return {success : false, reason: 'request already made'};
     
+
+    //Make the transaction so the friend request is sent
     try {
         await prisma.$transaction([prisma.user.update({
             where: {id : senderId},
@@ -118,4 +128,50 @@ export const serviceSendFriendRequest = async (senderId: string, receiverId: str
     }
     return {success: true};
 };
+
+
+
+export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: string) => {
+    //Get the status of the relationship
+    const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
+
+
+    //Regarding the status, return all the errors possible
+    if (!relationStatus)
+        return {success: false, reason: 'invalid IDs'};
+    if (relationStatus == 'non_valid_status')
+        return {success: false, reason: 'invalid database'};
+    if (relationStatus == 'blocked' || relationStatus == 'blocked_by')
+        return {success: false, reason: 'someone is blocked'};
+    if (relationStatus == 'already_friends')
+        return {success: false, reason: 'already friends'};
+    if (relationStatus == 'already_sent')
+        return {success: false, reason: 'friend request sent and not received'};
+
+    //Make the transaction so the friend request is sent
+    try {
+        await prisma.$transaction([prisma.user.update({
+            where: {id : senderId},
+            data: {
+                demandeEnvoye: {
+                    disconnect: {id : receiverId},
+                },
+            },
+        }),
+    prisma.user.update({
+            where: {id : receiverId},
+            data: {
+                demandeRecue: {
+                    disconnect: {id : senderId},
+                },
+            },
+        })
+    ]);
+    
+    } catch(error) {
+        throw error;
+    }
+    return {success: true};
+        
+}
 

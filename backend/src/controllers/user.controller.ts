@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { serviceSendFriendRequest } from "../services/user.services"
+import { 
+    serviceSendFriendRequest,
+    serviceDeclineFriendRequest
+ } from "../services/user.services"
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -23,7 +26,7 @@ export const getUserById = async (req: Request, res: Response) => {
             res.status(404).json({error : 'No user associated to the ID'});
             return;
         } 
-
+   
         res.status(200).json(user);
     } catch(error) {
         res.status(500).json({error : 'Server error'});
@@ -44,7 +47,7 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
         return;
     }
     //Verify the receiverId is valid
-    if (typeof receiverIdRaw != 'string') {
+    if (!receiverIdRaw ||typeof receiverIdRaw != 'string') {
         res.status(400).json({error : 'non valid receiver ID'});
         return;
     }
@@ -59,12 +62,50 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
     try {
         const result = await serviceSendFriendRequest(senderId, receiverId);
         if (result.success)
-            res.status(201);
+            res.status(201).json(result);
         else
             res.status(400).json(result);
     }
     catch(error) {
         res.status(500).json({error : 'Server error'});
     }
+    return;
+};
+
+
+
+export const declineFriendRequest = async(req: Request, res: Response) => {
+    const receiverId : string = req.params.id;
+    const senderIdRaw = req.query.senderId;
+
+    //Verify the receiver Id is valid
+    if (!receiverId || typeof receiverId != 'string') {
+        res.status(400).json({ error: 'the receiver id is not valid'});
+        return;
+    }
+
+    //Verify the senderId is valid
+    if (!senderIdRaw || typeof senderIdRaw != 'string') {
+        res.status(400).json({ error: 'the sender id is not valid'});
+        return;
+    }
+    const senderId : string = senderIdRaw;
+
+    if (receiverId==senderId) {
+        res.status(400).json({error: 'the sender and receiver Id can\'t be the sames'});
+        return;
+    }
+
+    try {
+        const result = await serviceDeclineFriendRequest(senderId, receiverId);
+        if (result.success)
+            res.status(200).json(result);
+        else
+            res.status(400).json(result);
+        
+    } catch(error) {
+        res.status(500).json({error : 'Server error'});
+    }
+
     return;
 };

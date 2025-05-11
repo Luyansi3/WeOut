@@ -36,11 +36,11 @@ model User {
   // Geolocalisation
   longitude         Float
   latitude          Float
-  dateActualisation DateTime
+  dateActualisation DateTime @updatedAt
 
   // Relation d'amities
   ami   User[] @relation("Amis")
-  amiDe User[] @relation("Amis")   //N"cessité de bidirectionnalité, mais nous l'ignorerons !
+  amiDe User[] @relation("Amis")   //Nécessité de bidirectionnalité, mais nous l'ignorerons !
 
   // Relatoin de blockage
   bloque   User[] @relation("Bloque")
