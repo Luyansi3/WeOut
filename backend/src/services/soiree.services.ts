@@ -198,4 +198,30 @@ export const servicePostSoiree = async(nom:string,
     } catch(error) {
         throw (error)
     }
+}
+
+export const serviceUpdateSoiree = async (
+    id: number,
+    data: {
+        nom?: string,
+        description?: string,
+        photoCouverturePath?: string,
+        debut?: Date,
+        fin?: Date,
+        lieuId?: number,
+        organismeId?: string,
+        tags?: any // adapte selon ta gestion des enums
+    },
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
+    try {
+        await serviceGetSoireeById(id, prisma);
+
+        return await prisma.soiree.update({
+            where: { id },
+            data
+        });
+    } catch (error) {
+        throw error;
+    }
 };

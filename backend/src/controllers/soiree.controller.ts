@@ -8,6 +8,7 @@ import {
     serviceDeleteSoiree,
     serviceGetSoireeByUserId,
     servicePostSoiree,
+    serviceUpdateSoiree
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -167,3 +168,46 @@ export const getSoireeByUserId = async (req: Request, res: Response) => {
             res.status(500).json({error : 'Server error'});
     }
 }
+export const putSoiree = async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+
+    if (isNaN(id)) {
+        res.status(400).json({ error: 'Invalid ID' });
+        return;
+    }
+
+    const {
+        nom,
+        description,
+        photoCouverturePath,
+        debut,
+        fin,
+        lieuId,
+        organismeId,
+        tags
+    } = req.body;
+
+    try {
+        const updated = await serviceUpdateSoiree(id, {
+            nom,
+            description,
+            photoCouverturePath,
+            debut: debut ? new Date(debut) : undefined,
+            fin: fin ? new Date(fin) : undefined,
+            lieuId,
+            organismeId,
+            tags,
+            
+        },prisma);
+
+        if (!updated) {
+            res.status(404).json({ error: 'Soiree not found' });
+            return;
+        }
+
+        res.status(200).json(updated);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
