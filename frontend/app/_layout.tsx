@@ -4,16 +4,20 @@ import { SafeAreaView } from 'react-native';
 import { createTamagui, TamaguiProvider, View } from 'tamagui';
 
 // fonts: see https://docs.expo.dev/develop/user-interface/fonts/ YOU NEED npx expo install expo-font expo-splash-screen
-import { useFonts } from 'expo-font'
-import { useEffect } from 'react'
+import { useFonts } from 'expo-font';
+import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 
 const config = createTamagui(defaultConfig)
 
-
+SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function RootLayout() {
-  SplashScreen.preventAutoHideAsync();
+  
   // Loading custom fonts
   const [loaded, error] = useFonts({
     'Raleway-Regular': require('@/assets/fonts/Raleway-Regular.ttf'),

@@ -99,6 +99,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
         secureTextEntry={secure && !showPassword}
         {...rest}
       />
+      
       {inputType === 'password' && (
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           {showPassword ? (
