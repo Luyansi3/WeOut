@@ -9,7 +9,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
-import { Button, Switch, Text, XStack, YStack } from 'tamagui';
+import { Button, Text, Switch, XStack, YStack } from 'tamagui';
 
 // Custom components
 import CustomButton from '../components/CustomButton';
@@ -78,7 +78,7 @@ const SignupScreen = () => {
                 {/* Le OR et les deux barres */}
                 <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16} >
                     <YStack flex={1} height={1} backgroundColor={customColors.textSecond} maxWidth={150} opacity={0.5} />
-                    <Text fontSize="$3" color={customColors.textSecond} fontWeight={"200"}>
+                    <Text fontSize="$3" color={customColors.textSecond} fontFamily={"Raleway-SemiBold"} >
                         OR
                     </Text>
                     <YStack flex={1} height={1} opacity={0.5} backgroundColor={customColors.textSecond} maxWidth={150} />
@@ -127,9 +127,9 @@ const SignupScreen = () => {
 
 
                 <XStack justifyContent="center" alignItems="center" marginTop={24}>
-                    <Text fontSize="$3" color="#000">Already have an account? </Text>
+                    <Text fontSize="$3" fontFamily = {"Raleway-Regular"} color="#000">Already have an account? </Text>
                     <Pressable onPress={() => { router.push('/login'); }}>
-                        <Text fontSize="$3" color={customColors.purple}>
+                        <Text fontSize="$3" color={customColors.purple} fontFamily={"Raleway-Regular"} >
                             Sign in
                         </Text>
                     </Pressable>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { XStack, YStack, Text } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
 import { ArrowLeft } from '@tamagui/lucide-icons';
-import { Pressable } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 
 // Custom components:
@@ -47,7 +47,7 @@ export default function Preferences() {
                 <SlidingSlider
                     value={dancingValue}
                     max={100}
-                    icon="💃​"
+                    icon="💃"
                     trackColor={customColors.sliderVide}
                     gradientFrom={customColors.purple}
                     gradientTo={customColors.pink}
@@ -110,6 +110,9 @@ export default function Preferences() {
                         pressStyle={{ backgroundColor: customColors.pink }}
                         focusStyle={{ backgroundColor: customColors.pink }}
                         hoverStyle={{ backgroundColor: customColors.pink }}
+                        onPressIn={() => {
+                            console.log('Update button pressed'); // TO DO
+                        }}
                     />
                 </XStack>
 
