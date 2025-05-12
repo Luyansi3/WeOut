@@ -197,7 +197,41 @@ router.post('/acceptFriendRequest/:id', acceptFriendRequest);
 router.get('/getListFriends/:id', getListFriends);
 
 
+// POST /users/participate/:id - Faire participer un user à une soirée
 
+/**
+ * @openapi
+ * /api/users/participate/{id}:
+ *   post:
+ *     tags:
+ *       - Utilisateurs
+ *       - Soirées
+ *     summary: Inscrit un utilisateur à une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur que l'on veut inscrire à la soirée
+ *       - in: path
+ *         name: partyId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de la soirée à laquelle on veut inscrire l'utilisateur      
+ *     responses:
+ *       201:
+ *         description: inscription réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Utilisateur non trouvé ou soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
 router.post('/participate/:id', participateEvent);
 
 export default router;

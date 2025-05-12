@@ -13,7 +13,7 @@ export class DatabaseError extends CustomErrors {
   statusCode: number;
   code: string;
 
-  constructor(id: string | number, code: string, statusCode: number = 400) {
+  constructor(id: string | number, code: string, statusCode: number = 404) {
     super(statusCode, "Impossible to find a unique tuple");
     this.name = this.constructor.name; // Donne un nom à l'erreur
     this.code = code;  // Code d'erreur personnalisé
