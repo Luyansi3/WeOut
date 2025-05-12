@@ -2,7 +2,8 @@ import { Router } from 'express';
 import {
     getSoireeById,
     getSoirees,
-    getSoireeByName
+    getSoireeByName,
+    deleteSoiree
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -101,5 +102,39 @@ router.get('/name/:name', getSoireeByName);
 // router.post('/', postSoiree);
 
 
-
+/**
+ * @openapi
+ * /api/soirees/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Soirées
+ *     summary: Supprime une soirée par son ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique de la soirée à supprimer
+ *     responses:
+ *       200:
+ *         description: Soirée supprimée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Requête invalide (ID manquant ou incorrect)
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.delete('/delete/:id', deleteSoiree);
+   
 export default router;
