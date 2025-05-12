@@ -5,7 +5,8 @@ import {
     serviceGetSoireeByName,
     serviceGetSoirees,
     getSoireeInIntervalAndId,
-    serviceDeleteSoiree
+    serviceDeleteSoiree,
+    serviceGetSoireeByUserId
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -91,3 +92,18 @@ export const deleteSoiree = async (req: Request, res: Response) => {
     }
     return;
 };
+
+
+export const getSoireeByUserId = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+
+    try {
+        const result = await serviceGetSoireeByUserId(id, prisma);
+        res.status(200).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
+    }
+}
