@@ -68,7 +68,7 @@ const SlidingSlider: React.FC<SlidingSliderProps> = ({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: (evt, gs) => handlePan(evt.nativeEvent.pageX),
       onPanResponderMove: (evt, gs) => handlePan(evt.nativeEvent.pageX),
-      onPanResponderRelease: () => {},
+      onPanResponderRelease: () => { },
     })
   ).current;
 
