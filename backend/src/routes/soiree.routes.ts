@@ -192,6 +192,11 @@ router.put("/:id", putSoiree);
  *         description: Erreur serveur
  */
 router.delete('/delete/:id', deleteSoiree);
+
+
+
+
+
 /**
  * @openapi
  * /api/soirees:
