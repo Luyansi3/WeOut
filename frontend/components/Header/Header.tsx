@@ -1,6 +1,7 @@
 import React from 'react';
-import { XStack, Image, YStack, View } from 'tamagui';
+import { XStack, Image, YStack, View, Button } from 'tamagui';
 import { Bell } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 
 /**
  * Header component with fixed dimensions and absolute positioning.
@@ -64,6 +65,23 @@ const Header: React.FC = () => {
         </YStack>
 
         {/* Photo de profil circulaire */}
+        <Button
+          testID='ProfileButton'
+          position="absolute"
+          right={profileRight}
+          bottom={16}
+          width={profileSize}
+          height={profileSize}
+          borderRadius={profileSize / 2}
+          backgroundColor="rgba(255,255,255,0.1)"
+          alignItems="center"
+          justifyContent="center"
+          zIndex={3}
+          onPress={() => {
+            router.push('/userprofile');
+          }
+          }
+        ></Button>
         <Image
           testID='ProfileImage'
           source={require('@/assets/profile_pictures/hamza_wirane.png')}
