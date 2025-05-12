@@ -9,7 +9,7 @@
     "dev": "nodemon --legacy-watch --watch dist --ext js --exec node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "ts-node prisma/seedExec.ts",
-    "cleanDB": "prisma migrate reset",
+    "cleanDB": "prisma migrate reset && prisma db push",
     "resetDB": "npm run cleanDB && npm run seed"
   },
   "keywords": [],
