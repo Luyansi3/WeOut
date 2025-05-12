@@ -310,3 +310,22 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
     return {success: true};
 }
 
+export const serviceUpdateUser = async (
+    id: string,
+    data: {
+        prenom?: string;
+        nom?: string;
+        genre?: "HOMME" | "FEMME" | "AUTRE";
+        longitude?: number;
+        latitude?: number;
+    },
+    prisma: PrismaClient
+) => {
+    await serviceGetUserById(id, prisma); 
+
+    return prisma.user.update({
+        where: { id },
+        data,
+    });
+};
+

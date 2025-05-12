@@ -6,7 +6,8 @@ import {
     serviceAcceptFriendRequest,
     serviceGetUserById,
     serviceGetListFriends,
-    serviceParticipateEvent
+    serviceParticipateEvent,
+    serviceUpdateUser
  } from "../services/user.services"
 
  import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -185,3 +186,24 @@ export const participateEvent = async (req: Request, res: Response) => {
     }
     
 }
+
+export const putUser = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    if (!id || typeof id !== "string") {
+        res.status(400).json({ error: "Invalid user ID" });
+        return;
+    }
+
+    const { prenom, nom, genre, latitude, longitude } = req.body;
+
+    try {
+        const updated = await serviceUpdateUser(id, { prenom, nom, genre, latitude, longitude }, prisma);
+        res.status(200).json(updated);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({ error: "Server error" });
+    }
+};
