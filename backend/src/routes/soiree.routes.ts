@@ -4,7 +4,8 @@ import {
     getSoirees,
     getSoireeByName,
     deleteSoiree,
-    getSoireeByUserId
+    getSoireeByUserId,
+    postSoiree
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -135,6 +136,62 @@ router.get('/name/:name', getSoireeByName);
  *         description: Erreur serveur
  */
 router.delete('/delete/:id', deleteSoiree);
+/**
+ * @openapi
+ * /api/soirees:
+ *   post:
+ *     tags:
+ *       - Soirées
+ *     summary: Créer une nouvelle soirée et lier des entités existantes
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nom
+ *               - description
+ *               - photoCouverturePath
+ *               - debut
+ *               - fin
+ *               - lieuId
+ *               - organismeId
+ *             properties:
+ *               nom:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               photoCouverturePath:
+ *                 type: string
+ *               debut:
+ *                 type: string
+ *                 format: date-time
+ *               fin:
+ *                 type: string
+ *                 format: date-time
+ *               lieuId:
+ *                 type: integer
+ *               organismeId:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Liste des tags déjà existantes à associer
+ *     responses:
+ *       201:
+ *         description: Soirée créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Soiree'
+ *       400:
+ *         description: Données manquantes ou invalides
+ *       500:
+ *         description: Erreur interne serveur
+ */
+router.post('/', postSoiree);
 
 
 

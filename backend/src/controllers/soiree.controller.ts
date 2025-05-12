@@ -6,7 +6,8 @@ import {
     serviceGetSoirees,
     getSoireeInIntervalAndId,
     serviceDeleteSoiree,
-    serviceGetSoireeByUserId
+    serviceGetSoireeByUserId,
+    servicePostSoiree,
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -54,8 +55,9 @@ export const getSoireeByName = async (req: Request, res: Response) => {
         const soirees = await serviceGetSoireeByName(name, prisma);
 
         res.status(200).json(soirees);
-    } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+    } catch(error) {
+        const message = error instanceof Error && error.message ? error.message : 'Server error';
+        res.status(500).json({error:message});
     }
 
     return;
@@ -69,8 +71,61 @@ export const getSoirees = async (req: Request, res: Response) => {
         const soirees = await serviceGetSoirees(now, active, prisma);
         res.status(200).json(soirees)
     }
-    catch (error) {
-        res.status(500).json({ error: 'Server error' });
+    catch(error) {
+        const message = error instanceof Error && error.message ? error.message : 'Server error';
+        res.status(500).json({error:message});
+    }
+    return;
+};
+
+export const postSoiree = async (req: Request, res: Response) => {
+    let {
+    nom,
+    description,
+    photoCouverturePath,
+    debut,
+    fin,
+    lieuId,
+    organismeId,
+    tags,
+    } = req.body;
+
+    if (
+        typeof nom !== 'string' ||
+        typeof description !== 'string' ||
+        typeof photoCouverturePath !== 'string' ||
+        typeof debut !== 'string' ||
+        typeof fin !== 'string' ||
+        typeof lieuId !== 'number' ||
+        typeof organismeId !== 'string'
+        ) {
+            res.status(400).json({ error: 'Invalid or missing field(s)' });
+        }
+
+    const isArrayOfStrings = (arr: any): arr is string[] => Array.isArray(arr) && arr.every(item => typeof item === 'string');
+    const isArrayOfInt = (arr: any): arr is number[] => Array.isArray(arr) && arr.every(item => typeof item === 'number');
+
+    if ((tags !== undefined && !Array.isArray(tags))) {
+        res.status(400).json({ error: 'tags must be arrays if provided' });
+    }
+    debut = new Date(debut);
+    fin = new Date(fin);
+    try {
+        const soirees = await servicePostSoiree(nom,
+                                                description,
+                                                photoCouverturePath,
+                                                debut,
+                                                fin,
+                                                lieuId,
+                                                organismeId,
+                                                tags,
+                                                prisma
+                                            );
+        res.status(201).json(soirees)
+    }
+    catch(error) {
+        const message = error instanceof Error && error.message ? error.message : 'Server error';
+        res.status(500).json({error:message});
     }
     return;
 };
