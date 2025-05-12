@@ -6,7 +6,7 @@ import {
     acceptFriendRequest,
     getListFriends,
     participateEvent,
-    putUser,
+    updateUserInfo
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -235,20 +235,22 @@ router.get('/getListFriends/:id', getListFriends);
  */
 router.post('/participate/:id', participateEvent);
 
+
+
 /**
  * @openapi
- * /api/users/{id}:
- *   put:
- *     summary: Met à jour les informations d'un utilisateur
+ * /api/users/updateUserInfo/{id}:
+ *   patch:
  *     tags:
- *       - Users
+ *       - Utilisateurs
+ *     summary: Met à jour les informations d’un utilisateur
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de l'utilisateur à modifier
  *         schema:
  *           type: string
+ *         description: ID unique de l’utilisateur à mettre à jour
  *     requestBody:
  *       required: true
  *       content:
@@ -269,18 +271,18 @@ router.post('/participate/:id', participateEvent);
  *                 type: number
  *     responses:
  *       200:
- *         description: Utilisateur mis à jour avec succès
+ *         description: Mise à jour réussie
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Requête invalide (ID ou données incorrectes)
+ *         description: Requête invalide
  *       404:
  *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
  */
-
-router.put("/:id", putUser);
-
+router.patch('/updateUserInfo/:id', updateUserInfo);
 
 export default router;
