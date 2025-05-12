@@ -92,7 +92,7 @@ const SignInScreen: React.FC = () => {
             <Text fontSize="$3" fontFamily={"Raleway-Regular"} color={customColors.textMain}>Remember Me</Text>
           </XStack>
 
-          <Pressable onPress={() => {/* TODO: forgot password */ }}>
+          <Pressable onPress={() => { router.push('/resetPassword'); }}>
             <Text fontFamily={"Raleway-Regular"} fontSize="$3" color={customColors.purple}>
               Forgot Password?
             </Text>

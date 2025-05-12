@@ -8,9 +8,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import {
     LockKeyhole,
     Mail,
-    TextCursorInput,
+    ArrowLeft,
     User,
-    ArrowRight
+    ArrowRight,
+    AtSign,
 } from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
@@ -91,9 +92,14 @@ const SignupScreen = () => {
 
     return (
         <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
-            <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={8} color={customColors.textMain} >
-                Sign up
-            </Text>
+            <XStack alignItems="center" marginBottom={8}>
+                <Pressable onPress={() => router.back()}>
+                    <ArrowLeft size={24} color={customColors.textMain} />
+                </Pressable>
+                <Text fontSize={28} fontFamily={"Raleway-Bold"} marginLeft={8} color={customColors.textMain}>
+                    Sign Up
+                </Text>
+            </XStack>
 
 
 
@@ -106,7 +112,7 @@ const SignupScreen = () => {
                     onChangeText={setFullName} />
 
                 <CustomInput value={username}
-                    leftIcon={<User />}
+                    leftIcon={<AtSign />}
                     placeholder='Your username'
                     inputType="text"
                     onChangeText={setUsername} />
