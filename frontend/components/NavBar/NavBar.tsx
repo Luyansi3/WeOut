@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Platform, View, TouchableOpacity} from 'react-native';
 import { XStack, Text, TabsContentProps } from 'tamagui';
-import { Compass, Map, PlusCircle } from '@tamagui/lucide-icons';
+import { Compass, Map, Search } from '@tamagui/lucide-icons';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
 export default function NavigationBar ({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -11,7 +11,7 @@ export default function NavigationBar ({ state, descriptors, navigation }: Botto
         const iconMap = {
           index: Compass,
           map: Map,
-          post: PlusCircle,
+          search: Search,
         };
         
         const { options } = descriptors[route.key];

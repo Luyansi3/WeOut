@@ -14,7 +14,7 @@ export default function RootLayout() {
           <Tabs screenOptions={{ headerShown: false }} tabBar={props => <NavigationBar {...props}/>}>
             <Tabs.Screen name="index" options={{ title: 'home' }} />
             <Tabs.Screen name="map" options={{ title: 'map' }} />
-            <Tabs.Screen name="post" options={{ title: 'post' }} />
+            <Tabs.Screen name="search" options={{ title: 'search' }} />
           </Tabs>
         </View>
       </SafeAreaView>

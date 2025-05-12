@@ -16,7 +16,6 @@ export type AllEventParams = {
 }
 
 export type EventCardProps = {
-    key: number;
     title: string;
     description: string;
     date: string;

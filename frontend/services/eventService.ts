@@ -14,3 +14,19 @@ export const fetchAllEvents = async (parameters: AllEventParams): Promise<EventR
   }
 };
 
+export const fetchEventsByName = async (name: string): Promise<EventResponse[]> => {
+  try {
+    const url = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees/name/${name}`;
+    console.log('Fetching events by name from:', url);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching events: ${response.statusText}`);
+    }
+    const events: EventResponse[] = await response.json();
+    return events;
+  } catch (error) {
+    console.error('Error fetching events by name:', error);
+    throw error;
+  }
+}
+
