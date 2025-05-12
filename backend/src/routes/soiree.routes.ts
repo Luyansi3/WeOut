@@ -4,7 +4,8 @@ import {
     getSoirees,
     getSoireeByName,
     deleteSoiree,
-    getSoireeByUserId
+    getSoireeByUserId,
+    getGroupsBySoireeId
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -174,4 +175,30 @@ router.delete('/delete/:id', deleteSoiree);
  */
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
+/**
+ * @openapi
+ * /api/soirees/groups/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Récupère les groupes associés à une soirée donnée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la soirée
+ *     responses:
+ *       200:
+ *         description: Groupes récupérés avec succès
+ *       400:
+ *         description: Format de l’ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/groups/:id', getGroupsBySoireeId);
+
 export default router;

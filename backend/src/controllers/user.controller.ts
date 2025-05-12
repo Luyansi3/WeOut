@@ -187,29 +187,32 @@ export const participateEvent = async (req: Request, res: Response) => {
     
 }
 
-
 export const updateUserInfo = async (req: Request, res: Response) => {
     const userId: string = req.params.id;
     const updateData = req.body;
-
+  
     try {
-        const result = await serviceUpdateUserInfo(userId, updateData, prisma);
-
-        if (!result.success) {
-            const statusCode = result.reason === 'Validation failed' ? 400 :
-                               result.reason === 'User not found' ? 404 : 500;
-
-            return ;
-        }
-
+      const result = await serviceUpdateUserInfo(userId, updateData, prisma);
+  
+      if (!result.success) {
+        const statusCode =
+          'reason' in result && result.reason === 'Validation failed' ? 400 :
+          'reason' in result && result.reason === 'User not found' ? 404 :
+          500;
+  
+        res.status(statusCode).json(result);
+        return ;
+      }
         res.status(200).json(result);
+      return ;
     } catch (error) {
-        if (error instanceof CustomErrors) {
-            res.status(error.statusCode).json(error);
-        } else {
-            console.error('Unexpected error in updateUserInfo:', error);
-            res.status(500).json({ error: 'Server error' });
-        }
+      if (error instanceof CustomErrors) {
+         res.status(error.statusCode).json({ error: error.message });
+         return;
+      }
+  
+      console.error('Unexpected error in updateUserInfo:', error);
+       res.status(500).json({ error: 'Server error' });
+       return;
     }
-    return ;
-};
+  };
