@@ -160,7 +160,6 @@ router.get('/name/:name', getSoireeByName);
 router.put("/:id", putSoiree);
 
 
-
 /**
  * @openapi
  * /api/soirees/delete/{id}:
@@ -294,11 +293,5 @@ router.post('/', postSoiree);
  *         description: Erreur serveur
  */
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
-   
-
-// POST /soirees/:id - récupérer un utilisateur par ID
-// router.post('/', postSoiree);
-
-
    
 export default router;
