@@ -30,7 +30,7 @@ const router = useRouter();
 const SignupScreen = () => {
     return (
         <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
-            <Text fontSize={28} fontWeight="700" marginBottom={8} color={customColors.textMain} >
+            <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={8} color={customColors.textMain} >
                 Sign up
             </Text>
 
