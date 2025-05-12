@@ -46,7 +46,7 @@ const SignInScreen: React.FC = () => {
         style={{ width: 120, height: 120, marginBottom: 24, resizeMode: 'contain' }}
       />
 
-      <Text fontSize={28} fontWeight="700" marginBottom={24} color={customColors.textMain}>
+      <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={24} color={customColors.textMain}>
         Sign in
       </Text>
 
@@ -71,11 +71,11 @@ const SignInScreen: React.FC = () => {
                 <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$2" />
               </XStack>
             </Switch>
-            <Text fontSize="$3" color={customColors.textMain}>Remember Me</Text>
+            <Text fontSize="$3" fontFamily={"Raleway-Regular"} color={customColors.textMain}>Remember Me</Text>
           </XStack>
 
           <Pressable onPress={() => {/* TODO: forgot password */ }}>
-            <Text fontSize="$3" color={customColors.purple}>
+            <Text fontFamily={"Raleway-Regular"} fontSize="$3" color={customColors.purple}>
               Forgot Password?
             </Text>
           </Pressable>
@@ -112,7 +112,7 @@ const SignInScreen: React.FC = () => {
         {/* Le OR et les deux barres */}
         <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16} >
           <YStack flex={1} height={1} backgroundColor={customColors.textSecond} maxWidth={150} opacity={0.5} />
-          <Text fontSize="$3" color={customColors.textSecond} fontWeight={"200"}>
+          <Text fontSize="$3" color={customColors.textSecond} fontFamily={"Raleway-SemiBold"} >
             OR
           </Text>
           <YStack flex={1} height={1} opacity={0.5} backgroundColor={customColors.textSecond} maxWidth={150} />
@@ -124,6 +124,7 @@ const SignInScreen: React.FC = () => {
         {/* Google et Facebook */}
         <CustomButton
           title="Login with Google"
+          fontFamily={"Raleway-Regular"}
           startIcon={
             <FontAwesome name="google" size={20} color={customColors.purple} />
           }
@@ -141,6 +142,7 @@ const SignInScreen: React.FC = () => {
 
         <CustomButton
           title="Login with Facebook"
+          fontFamily={"Raleway-Regular"}
           startIcon={
             <FontAwesome name="facebook-square" size={20} color={customColors.purple} />
           }
@@ -161,9 +163,9 @@ const SignInScreen: React.FC = () => {
 
 
         <XStack justifyContent="center" alignItems="center" marginTop={24}>
-          <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
+          <Text fontFamily={"Raleway-Regular"} fontSize="$3" color="#000">Don’t have an account yet? </Text>
           <Pressable onPress={() => { router.push('/signup'); }}>
-            <Text fontSize="$3" color={customColors.purple}>
+            <Text fontSize="$3" color={customColors.purple} fontFamily={"Raleway-Regular"}>
               Sign up
             </Text>
           </Pressable>
