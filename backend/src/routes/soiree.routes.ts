@@ -99,6 +99,61 @@ router.get('/', getSoirees);
  */
 
 router.get('/name/:name', getSoireeByName);
+
+/**
+ * @openapi
+ * /api/soirees/{id}:
+ *   put:
+ *     summary: Met à jour une soirée existante
+ *     tags:
+ *       - Soirees
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la soirée à modifier
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nom:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               photoCouverturePath:
+ *                 type: string
+ *               debut:
+ *                 type: string
+ *                 format: date-time
+ *               fin:
+ *                 type: string
+ *                 format: date-time
+ *               lieuId:
+ *                 type: integer
+ *               organismeId:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Soirée mise à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Soiree'
+ *       404:
+ *         description: Soirée non trouvée
+ *       400:
+ *         description: Requête invalide
+ */
+
 router.put("/:id", putSoiree);
 
 // POST /soirees/:id - récupérer un utilisateur par ID

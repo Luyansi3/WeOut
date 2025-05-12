@@ -1,0 +1,27 @@
+meta {
+  name: putSoiree
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://{{localhost}}/api/soirees/1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  
+    {
+      "id": 1,
+      "nom": "SixEducationV2",
+      "description": "House",
+      "photoCouverturePath": "",
+      "debut": "1970-01-01T00:00:00.000Z",
+      "fin": "1970-01-01T00:00:00.000Z",
+      "lieuId": 1,
+      "organismeId": "222ca61b-4a34-4e7b-abe5-672a4618f3fc",
+      "tags": []
+    }
+  
+}
