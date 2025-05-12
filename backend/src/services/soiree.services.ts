@@ -215,9 +215,7 @@ export const serviceUpdateSoiree = async (
     prisma: PrismaClient | PrismaTransactionClient
 ) => {
     try {
-        await serviceGetSoireeById(id);
-        const soireeExist = await prisma.soiree.findUnique({ where: { id } });
-        if (!soireeExist) return null;
+        await serviceGetSoireeById(id, prisma);
 
         return await prisma.soiree.update({
             where: { id },
