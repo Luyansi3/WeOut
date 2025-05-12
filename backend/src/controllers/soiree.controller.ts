@@ -8,7 +8,8 @@ import {
     serviceDeleteSoiree,
     serviceGetSoireeByUserId,
     servicePostSoiree,
-    serviceUpdateSoiree
+    serviceUpdateSoiree,
+    serviceGetGroupsBySoireeId
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -206,3 +207,35 @@ export const putSoiree = async (req: Request, res: Response) => {
     }
 };
 
+
+
+export const getGroupsBySoireeId = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const soireeId: number = parseInt(req.params.id, 10);
+
+    try {
+      const result = await serviceGetGroupsBySoireeId(soireeId, prisma);
+  
+      if (!result.success) {
+        const statusCode =
+          result.reason === 'Invalid soiree ID format' ? 400 :
+          result.reason === 'Soiree not found' ? 404 :
+          500;
+  
+         res.status(statusCode).json(result);
+         return ;
+      }
+  
+       res.status(200).json(result);
+       return ;
+    } catch (error) {
+      if (error instanceof CustomErrors) {
+        res.status(error.statusCode).json({ error: error.message });
+        return ;
+      }
+  
+      console.error('Unexpected error in getGroupsBySoireeId:', error);
+      res.status(500).json({ error: 'Server error' });
+      return ;
+    }
+  };
