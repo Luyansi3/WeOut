@@ -1,6 +1,11 @@
-import { serviceGetSoireeById } from "../services/soiree.services";
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { 
+    serviceGetSoireeById,
+    serviceGetSoireeByName,
+    serviceGetSoirees,
+ } from "../services/soiree.services"
+ import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -16,13 +21,12 @@ export const getSoireeById = async (req: Request, res: Response) => {
 
     try {
         const soiree = await serviceGetSoireeById(id, prisma);
-        if (!soiree) {
-            res.status(404).json({error : 'No soiree associated to the ID'});
-            return;
-        } 
         res.status(200).json(soiree);
     } catch(error) {
-        res.status(500).json({error : 'Server error'});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
     return;
 };
@@ -37,16 +41,8 @@ export const getSoireeByName = async (req: Request, res: Response) => {
         
 
     try {
-        const soirees = await prisma.soiree.findMany({
-            where: {
-                nom: {equals: name,}
-            }
-        });
-
-        if (soirees.length==0) {
-            res.status(404).json({error : 'No soiree associated to the ID'});
-            return;
-        } 
+        console.log(name);
+        const soirees = await serviceGetSoireeByName(name, prisma);
 
         res.status(200).json(soirees);
     } catch(error) {
@@ -59,12 +55,9 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 export const getSoirees = async (req: Request, res: Response) => {
 
     try {
-        const { active } = req.query;
+        const active = req.query.active;
         const now = new Date();
-
-        const soirees = await prisma.soiree.findMany({
-            where: active === 'true' ? { fin: { gt: now } } : {},
-        });
+        const soirees = await serviceGetSoirees(now, active, prisma);
         res.status(200).json(soirees)
     }
     catch(error) {

@@ -8,11 +8,11 @@ import {
 const router : Router = Router();
 
 
-// GET /soirees/:id - récupérer un utilisateur par ID
+// GET /soirees/:id - récupérer une soirée par ID
 
 /**
  * @openapi
- * /api/soirees/id/{id}:
+ * /api/soirees/{id}:
  *   get:
  *     tags:
  *       - Soirées
@@ -36,7 +36,7 @@ const router : Router = Router();
  *       500:
  *         description: Erreur serveur
  */
-router.get('/id/:id', getSoireeById);
+router.get('/:id', getSoireeById);
 
 /**
  * @openapi
@@ -95,6 +95,11 @@ router.get('/', getSoirees);
  */
 
 router.get('/name/:name', getSoireeByName);
+
+
+// POST /soirees/:id - récupérer un utilisateur par ID
+// router.post('/', postSoiree);
+
 
 
 export default router;
