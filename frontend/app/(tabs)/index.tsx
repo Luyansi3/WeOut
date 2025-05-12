@@ -72,9 +72,20 @@ export default function IndexScreen() {
                 setLoading(false);
             }
         };
+        const eventsData = await fetchEvents(parameters);
+        setEvents(eventsData);
 
-        fetchEventsWithLocations();
-    }, []);
+        const locationPromises = eventsData.map(evt =>
+          fetchLocationById(evt.lieuId)
+        );
+        const locationsData = await Promise.all(locationPromises);
+        setLocations(locationsData);
+      } catch (err) {
+        console.error('Error fetching events or locations:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     if (loading) return <ActivityIndicator style={{ alignContent: "center", alignItems: "center" }} size="large" />;
 
@@ -132,4 +143,35 @@ export default function IndexScreen() {
 
         </View>
     );
+  }
+
+  return (
+    <View flex={1} backgroundColor="#ECECEC" alignItems="center">
+      <Header />
+
+      <ScrollView width="100%" backgroundColor="#F2F2F2" padding="$4">
+        <YStack gap="$4">
+          {events.map((event, idx) => {
+            const loc = locations[idx];
+            return (
+              <Pressable
+                key={event.id}
+                onPress={() => router.push(`/events/${event.id}`)}
+              >
+                <EventCard
+                  image={event.photoCouverturePath}
+                  title={event.nom}
+                  description={event.description}
+                  date={new Date(event.debut)
+                    .toLocaleDateString()
+                    .replace(/-/g, '/')}
+                  location={loc?.adresse ?? 'Unknown location'}
+                />
+              </Pressable>
+            );
+          })}
+        </YStack>
+      </ScrollView>
+    </View>
+  );
 }

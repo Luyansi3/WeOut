@@ -1,6 +1,7 @@
 import { ImageSourcePropType } from "react-native";
 
 export type EventResponse = {
+    id : string,
     nom: string,
     description: string,
     photoCouverturePath: string,
