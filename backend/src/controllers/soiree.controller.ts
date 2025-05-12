@@ -1,6 +1,12 @@
-import { serviceGetSoireeById } from "../services/soiree.services";
+
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { 
+    serviceGetSoireeById,
+    getSoireeInIntervalAndId,
+    serviceGetSoireeByName,
+    serviceGetSoirees
+ } from "../services/soiree.services"
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -37,16 +43,8 @@ export const getSoireeByName = async (req: Request, res: Response) => {
         
 
     try {
-        const soirees = await prisma.soiree.findMany({
-            where: {
-                nom: {equals: name,}
-            }
-        });
-
-        if (soirees.length==0) {
-            res.status(404).json({error : 'No soiree associated to the ID'});
-            return;
-        } 
+        console.log(name);
+        const soirees = await serviceGetSoireeByName(name, prisma);
 
         res.status(200).json(soirees);
     } catch(error) {
@@ -59,12 +57,9 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 export const getSoirees = async (req: Request, res: Response) => {
 
     try {
-        const { active } = req.query;
+        const active = req.query.active;
         const now = new Date();
-
-        const soirees = await prisma.soiree.findMany({
-            where: active === 'true' ? { fin: { gt: now } } : {},
-        });
+        const soirees = await serviceGetSoirees(now, active, prisma);
         res.status(200).json(soirees)
     }
     catch(error) {

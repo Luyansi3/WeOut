@@ -97,4 +97,9 @@ router.get('/', getSoirees);
 router.get('/name/:name', getSoireeByName);
 
 
+// POST /soirees/:id - récupérer un utilisateur par ID
+// router.post('/', postSoiree);
+
+
+
 export default router;

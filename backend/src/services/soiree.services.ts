@@ -46,6 +46,20 @@ const getSoireeInInterval = async (start: Date, end: Date, prisma: PrismaClient 
 
 
 
+export const serviceGetSoireeByName = async(name: string, prisma: PrismaClient | PrismaTransactionClient) => {
+    try {
+        return await prisma.soiree.findMany({
+            where: {
+                nom: {equals: name,},
+            }
+        });
+    } catch(error) {
+        throw (error)
+    }
+};
+
+
+
 
 
 export const getSoireeInIntervalAndId = async (start: Date, end: Date, id: string, prisma: PrismaClient | PrismaTransactionClient) => {
@@ -89,3 +103,12 @@ export const getSoireeInIntervalAndId = async (start: Date, end: Date, id: strin
 
 
 
+export const serviceGetSoirees = async(now: Date, active:any, prisma : PrismaTransactionClient | PrismaClient) => {
+    try {
+        return await prisma.soiree.findMany({
+            where: active === 'true' ? { fin: { gt: now } } : {},
+        });
+    } catch(error) {
+        throw (error)
+    }
+};
