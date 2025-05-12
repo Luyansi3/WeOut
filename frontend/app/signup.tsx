@@ -41,6 +41,36 @@ const SignupScreen = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
 
 
+    /* 
+
+    FUNCTION FOR REGISTRATION
+
+    */
+
+    const handleSignUp = () => {
+        if (!fullName || !username || !email || !password || !confirmPassword) {
+            alert('Please fill in all fields');
+            return;
+        }
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        try {
+            const res = await fetch('http://localhost:3000/api/auth/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fullName, username, email, password }),
+            });
+            if (!res.ok) throw new Error('Registration failed');
+            alert('Registration successful! Please log in.');
+            router.push('/login');
+          } catch (e) {
+            alert('Registration error');
+          }
+    }
+
+
     return (
         <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
             <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={8} color={customColors.textMain} >

@@ -40,29 +40,7 @@ const SignInScreen: React.FC = () => {
   const router = useRouter();
 
 
-  function handleSignIn(): void {
-    if (!email || !password) {
-      alert('Please enter your email and password.');
-      return;
-    }
-    // Exemple d'appel API (à adapter à ton backend)
-    fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-      .then(async res => {
-        if (!res.ok) throw new Error('Invalid credentials');
-        // Si tu veux récupérer un token ou des infos utilisateur :
-        // const data = await res.json();
-        // ...stocke le token, navigue, etc.
-        alert('Connexion réussie !');
-        // router.push('/home'); // ou la page d'accueil
-      })
-      .catch(() => {
-        alert('Email ou mot de passe incorrect.');
-      });
-  }
+
 
 
   return (
@@ -86,7 +64,7 @@ const SignInScreen: React.FC = () => {
           placeholder='Your mail'
           inputType="email"
           onChangeText={setEmail} />
-          
+
         <CustomInput value={password}
           leftIcon={<LockKeyhole />}
           placeholder='Your password'
