@@ -217,44 +217,4 @@ export const serviceGetSoireeByUserId = async (id: string, prisma: PrismaClient 
 
 
 
-export const serviceUpdateUser = async (
-    id: string,
-    prisma: PrismaClient | PrismaTransactionClient
-  ) => {
-    const run = async (tx: PrismaTransactionClient) => {
-      await serviceGetUserById(id, tx);
-  
-      const soirees = await tx.soiree.findMany({
-        where: {
-          groupes: {
-            some: {
-              users: {
-                some: {
-                  id: id,
-                },
-              },
-            },
-          },
-        },
-      });
-  
-      await tx.user.update({
-        where: { id },
-        data: {
-          nombreSoiree: soirees.length,
-        },
-      });
-  
-      return soirees;
-    };
-    try {
-      if (prisma instanceof PrismaClient) {
-        return await prisma.$transaction(run);
-      } else {
-        return await run(prisma);
-      }
-    } catch (error) {
-      console.error("Failed to update user:", error);
-      throw error;
-    }
-  };
+

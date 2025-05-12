@@ -6,7 +6,8 @@ import {
     serviceAcceptFriendRequest,
     serviceGetUserById,
     serviceGetListFriends,
-    serviceParticipateEvent
+    serviceParticipateEvent,
+    serviceUpdateUserInfo
  } from "../services/user.services"
 
  import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -185,3 +186,30 @@ export const participateEvent = async (req: Request, res: Response) => {
     }
     
 }
+
+
+export const updateUserInfo = async (req: Request, res: Response) => {
+    const userId: string = req.params.id;
+    const updateData = req.body;
+
+    try {
+        const result = await serviceUpdateUserInfo(userId, updateData, prisma);
+
+        if (!result.success) {
+            const statusCode = result.reason === 'Validation failed' ? 400 :
+                               result.reason === 'User not found' ? 404 : 500;
+
+            return ;
+        }
+
+        res.status(200).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors) {
+            res.status(error.statusCode).json(error);
+        } else {
+            console.error('Unexpected error in updateUserInfo:', error);
+            res.status(500).json({ error: 'Server error' });
+        }
+    }
+    return ;
+};
