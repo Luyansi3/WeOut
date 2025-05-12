@@ -1,1 +1,1 @@
-export type CustomInputType = 'email' | 'password' | 'default' | 'fullName' | 'username' | 'confirmPassword';
+export type CustomInputType = 'password' | 'email' | 'text';
