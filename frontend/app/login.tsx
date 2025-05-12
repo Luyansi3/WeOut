@@ -40,7 +40,9 @@ const SignInScreen: React.FC = () => {
   const router = useRouter();
 
 
-
+  const handleSignIn = async () => {
+    console.log("Sign in pressed");
+  }
 
 
   return (

@@ -1,30 +1,40 @@
+import { convertURLWithParams } from '@/utils/convertURLWithParams';
+
 export interface SignupData {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     username: string;
     email: string;
     password: string;
-    confirmPassword: string;
-  }
-  
-  export async function signUpUser(data: SignupData): Promise<void> {
-    if (!data.fullName || !data.username || !data.email || !data.password) {
-      throw new Error('Please fill in all fields');
-    }
-    if (data.password !== data.confirmPassword) {
-        throw new Error('Passwords do not match');
-    }
+}
+
+export async function signUpUser(
+    firstName: string,
+    lastName: string,
+    username: string,
+    email: string,
+    password: string): Promise<void> {
+
+    
+
+
+    // Check if the username is already taken TO DO
+    // Check if the email is already taken TO DO
+
+
+
+
+    // Call API
     try {
-      let url: string = convertURLWithParams(`http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees`, parameters);
-      const res = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, username, email, password }),
-      });
-      if (!res.ok) throw new Error('Registration failed');
-      alert('Registration successful! Please log in.');
-      router.push('/login');
+        let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/signup`
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({firstName, lastName, username, email, password }),
+        });
+        if (!res.ok) throw new Error('Registration failed');
+        alert('Registration successful! Please log in.');
     } catch (e) {
-      alert('Registration error');
+        alert('Registration error');
     }
-
-
+}

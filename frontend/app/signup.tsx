@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 
-// Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
 
 // Expo vector icons for social login
 import { FontAwesome } from '@expo/vector-icons';
@@ -20,6 +19,17 @@ import { Button, Text, Switch, XStack, YStack } from 'tamagui';
 // Custom components
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+
+// Services:
+import { signUpUser } from '../services/signingUpService';
+
+
+
+
+
+
+
+
 
 // Custom colors:
 const customColors = {
@@ -41,34 +51,42 @@ const SignupScreen = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
 
 
-    /* 
 
-    FUNCTION FOR REGISTRATION
-
-    */
-
-    const handleSignUp = () => {
-        if (!fullName || !username || !email || !password || !confirmPassword) {
+    const handleSignUp = async () => {
+        // Check if all fields are filled
+        if (!fullName || !username || !email || !password) {
             alert('Please fill in all fields');
             return;
         }
+        // Check if password and confirm password match
         if (password !== confirmPassword) {
             alert('Passwords do not match');
             return;
         }
+        // Retrieve the first and last name from the full name
+        let firstName: string;
+        let lastName: string;
+        firstName = fullName.split(' ')[0];
+        lastName = fullName.split(' ')[1];
+
+        // Check if the first name and last name are not empty
+        if (!firstName || !lastName) {
+            alert('Please enter a valid full name');
+            return;
+        }
+
+
         try {
-            const res = await fetch('http://localhost:3000/api/auth/register', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fullName, username, email, password }),
-            });
-            if (!res.ok) throw new Error('Registration failed');
-            alert('Registration successful! Please log in.');
-            router.push('/login');
-          } catch (e) {
-            alert('Registration error');
-          }
-    }
+            await signUpUser(firstName, lastName, username, email, password);
+            // Redirect to login page after successful signup TO DO
+        } catch (error) {
+            console.error('Error during signup:', error);
+            alert('An error occurred during signup. Please try again.');
+        }
+    };
+
+
+
 
 
     return (
@@ -83,7 +101,7 @@ const SignupScreen = () => {
             <YStack width="100%" space={16}>
                 <CustomInput value={fullName}
                     leftIcon={<User />}
-                    placeholder='Your fullname'
+                    placeholder='Your full name'
                     inputType="text"
                     onChangeText={setFullName} />
 
@@ -128,9 +146,7 @@ const SignupScreen = () => {
 
                         endCircle={true}
                         // to do le onPress
-                        onPress={() => {
-                            console.log('Sign up button pressed');
-                        }}
+                        onPress={handleSignUp}
                         pressStyle={{ backgroundColor: customColors.pink }}
                         focusStyle={{ backgroundColor: customColors.pink }}
                         hoverStyle={{ backgroundColor: customColors.pink }}
