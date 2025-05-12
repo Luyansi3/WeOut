@@ -53,6 +53,16 @@ model User {
   demandeEnvoye User[] @relation("Demande")
   demandeRecue  User[] @relation("Demande")
 
+  //Caractéristiques
+  bio String?
+  photoProfil String?
+  pseudo String
+  lienInsta String?
+  lienTwitter String?
+  dancing Int?
+  talking Int?
+  alcohool Int?
+
   // Groupes d'appartenance
   groupes Groupe[]
 
@@ -123,6 +133,15 @@ model Soiree {
   nom                 String
   description         String
   photoCouverturePath String?
+
+
+  //Caractéristiques
+  dancing Int?
+  nbNoteDancing Int @default(0) 
+  talking Int?
+  nbNoteTalking Int @default(0)
+  alcohool Int?
+  nbNoteAlcohool Int @default(0)
 
   // date
   debut DateTime
