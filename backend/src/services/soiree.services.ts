@@ -38,3 +38,28 @@ export const serviceGetSoirees = async(now: Date, active:unknown) => {
         throw (error)
     }
 };
+
+export const serviceDeleteSoiree = async (soireeId: number) => {
+    if (!soireeId || isNaN(soireeId)) {
+        return { success: false, reason: "Invalid or missing soiree ID" };
+    }
+
+    try {
+        const existingSoiree = await prisma.soiree.findUnique({
+            where: { id: soireeId },
+        });
+
+        if (!existingSoiree) {
+            return { success: false, reason: "Soiree not found" };
+        }
+
+        await prisma.soiree.delete({
+            where: { id: soireeId },
+        });
+
+        return { success: true, message: "Soiree deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting soiree:", error);
+        return { success: false, reason: "Database error", error };
+    }
+};
