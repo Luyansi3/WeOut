@@ -1,3 +1,4 @@
+import { serviceGetSoireeById } from "../services/soiree.services";
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
@@ -14,20 +15,15 @@ export const getSoireeById = async (req: Request, res: Response) => {
         
 
     try {
-        const soiree = await prisma.soiree.findUnique({
-            where: {id},
-        });
-
+        const soiree = await serviceGetSoireeById(id, prisma);
         if (!soiree) {
             res.status(404).json({error : 'No soiree associated to the ID'});
             return;
         } 
-
         res.status(200).json(soiree);
     } catch(error) {
         res.status(500).json({error : 'Server error'});
     }
-
     return;
 };
 
