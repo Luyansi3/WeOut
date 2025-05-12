@@ -4,7 +4,8 @@ import {
     sendFriendRequest,
     declineFriendRequest,
     acceptFriendRequest,
-    getListFriends
+    getListFriends,
+    participateEvent
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -194,5 +195,9 @@ router.post('/acceptFriendRequest/:id', acceptFriendRequest);
  *         description: Erreur serveur
  */
 router.get('/getListFriends/:id', getListFriends);
+
+
+
+router.post('/participate/:id', participateEvent);
 
 export default router;

@@ -99,3 +99,26 @@ export const createMultipleUsersRandomly = (iterations: number) => {
         createUser(generateRandomString(10), generateRandomString(10) + "@" + generateRandomString(5), generateRandomString(5), generateRandomString(7));
     }
 };
+
+
+export const createSoiree = async (nom: string, description: string, start: Date, end: Date) => {
+    try {
+        await prisma.soiree.create({
+            data: {
+                nom: nom,
+                description: description,
+                debut: start,
+                fin: end, 
+            },
+        });
+    } catch(error) {
+        throw(error);
+    }
+}
+
+
+export const createMultiplePartiesRandomly = (iterations: number) => {
+    for(let i =0; i<iterations; i++) {
+        createSoiree(generateRandomString(5), generateRandomString(30), new Date(), new Date(new Date().setDate(new Date().getDate() + 1)));
+    }
+}
