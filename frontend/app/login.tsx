@@ -4,8 +4,6 @@ import { useRouter } from 'expo-router';
 import {
   LockKeyhole,
   Mail,
-  TextCursorInput,
-  User,
   ArrowRight
 } from '@tamagui/lucide-icons';
 
@@ -83,9 +81,18 @@ const SignInScreen: React.FC = () => {
       <YStack width="100%" space={16}>
 
         {/* Email et Password */}
-        <CustomInput leftIcon={<Mail/>} placeholder='Your mail' inputType="email" onChangeText={setEmail}/>
-        <CustomInput leftIcon={<LockKeyhole/>} style={[]}placeholder='Your password' inputType="email" onChangeText={setEmail}/>
-    
+        <CustomInput value={email}
+          leftIcon={<Mail />}
+          placeholder='Your mail'
+          inputType="email"
+          onChangeText={setEmail} />
+          
+        <CustomInput value={password}
+          leftIcon={<LockKeyhole />}
+          placeholder='Your password'
+          inputType="password"
+          onChangeText={setPassword} />
+
 
 
 
