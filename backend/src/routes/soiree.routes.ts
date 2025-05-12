@@ -3,7 +3,8 @@ import {
     getSoireeById,
     getSoirees,
     getSoireeByName,
-    deleteSoiree
+    deleteSoiree,
+    getSoireeByUserId
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -99,8 +100,6 @@ router.get('/name/:name', getSoireeByName);
 
 
 // POST /soirees/:id - récupérer un utilisateur par ID
-// router.post('/', postSoiree);
-
 
 /**
  * @openapi
@@ -136,5 +135,43 @@ router.get('/name/:name', getSoireeByName);
  *         description: Erreur serveur
  */
 router.delete('/delete/:id', deleteSoiree);
+
+
+
+// GET /soirees/getByUserId/:id - Récupérer toutes les soirées d'un user
+
+
+/**
+ * @openapi
+ * /api/soirees/getByUserId/{id}:
+ *   GET:
+ *     tags:
+ *       - Soirées
+ *       - User
+ *     summary: Get toutes les soirées auxquelles participe un User
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique du user dont on récupère les soirées
+ *     responses:
+ *       200:
+ *         description: Obtenir la liste de soirée d'un User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Requête invalide (ID manquant ou incorrect)
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
 export default router;
