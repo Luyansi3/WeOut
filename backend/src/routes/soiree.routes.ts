@@ -288,4 +288,9 @@ router.post('/', postSoiree);
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
 
+// POST /soirees/:id - récupérer un utilisateur par ID
+// router.post('/', postSoiree);
+
+
+
 export default router;
