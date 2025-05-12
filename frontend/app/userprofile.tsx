@@ -1,10 +1,35 @@
 import { View, Input, Button, Text, Image, XStack, YStack, SizableText, Tabs, Separator, TabsContentProps } from 'tamagui';
 import { Instagram, Twitter, Users2, PartyPopper } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchUserProfile } from '@/services/profileService';
+import { ActivityIndicator } from 'react-native';
+import { UserProfileResponse } from '@/types/UserProfile';
 
 export default function UserprofileScreen() {
-    const router = useRouter();
+    const router = useRouter();``
+    const userId = "52f81189-9e7f-4bc2-9036-7e875b7c9118"; 
+    const [userProfile, setUserProfile] = useState({} as UserProfileResponse);
+    const [loading, setLoading] = useState(true);
+    
+        useEffect(() => {
+            const fetchUser = async () => {
+                try {
+                const userData: UserProfileResponse = await fetchUserProfile(userId);
+                setUserProfile(userData);
+                } catch (err) {
+                console.log("Error fetching user:", err);
+                } finally {
+                setLoading(false);
+                }
+            };
+    
+            fetchUser();
+        }, []);
+    
+        if (loading) return <ActivityIndicator size="large" />;
+
+
 
     return (
         <View flex={1}
@@ -21,14 +46,13 @@ export default function UserprofileScreen() {
                 />
 
                 <YStack
-                    flex={1}
                     width="100%"
                     padding={"$4"}
                     gap="$2"
                     backgroundColor="white"
                 >
-                    <Text fontSize="$8">Hamza Wirane</Text>
-                    <Text fontSize="$6" color="gray">@hamza.wirane</Text>
+                    <Text fontSize="$8">{userProfile.prenom} {userProfile.nom}</Text>
+                    <Text fontSize="$6" marginBottom={"$3"} color="gray">{userProfile.compte}</Text>
                     <XStack
                         gap="$4"
                     >
@@ -39,7 +63,7 @@ export default function UserprofileScreen() {
                                 width={24}
                                 height={24}
                             />
-                            <Text fontSize="$6">350</Text>
+                            <Text fontSize="$6"> {userProfile.ami ? userProfile.ami.length : "0 (Error)"} </Text>
                         </XStack>
                         <XStack gap="$2">
                             <PartyPopper
@@ -51,7 +75,7 @@ export default function UserprofileScreen() {
                     </XStack>
                     <XStack
                         gap="$4"
-
+                        marginBottom={"$3"} 
                     >
                         <XStack
                             gap="$2"
@@ -81,77 +105,8 @@ export default function UserprofileScreen() {
                         fontSize="$6"
                         color="gray"
                     >
-                        Toujours partant pour de nouvelles vibes
+                        Toujours partant pour de nouvelles vibes vraiment la grosse ambiance ici ou quoiiiiii 100 caractères
                     </Text>
-
-                    <Tabs
-
-                        defaultValue="tab1"
-                        width={'100%'}
-                        orientation="horizontal"
-                        flexDirection="column"
-                        height={150}
-                        overflow="hidden"
-                    >
-                        <Tabs.List
-                            separator={<Separator vertical />}
-                        >
-                            <Tabs.Tab
-                                focusStyle={{
-                                    backgroundColor: '$color3',
-                                }}
-                                flex={1}
-                                value="tab1"
-                            >
-                                <SizableText fontFamily="$body" textAlign="center">
-                                    Past
-                                </SizableText>
-                            </Tabs.Tab>
-                            <Tabs.Tab
-                                focusStyle={{
-                                    backgroundColor: '$color3',
-                                }}
-                                flex={1}
-                                value="tab2"
-                            >
-                                <SizableText fontFamily="$body" textAlign="center">
-                                    Upcoming
-                                </SizableText>
-                            </Tabs.Tab>
-
-
-
-                        </Tabs.List>
-
-                        <Tabs.Content
-                            value="tab1"
-                            flex={1}
-                            backgroundColor="white"
-                            marginTop={"$6"}
-                        >
-                            <Text fontSize="$6" textAlign="center">
-                                No past parties
-                            </Text>
-
-
-                        </Tabs.Content>
-                        <Tabs.Content
-                            value="tab2"
-                            flex={1}
-                            backgroundColor="white"
-                            marginTop={"$6"}
-                        >
-                            <Text
-                                fontSize="$6"
-                                textAlign="center"
-                            >
-                                No upcoming parties
-                            </Text>
-                        </Tabs.Content>
-
-                    </Tabs>
-
-
 
                 </YStack>
             </YStack>

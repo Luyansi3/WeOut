@@ -1,7 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { connect } from "http2";
 import { userInfo } from "os";
-const prisma : PrismaClient = new PrismaClient();
+import { serviceGetSoireeById,
+         getSoireeInIntervalAndId
+       }  from "../services/soiree.services";
+import { DatabaseError, BadStateDataBase, ImpossibleToParticipate } from "../errors/customErrors";
+       
+type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
+
 
 
 
@@ -13,13 +19,12 @@ type FriendshipStatus =
   | 'blocked'
   | 'blocked_by'
   | 'no_relation'
-  | 'non_valid_status'
   | null;
   
 
-const checkFriendshipStatus = async (senderId: string, receiverId: string) : Promise<FriendshipStatus> => {
+const checkFriendshipStatus = async (senderId: string, receiverId: string, prisma: PrismaClient | PrismaTransactionClient) : Promise<FriendshipStatus> => {
     //Get the sener (or active person)
-    const sender = await prisma.user.findUnique({
+    const sender = await prisma.user.findUniqueOrThrow({
         where : {id: senderId},
         include: {
             demandeRecue : true,
@@ -30,7 +35,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
         },
     });
     //Get the receiver (or passive person)
-    const receiver = await prisma.user.findUnique({
+    const receiver = await prisma.user.findUniqueOrThrow({
         where : {id: receiverId},
         include: {
             demandeRecue : true,
@@ -40,10 +45,6 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
             ami : true
         },
     });
-
-    //Check for null
-    if (!sender || !receiver)
-        return null;
 
     //Voir toutes les configurations possibles
     const hasSent = sender.demandeEnvoye.some((user : any)=> user.id == receiverId);
@@ -68,7 +69,7 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
         || (isFriend && (hasReceived || hasSent))
         || (isFriendReverse && (hasReceivedReverse || hasSentReverse))
     )
-        return 'non_valid_status'
+        throw new BadStateDataBase(receiverId, senderId);
 
     if (hasBlocked && isBlockedReverse)
         return 'blocked';
@@ -87,27 +88,28 @@ const checkFriendshipStatus = async (senderId: string, receiverId: string) : Pro
 
 
 
-export const serviceGetUserById = async(id: string) => {
+export const serviceGetUserById = async(id: string, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
-            return await prisma.user.findUnique({
+            return await prisma.user.findUniqueOrThrow({
                 where: {id},
             });
-        } catch(error) {
-            throw (error)
-        }        
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') 
+                throw new DatabaseError(id, "User", 400);
+            else 
+                throw error;  
+        }    
 };
 
 
-export const serviceSendFriendRequest = async (senderId: string, receiverId: string) => {
+export const serviceSendFriendRequest = async (senderId: string, receiverId: string, prisma: PrismaClient) => {
     //Get the status of the relationship
-    const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
+    const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId, prisma);
 
 
     //Regarding the status, return all the errors possible
     if (!relationStatus)
         return {success: false, reason: 'invalid IDs'};
-    if (relationStatus == 'non_valid_status')
-        return {success: false, reason: 'invalid database'};
     if (relationStatus == 'blocked' || relationStatus == 'blocked_by')
         return {success: false, reason: 'someone is blocked'};
     if (relationStatus == 'already_friends')
@@ -144,16 +146,14 @@ export const serviceSendFriendRequest = async (senderId: string, receiverId: str
 
 
 
-export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: string) => {
+export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: string, prisma: PrismaClient) => {
     //Get the status of the relationship
-    const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
+    const relationStatus: FriendshipStatus = await checkFriendshipStatus(senderId, receiverId, prisma);
 
 
     //Regarding the status, return all the errors possible
     if (!relationStatus)
         return {success: false, reason: 'invalid IDs'};
-    if (relationStatus == 'non_valid_status')
-        return {success: false, reason: 'invalid database'};
     if (relationStatus == 'blocked' || relationStatus == 'blocked_by')
         return {success: false, reason: 'someone is blocked'};
     if (relationStatus == 'already_friends')
@@ -191,15 +191,13 @@ export const serviceDeclineFriendRequest =  async(senderId: string, receiverId: 
 }
 
 
-export const serviceAcceptFriendRequest = async(senderId: string, receiverId: string) => {
+export const serviceAcceptFriendRequest = async(senderId: string, receiverId: string, prisma: PrismaClient) => {
     //Get the status of the relationship
-    const relationStatus : FriendshipStatus = await checkFriendshipStatus(senderId, receiverId);
+    const relationStatus : FriendshipStatus = await checkFriendshipStatus(senderId, receiverId, prisma);
 
     //Regarding the status, return all the errors possible
     if (!relationStatus)
         return {success: false, reason: 'invalid IDs'};
-    if (relationStatus == 'non_valid_status')
-        return {success: false, reason: 'invalid database'};
     if (relationStatus == 'blocked' || relationStatus == 'blocked_by')
         return {success: false, reason: 'someone is blocked'};
     if (relationStatus == 'already_friends')
@@ -243,9 +241,14 @@ export const serviceAcceptFriendRequest = async(senderId: string, receiverId: st
 }
 
 
-export const serviceGetListFriends = async(id: string) => {
+export const serviceGetListFriends = async(id: string, prisma: PrismaClient | PrismaTransactionClient) => {
+    
 
     try {
+        //Validate the id
+        await prisma.user.findUniqueOrThrow({
+                where : {id: id},
+            });
         const friends = await prisma.user.findMany({
         where: {
             ami: {
@@ -257,5 +260,53 @@ export const serviceGetListFriends = async(id: string) => {
     } catch(error) {
         throw(error);
     }   
+};
+
+export const serviceParticipateEvent = async (userId: string, partyId: number, prisma: PrismaClient) => {
+    try {
+        //Faire une transaction
+        await serviceGetUserById(userId, prisma);
+        await prisma.$transaction( async(tx) => {
+            const soiree = await serviceGetSoireeById(partyId, tx);
+            const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
+            if (concurrentParties.length !== 0) {
+                throw new ImpossibleToParticipate(400, partyId, userId);
+            }
+
+            await tx.user.update({
+                where: {id: userId},
+                data : {
+                    nombreSoiree : {
+                        increment: 1,
+                    },
+                },
+            });
+            await tx.soiree.update({
+                where : {id: partyId},
+                data : {
+                    nombreParticipants : {
+                        increment: 1,
+                    },
+                },
+            });
+            await tx.groupe.create({
+                data: {
+                    users : {
+                        connect : [
+                            { id : userId }
+                        ]
+                    },
+                    soiree : {
+                        connect : {id: partyId},
+                    },
+                },
+            });
+            return;
+        });
+    } catch (error){
+        throw error;
+    }
+
+    return {success: true};
 }
 

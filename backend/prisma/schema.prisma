@@ -26,6 +26,9 @@ model Compte {
   // A vérifier dans le code que uniquement un des deux soit NULL
   user      User?
   organisme Organisme?
+
+  //Nombre d'evenement organise
+  nombreSoiree Int @default(0)
 }
 model User {
   id     String @id @default(uuid())
@@ -63,6 +66,9 @@ model User {
   // Compte associé
   compte   Compte @relation(fields: [compteId], references: [id])
   compteId String @unique
+
+  //Nombre de soirée participée
+  nombreSoiree Int @default(0)
 }
 model Organisme {
   id   String @id @default(uuid())
@@ -116,19 +122,19 @@ model Soiree {
   id                  Int    @id @default(autoincrement())
   nom                 String
   description         String
-  photoCouverturePath String
+  photoCouverturePath String?
 
   // date
   debut DateTime
   fin   DateTime
 
   // Lieu de soirée
-  lieu   Lieux @relation(fields: [lieuId], references: [id])
-  lieuId Int
+  lieu   Lieux? @relation(fields: [lieuId], references: [id])
+  lieuId Int?
 
   // Organisme organisant
-  organsime   Organisme @relation(fields: [organismeId], references: [id])
-  organismeId String
+  organsime   Organisme? @relation(fields: [organismeId], references: [id])
+  organismeId String?
 
   // Groupes participants à la soirée
   groupes Groupe[] @relation("Participe")
@@ -141,6 +147,9 @@ model Soiree {
 
   // Tags associés
   tags Tag[]
+
+  //Nombre de participants
+  nombreParticipants Int @default(0)
 }
 model Groupe {
   id String @id @default(uuid())

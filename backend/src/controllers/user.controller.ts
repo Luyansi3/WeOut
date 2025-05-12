@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { 
     serviceSendFriendRequest,
     serviceDeclineFriendRequest,
     serviceAcceptFriendRequest,
     serviceGetUserById,
-    serviceGetListFriends
+    serviceGetListFriends,
+    serviceParticipateEvent
  } from "../services/user.services"
+
+ import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -20,14 +23,14 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await serviceGetUserById(id);
-        if (!user) {
-            res.status(404).json({error : 'No user associated to the ID'});
-            return;
-        }
+        const user = await serviceGetUserById(id, prisma);
         res.status(200).json(user);
+
     } catch (error) {
-        res.status(500).json({error : 'Server error'});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }    
 
     return;
@@ -58,14 +61,17 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
 
 
     try {
-        const result = await serviceSendFriendRequest(senderId, receiverId);
+        const result = await serviceSendFriendRequest(senderId, receiverId, prisma);
         if (result.success)
             res.status(201).json(result);
         else
             res.status(400).json(result);
     }
     catch(error) {
-        res.status(500).json({error : 'Server error'});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
     return;
 };
@@ -89,14 +95,17 @@ export const declineFriendRequest = async(req: Request, res: Response) => {
     }
 
     try {
-        const result = await serviceDeclineFriendRequest(senderId, receiverId);
+        const result = await serviceDeclineFriendRequest(senderId, receiverId, prisma);
         if (result.success)
             res.status(201).json(result);
         else
             res.status(400).json(result);
         
     } catch(error) {
-        res.status(500).json({error : 'Server error'});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
 
     return;
@@ -121,7 +130,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     }
 
     try {
-        const result = await serviceAcceptFriendRequest(senderId, receiverId);
+        const result = await serviceAcceptFriendRequest(senderId, receiverId, prisma);
         if (result.success) {
             res.status(201);
         } else {
@@ -129,7 +138,10 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
         }
         res.json(result);
     } catch (error) {
-        res.status(500).json({error :"Server error"});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
 };
 
@@ -138,16 +150,38 @@ export const getListFriends = async (req: Request, res: Response) => {
     const id : string = req.params.id;
 
     try {
-        const friends = await serviceGetListFriends(id);
 
-        if (!friends) {
-            res.status(400).json({error : 'the given id is not valid'});
-        } else {
-            res.status(200).json(friends);
-        }
-
-
+        const friends = await serviceGetListFriends(id, prisma);
+        res.status(200).json(friends);
+        
     } catch(error) {
-        res.status(500).json({error: "Server error"});
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
+};
+
+
+export const participateEvent = async (req: Request, res: Response) => {
+    const userId : string = req.params.id;
+    const partyIdRaw = req.query.partyId;
+
+    if (!partyIdRaw || typeof partyIdRaw != 'string') {
+        res.status(400).json('non valid party id');
+        return;
+    }
+    const partyId : number = parseInt(partyIdRaw, 10);
+
+
+    try {
+        const result = await serviceParticipateEvent(userId, partyId, prisma);
+        res.status(201).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
+    }
+    
 }

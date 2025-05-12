@@ -5,7 +5,9 @@ import {
     serviceGetSoireeByName,
     serviceGetSoirees,
     serviceDeleteSoiree
-} from "../services/soiree.services"
+ } from "../services/soiree.services"
+ import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
+    
 
 
 const prisma: PrismaClient = new PrismaClient();
@@ -20,17 +22,14 @@ export const getSoireeById = async (req: Request, res: Response) => {
 
 
     try {
-        const soiree = await serviceGetSoireeById(id);
-        if (!soiree) {
-            res.status(404).json({ error: 'No soiree associated to the ID' });
-            return;
-        }
-
+        const soiree = await serviceGetSoireeById(id, prisma);
         res.status(200).json(soiree);
-    } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+    } catch(error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
-
     return;
 };
 
@@ -45,7 +44,7 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 
     try {
         console.log(name);
-        const soirees = await serviceGetSoireeByName(name);
+        const soirees = await serviceGetSoireeByName(name, prisma);
 
         res.status(200).json(soirees);
     } catch (error) {
@@ -60,7 +59,7 @@ export const getSoirees = async (req: Request, res: Response) => {
     try {
         const active: unknown = req.query.active;
         const now = new Date();
-        const soirees = await serviceGetSoirees(now, active);
+        const soirees = await serviceGetSoirees(now, active, prisma);
         res.status(200).json(soirees)
     }
     catch (error) {
@@ -77,7 +76,7 @@ export const deleteSoiree = async (req: Request, res: Response) => {
         return;
     }
     try {
-        const result = await serviceDeleteSoiree(id);
+        const result = await serviceDeleteSoiree(id, prisma);
 
         if (!result.success) {
             const statusCode = result.reason === 'Soiree not found' ? 404 : 400;
