@@ -61,12 +61,20 @@ export const fetchEventById = async (
   id: string | number
 ): Promise<EventResponse> => {
   const url = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees/${id}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error(`Soirée ${id} introuvable (404)`);
+  try {
+    const response = await fetch(url);
+    console.log('[eventService] fetchEventById status =', response.status);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(`Soirée ${id} introuvable (404)`);
+      }
+      throw new Error(`fetchEventById failed (${response.status})`);
     }
-    throw new Error(`fetchEventById failed (${response.status})`);
+    const data: EventResponse = await response.json();
+    console.log('[eventService] fetchEventById data =', data);
+    return data;
+  } catch (error) {
+    console.error('[eventService] fetchEventById error =', error);
+    throw error;
   }
-  return response.json();
 };

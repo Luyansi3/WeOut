@@ -1,5 +1,4 @@
-import { ImageSourcePropType } from "react-native";
-
+// types/Event.ts
 export type EventResponse = {
     id : string,
     nom: string,
@@ -24,5 +23,6 @@ export type EventCardProps = {
     description: string;
     date: string;
     location: string;
-    image: string;
-};
+  };
+  
+  
