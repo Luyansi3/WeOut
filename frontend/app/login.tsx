@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import {
+  LockKeyhole,
+  Mail,
+  TextCursorInput,
+  User,
+  ArrowRight
+} from '@tamagui/lucide-icons';
 
 // Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
 
 // Expo vector icons for social login
 import { FontAwesome } from '@expo/vector-icons';
-import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
 import { Button, Switch, Text, XStack, YStack } from 'tamagui';
@@ -36,6 +42,30 @@ const SignInScreen: React.FC = () => {
   const router = useRouter();
 
 
+  function handleSignIn(): void {
+    if (!email || !password) {
+      alert('Please enter your email and password.');
+      return;
+    }
+    // Exemple d'appel API (à adapter à ton backend)
+    fetch('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async res => {
+        if (!res.ok) throw new Error('Invalid credentials');
+        // Si tu veux récupérer un token ou des infos utilisateur :
+        // const data = await res.json();
+        // ...stocke le token, navigue, etc.
+        alert('Connexion réussie !');
+        // router.push('/home'); // ou la page d'accueil
+      })
+      .catch(() => {
+        alert('Email ou mot de passe incorrect.');
+      });
+  }
+
 
   return (
 
@@ -53,8 +83,9 @@ const SignInScreen: React.FC = () => {
       <YStack width="100%" space={16}>
 
         {/* Email et Password */}
-        <CustomInput inputType="email" />
-        <CustomInput inputType="password" />
+        <CustomInput leftIcon={<Mail/>} placeholder='Your mail' inputType="email" onChangeText={setEmail}/>
+        <CustomInput leftIcon={<LockKeyhole/>} style={[]}placeholder='Your password' inputType="email" onChangeText={setEmail}/>
+    
 
 
 
@@ -67,7 +98,7 @@ const SignInScreen: React.FC = () => {
               size="$3"
               backgroundColor={remember ? customColors.purple : "#E5E5E5"}
             >
-              <XStack alignItems="center"  padding={2}>
+              <XStack alignItems="center" padding={2}>
                 <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$2" />
               </XStack>
             </Switch>
@@ -93,15 +124,12 @@ const SignInScreen: React.FC = () => {
             borderRadius={15}
             fontSize={15}
             fontFamily={"Raleway-SemiBold"}
-    
-            endCircle={true}
-            // to do le onPress
-            onPress={() => {
-              console.log('Sign in button pressed');
-            }}
             pressStyle={{ backgroundColor: customColors.pink }}
             focusStyle={{ backgroundColor: customColors.pink }}
             hoverStyle={{ backgroundColor: customColors.pink }}
+            endCircle={true}
+
+            onPress={handleSignIn}
           />
         </XStack>
 
