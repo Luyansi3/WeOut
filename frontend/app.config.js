@@ -1,6 +1,3 @@
-// app.config.js
-import 'dotenv/config'; // optional, loads from .env if you're using dotenv
-
 export default () => ({
   expo: {
     name: "frontend",
@@ -10,7 +7,7 @@ export default () => ({
     icon: "./assets/images/we-out-logo-pink.png",
     scheme: "frontend",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
+    newArchEnabled: false,
 
     ios: {
       supportsTablet: true,
