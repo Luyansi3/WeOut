@@ -5,7 +5,8 @@ import {
     getSoireeByName,
     deleteSoiree,
     getSoireeByUserId,
-    postSoiree
+    postSoiree,
+    putSoiree
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -98,7 +99,7 @@ router.get('/', getSoirees);
  */
 
 router.get('/name/:name', getSoireeByName);
-
+router.put("/:id", putSoiree);
 
 // POST /soirees/:id - récupérer un utilisateur par ID
 
