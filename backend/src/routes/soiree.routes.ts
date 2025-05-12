@@ -13,9 +13,11 @@ const router : Router = Router();
 
 
 // GET /soirees/:id - récupérer une soirée par ID
+// GET /soirees/:id - récupérer une soirée par ID
 
 /**
  * @openapi
+ * /api/soirees/{id}:
  * /api/soirees/{id}:
  *   get:
  *     tags:
@@ -40,6 +42,7 @@ const router : Router = Router();
  *       500:
  *         description: Erreur serveur
  */
+router.get('/:id', getSoireeById);
 router.get('/:id', getSoireeById);
 
 /**
@@ -157,10 +160,7 @@ router.get('/name/:name', getSoireeByName);
 router.put("/:id", putSoiree);
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> bd28079 (delete soiree)
 /**
  * @openapi
  * /api/soirees/delete/{id}:
@@ -295,5 +295,10 @@ router.post('/', postSoiree);
  */
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
+
+// POST /soirees/:id - récupérer un utilisateur par ID
+// router.post('/', postSoiree);
+
+
    
 export default router;
