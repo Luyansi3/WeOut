@@ -157,7 +157,10 @@ router.get('/name/:name', getSoireeByName);
 router.put("/:id", putSoiree);
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd28079 (delete soiree)
 /**
  * @openapi
  * /api/soirees/delete/{id}:
