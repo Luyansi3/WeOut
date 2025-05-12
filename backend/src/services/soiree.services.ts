@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
+import { DatabaseError, BadStateDataBase, CustomErrors, ImpossibleToParticipate } from "../errors/customErrors";
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
@@ -10,9 +11,9 @@ export const serviceGetSoireeById = async (id: number, prisma: PrismaClient | Pr
         });
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') 
-            throw new Error(`The party with ${id} was not found.`);
+            throw new DatabaseError(id, "Soiree", 400);
         else 
-            throw error; 
+            throw error;
     }
 };
 
@@ -103,7 +104,7 @@ export const getSoireeInIntervalAndId = async (start: Date, end: Date, id: strin
 
 
 
-export const serviceGetSoirees = async(now: Date, active:any, prisma : PrismaTransactionClient | PrismaClient) => {
+export const serviceGetSoirees = async(now: Date, active:any, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
         return await prisma.soiree.findMany({
             where: active === 'true' ? { fin: { gt: now } } : {},

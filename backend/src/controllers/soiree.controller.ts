@@ -1,13 +1,13 @@
-
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import {
+import { 
     serviceGetSoireeById,
-    getSoireeInIntervalAndId,
     serviceGetSoireeByName,
     serviceGetSoirees,
+    getSoireeInIntervalAndId,
     serviceDeleteSoiree
  } from "../services/soiree.services"
+ import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
 
 
 const prisma: PrismaClient = new PrismaClient();
@@ -23,13 +23,12 @@ export const getSoireeById = async (req: Request, res: Response) => {
 
     try {
         const soiree = await serviceGetSoireeById(id, prisma);
-        if (!soiree) {
-            res.status(404).json({ error: 'No soiree associated to the ID' });
-            return;
-        } 
         res.status(200).json(soiree);
-    } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+    } catch(error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
     return;
 };
