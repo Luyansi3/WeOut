@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 
 // Custom components:
 import SlidingSlider from '@/components/SlidingSlider/SlidingSlider';
+import CustomButton from '@/components/CustomButton';
 
 
 
@@ -40,9 +41,7 @@ export default function Preferences() {
 
             <YStack flex={1} space={10} padding={20} alignContent="center" width={"100%"} backgroundColor={customColors.background} borderRadius={20} elevation={2}>
                 {/* Dancing slider */}
-                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"} >
-                    How much do you like dancing ?
-                </Text>
+                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"}>{"How much do you like dancing ?"}</Text>
 
 
                 <SlidingSlider
@@ -62,10 +61,7 @@ export default function Preferences() {
 
 
                 {/* Drink slider */}
-                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"} >
-                    How much do you drink
-                    while partying ?
-                </Text>
+                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"}>{"How much do you drink while partying ?"}</Text>
                 <SlidingSlider
                     value={drinkValue}
                     max={100}
@@ -81,10 +77,7 @@ export default function Preferences() {
 
 
                 {/* Talk slider */}
-                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"} >
-                    How much do you talk
-                    while partying ?
-                </Text>
+                <Text fontSize={20} marginBottom={8} color={customColors.textMain} fontFamily={"Raleway-Regular"}>{"How much do you talk while partying ?"}</Text>
                 <SlidingSlider
                     value={talkValue}
                     max={100}
@@ -94,6 +87,32 @@ export default function Preferences() {
                     gradientTo={customColors.pink}
                     circleSize={40}
                     onValueChange={setTalkValue} />
+
+
+
+                {/* Bouton Update pour confirmer les paramètres */}
+                <XStack justifyContent="center" alignItems="center" marginTop={20}>
+                    <CustomButton
+                        backgroundColor={customColors.pink}
+                        title="UPDATE"
+                        maxWidth={250}
+                        maxHeight={60}
+                        minWidth={150}
+                        minHeight={60}
+                        borderRadius={15}
+                        fontSize={16}
+
+                        fontFamily={"Raleway-SemiBold"}
+                        // to do le onPress
+                        onPress={() => {
+                            console.log('Update button pressed');
+                        }}
+                        pressStyle={{ backgroundColor: customColors.pink }}
+                        focusStyle={{ backgroundColor: customColors.pink }}
+                        hoverStyle={{ backgroundColor: customColors.pink }}
+                    />
+                </XStack>
+
 
             </YStack>
         </YStack>

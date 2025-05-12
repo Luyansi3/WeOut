@@ -66,12 +66,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         );
 
     }
-    else {
+    else if (endIcon) {
         trailingIcon = (
             <XStack position="absolute" right={16}>
                 {endIcon}   
             </XStack>
         );
+    }
+    else {
+        trailingIcon = null;
     }
 
 
