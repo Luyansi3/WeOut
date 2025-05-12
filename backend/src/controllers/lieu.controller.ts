@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { 
+    serviceGetLieuById
+ } from "../services/lieu.services"
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -13,9 +16,7 @@ export const getLieuById = async (req: Request, res: Response) => {
     }
 
     try {
-        const lieu = await prisma.lieux.findUnique({
-            where: {id},
-        });
+        const lieu = await serviceGetLieuById(id);
 
         if (!lieu) {
             res.status(404).json({error : 'No lieu associated to the ID'});
