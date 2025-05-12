@@ -29,7 +29,7 @@ export const serviceGetSoireeByName = async(name: string) => {
 };
 
 
-export const serviceGetSoirees = async(now: Date, active:any) => {
+export const serviceGetSoirees = async(now: Date, active:unknown) => {
     try {
         return await prisma.soiree.findMany({
             where: active === 'true' ? { fin: { gt: now } } : {},
