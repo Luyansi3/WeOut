@@ -1,0 +1,25 @@
+meta {
+  name: putUser
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://{{localhost}}/api/users/888d8016-b7a3-4173-ade4-063f0bcb9d54
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": "888d8016-b7a3-4173-ade4-063f0bcb9d4",
+    "prenom": "Hamzaza",
+    "nom": "Wirane",
+    "genre": "HOMME",
+    "longitude": 0,
+    "latitude": 0,
+    "dateActualisation": "2025-05-12T21:28:28.797Z",
+    "compteId": "2a6802ab-2468-4517-8f93-4211b03f9bc1",
+    "nombreSoiree": 0
+  }
+}
