@@ -5,6 +5,7 @@ import {
   Eye,
   EyeOff,
   TextCursorInput,
+  User,
 } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import {
@@ -81,6 +82,19 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
       placeholder = 'Your password';
       secure = true;
       break;
+    case 'fullName':
+      IconLeft = User;
+      placeholder = 'Full name';
+      break;
+    case 'username':
+      IconLeft = User;
+      placeholder = 'Username';
+      break;
+    case 'confirmPassword':
+      IconLeft = LockKeyhole;
+      placeholder = 'Confirm password';
+      secure = true;
+      break;
     default:
       IconLeft = TextCursorInput;
       placeholder = rest.placeholder || '';
@@ -100,7 +114,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style,
         {...rest}
       />
       
-      {inputType === 'password' && (
+      { (inputType === 'password' || inputType === 'confirmPassword') && (
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           {showPassword ? (
             <Eye size={20} color={customColors.textSecond} style={styles.iconRight} />

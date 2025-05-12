@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 
 // Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
 
@@ -30,6 +31,9 @@ const SignInScreen: React.FC = () => {
     textSecond: "#747688",
     textMain: "#1A1B41"
   };
+
+  // Router for navigation
+  const router = useRouter();
 
 
 
@@ -158,7 +162,7 @@ const SignInScreen: React.FC = () => {
 
         <XStack justifyContent="center" alignItems="center" marginTop={24}>
           <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
-          <Pressable onPress={() => {/* TODO: go to SignUp */ }}>
+          <Pressable onPress={() => { router.push('/signup'); }}>
             <Text fontSize="$3" color={customColors.purple}>
               Sign up
             </Text>
