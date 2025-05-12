@@ -57,7 +57,7 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 export const getSoirees = async (req: Request, res: Response) => {
 
     try {
-        const active = req.query.active;
+        const active:unknown = req.query.active;
         const now = new Date();
         const soirees = await serviceGetSoirees(now, active, prisma);
         res.status(200).json(soirees)
