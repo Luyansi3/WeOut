@@ -12,7 +12,6 @@ const router : Router = Router();
  *   get:
  *     tags:
  *       - Orga
- *       - Soirees
  *     summary: recupère un orga par l'id de la soirée qu'il organise
  *     parameters:
  *       - in: path
