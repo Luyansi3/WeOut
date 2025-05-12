@@ -8,6 +8,7 @@ import {
     serviceDeleteSoiree,
     serviceGetSoireeByUserId,
     servicePostSoiree,
+    serviceUpdateSoiree
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -187,29 +188,26 @@ export const putSoiree = async (req: Request, res: Response) => {
     } = req.body;
 
     try {
-        const soireeExist = await prisma.soiree.findUnique({ where: { id } });
+        const updated = await serviceUpdateSoiree(id, {
+            nom,
+            description,
+            photoCouverturePath,
+            debut: debut ? new Date(debut) : undefined,
+            fin: fin ? new Date(fin) : undefined,
+            lieuId,
+            organismeId,
+            tags,
+            
+        },prisma);
 
-        if (!soireeExist) {
+        if (!updated) {
             res.status(404).json({ error: 'Soiree not found' });
             return;
         }
 
-        const updatedSoiree = await prisma.soiree.update({
-            where: { id },
-            data: {
-                nom,
-                description,
-                photoCouverturePath,
-                debut: debut ? new Date(debut) : undefined,
-                fin: fin ? new Date(fin) : undefined,
-                lieuId,
-                organismeId,
-                tags
-            }
-        });
-
-        res.status(200).json(updatedSoiree);
+        res.status(200).json(updated);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
