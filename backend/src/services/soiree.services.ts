@@ -1,5 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { DatabaseError, BadStateDataBase, CustomErrors, ImpossibleToParticipate } from "../errors/customErrors";
+import { serviceGetUserById } from "./user.services";
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
@@ -165,3 +166,27 @@ export const serviceDeleteSoiree = async (soireeId: number, prisma: PrismaClient
         return { success: false, reason: "Database error", error };
     }
 };
+
+
+
+export const serviceGetSoireeByUserId = async (id: string, prisma: PrismaClient | PrismaTransactionClient) => {
+    try {
+        await serviceGetUserById(id, prisma);
+        const result = await prisma.soiree.findMany({
+            where : {
+                groupes : {
+                    some : {
+                        users : {
+                            some : {
+                                id : id,
+                            },
+                        }
+                    },
+                },
+            },
+        });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
