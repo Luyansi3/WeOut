@@ -6,7 +6,13 @@ import { useRouter } from 'expo-router';
 
 // Expo vector icons for social login
 import { FontAwesome } from '@expo/vector-icons';
-import { ArrowRight } from '@tamagui/lucide-icons';
+import {
+    LockKeyhole,
+    Mail,
+    TextCursorInput,
+    User,
+    ArrowRight
+} from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
 import { Button, Text, Switch, XStack, YStack } from 'tamagui';
@@ -28,6 +34,13 @@ const customColors = {
 const router = useRouter();
 
 const SignupScreen = () => {
+    const [fullName, setFullName] = useState('');
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+
     return (
         <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
             <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={8} color={customColors.textMain} >
@@ -38,13 +51,36 @@ const SignupScreen = () => {
 
 
             <YStack width="100%" space={16}>
+                <CustomInput value={fullName}
+                    leftIcon={<User />}
+                    placeholder='Your fullname'
+                    inputType="text"
+                    onChangeText={setFullName} />
 
-                {/* Email et Password */}
-                <CustomInput inputType="fullName" />
-                <CustomInput inputType="username" />
-                <CustomInput inputType="email" />
-                <CustomInput inputType="password" />
-                <CustomInput inputType="confirmPassword" />
+                <CustomInput value={username}
+                    leftIcon={<User />}
+                    placeholder='Your username'
+                    inputType="text"
+                    onChangeText={setUsername} />
+
+                <CustomInput value={email}
+                    leftIcon={<Mail />}
+                    placeholder='Your mail'
+                    inputType="email"
+                    onChangeText={setEmail} />
+
+                <CustomInput value={password}
+                    leftIcon={<LockKeyhole />}
+                    placeholder='Your password'
+                    inputType="password"
+                    onChangeText={setPassword} />
+
+                <CustomInput value={confirmPassword}
+                    leftIcon={<LockKeyhole />}
+                    placeholder='Confirm your password'
+                    inputType="password"
+                    onChangeText={setConfirmPassword} />
+
 
 
 
@@ -127,7 +163,7 @@ const SignupScreen = () => {
 
 
                 <XStack justifyContent="center" alignItems="center" marginTop={24}>
-                    <Text fontSize="$3" fontFamily = {"Raleway-Regular"} color="#000">Already have an account? </Text>
+                    <Text fontSize="$3" fontFamily={"Raleway-Regular"} color="#000">Already have an account? </Text>
                     <Pressable onPress={() => { router.push('/login'); }}>
                         <Text fontSize="$3" color={customColors.purple} fontFamily={"Raleway-Regular"} >
                             Sign in

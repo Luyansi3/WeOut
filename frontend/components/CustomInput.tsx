@@ -51,9 +51,11 @@ const styles = StyleSheet.create({
 
 interface CustomInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   /** Determines which icon, placeholder, and behavior to use */
+  value: string;
   placeholder?: string;
   leftIcon?: React.ReactNode;
   inputType?: CustomInputType; // password, email or text default is text
+  onChangeText: (text: string) => void; // function to update the state of the input
 }
 
 /* Pour vous aider a faire un input voici quelques templates: */
@@ -67,8 +69,7 @@ interface CustomInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
 //   text: { IconLeft: TextCursorInput, placeholder: '', secure: false },
 // };
 
-const CustomInput: React.FC<CustomInputProps> = ({ placeholder = '', leftIcon = null, inputType = 'text', style, ...rest }) => {
-  const [value, setValue] = useState('');
+const CustomInput: React.FC<CustomInputProps> = ({ value='', placeholder = '', leftIcon = null, inputType = 'text', style, onChangeText, ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Configure per-type
@@ -88,7 +89,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ placeholder = '', leftIcon = 
         style={[styles.input]}
         placeholder={placeholder}
         value={value}
-        onChangeText={setValue}
+        onChangeText={onChangeText}
         keyboardType={inputType === 'email' ? 'email-address' : 'default'}
         autoCapitalize={inputType === 'email' ? 'none' : 'sentences'}
         secureTextEntry={secure && !showPassword}
