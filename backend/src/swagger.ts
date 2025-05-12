@@ -21,7 +21,9 @@ const options: swaggerJSDoc.Options = {
             photoCouverturePath: { type: 'string' },
             debut: { type: 'string', format: 'date-time' },
             fin: { type: 'string', format: 'date-time' },
-            createurId: { type: 'string' }
+            lieuId: { type: 'string' },
+            organismeId: { type: 'string' },
+            tags: { type: 'array', items: { type: 'string' }, nullable:true },
           }
         },
         User: {
