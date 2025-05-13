@@ -156,7 +156,7 @@ router.get('/name/:name', getSoireeByName);
 
 router.put("/:id", putSoiree);
 
-// POST /soirees/:id - récupérer un utilisateur par ID
+
 
 /**
  * @openapi
