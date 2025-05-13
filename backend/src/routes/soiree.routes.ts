@@ -9,7 +9,8 @@ import {
     putSoiree,
     getGroupsBySoireeId,
     getEventsByDatesAndId,
-    getParticipants
+    getParticipants,
+    getComments
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -486,5 +487,34 @@ router.get('/groups/:id', getGroupsBySoireeId);
  *         description: Erreur serveur
  */
 router.get('/participants/:id', getParticipants);
+
+
+
+/**
+ * @openapi
+ * /api/soirees/comments/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *       - Commentaires
+ *     summary: Récupère les commentaires d'une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID unique de la soirée
+ *     responses:
+ *       200:
+ *         description: Commentaires récupérés avec succès
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/comments/:id', getComments);
 
 export default router;

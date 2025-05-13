@@ -378,3 +378,44 @@ export const serviceGetSoireeParticipants = async (
         };
     }
 };
+
+export const serviceGetCommentsBySoireeId = async (
+    soireeId: number,
+    prisma: PrismaClient | PrismaTransactionClient
+  ) => {
+    try {
+      await serviceGetSoireeById(soireeId, prisma);
+      const commentaires = await prisma.commentaire.findMany({
+        where: { soireeId },
+        include: {
+          createur: {
+            select: {
+              id: true,
+              prenom: true,
+              nom: true,
+            },
+          },
+        },
+      });
+      return {
+        success: true,
+        commentaires,
+      };
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        return {
+          success: false,
+          reason: 'Soiree not found',
+          id: error.id,
+          code: error.code,
+        };
+      }
+  
+      console.error('Error retrieving comments:', error);
+      return {
+        success: false,
+        reason: 'Database error',
+        error,
+      };
+    }
+  };

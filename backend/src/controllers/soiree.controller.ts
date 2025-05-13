@@ -11,7 +11,8 @@ import {
     serviceUpdateSoiree,
     serviceGetGroupsBySoireeId,
     serviceGetEventsByDatesAndId,
-    serviceGetSoireeParticipants
+    serviceGetSoireeParticipants,
+    serviceGetCommentsBySoireeId
 } from "../services/soiree.services"
 import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
 
@@ -296,8 +297,8 @@ export const getParticipants = async (req: Request, res: Response) => {
             return;
         }
 
-         res.status(200).json(result);
-         return;
+        res.status(200).json(result);
+        return;
     } catch (error) {
         if (error instanceof DatabaseError) {
             res.status(404).json({
@@ -319,5 +320,37 @@ export const getParticipants = async (req: Request, res: Response) => {
         console.error('Unexpected error in getParticipants:', error);
         res.status(500).json({ success: false, reason: 'Server error' });
         return;
+    }
+};
+
+export const getComments = async (req: Request, res: Response) => {
+    const rawId = req.params.id;
+    const soireeId = parseInt(rawId, 10);
+
+    if (isNaN(soireeId)) {
+         res.status(400).json({
+            success: false,
+            reason: 'Invalid soiree ID format',
+        });
+        return;
+    }
+    try {
+        const result = await serviceGetCommentsBySoireeId(soireeId, prisma);
+
+        if (!result.success) {
+            const statusCode =
+                result.reason === 'Soiree not found' ? 404 : 500;
+
+             res.status(statusCode).json(result);
+             return;
+        }
+
+         res.status(200).json(result);
+         return;
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({ error: 'Server error' });
     }
 };
