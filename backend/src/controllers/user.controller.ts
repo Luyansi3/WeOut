@@ -8,7 +8,8 @@ import {
     serviceGetListFriends,
     serviceParticipateEvent,
     serviceUpdateUserInfo,
-    serviceSignupUser
+    serviceSignupUser,
+    serviceCheckFriendshipStatus
  } from "../services/user.services"
 import { z } from 'zod';
 import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -252,3 +253,25 @@ export const signupUser = async (req: Request, res: Response) => {
             res.status(500).json({ error: "Server error" });
     }
 };
+
+
+
+export const checkFriendshipStatus = async(req: Request, res: Response) => {
+    const activeId : string = req.params.id;
+    const passiveIdRaw = req.query.id;
+
+    if (!passiveIdRaw || typeof passiveIdRaw !== 'string') {
+        res.status(400).json({error: 'Bad id for the passive User'});
+        return;
+    } const passiveId : string = passiveIdRaw;
+
+    try {
+        const result = await serviceCheckFriendshipStatus(activeId, passiveIdRaw, prisma);
+        res.status(200).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json({error: error.message});
+        else
+            res.status(500).json({ error: "Server error" });
+    }
+}
