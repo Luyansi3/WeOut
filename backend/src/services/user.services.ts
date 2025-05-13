@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, Soiree } from "@prisma/client";
 import { connect } from "http2";
 import { userInfo } from "os";
 import { serviceGetSoireeById,
@@ -268,10 +268,47 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
         await serviceGetUserById(userId, prisma);
         await prisma.$transaction( async(tx) => {
             const soiree = await serviceGetSoireeById(partyId, tx);
+            const user = await serviceGetUserById(userId, tx);
             const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
             if (concurrentParties.length !== 0) {
                 throw new ImpossibleToParticipate(400, partyId, userId);
             }
+
+            const updatesSoiree : Partial<Soiree> = {};
+
+            
+            
+            
+
+            if (soiree.dancing) {
+                if (user.dancing) {
+                    updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
+                    updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing + user.dancing) / (soiree.nbNoteDancing + 1);
+                } 
+            } else {
+                updatesSoiree.dancing = user.dancing;
+            }
+
+            if (soiree.talking) {
+                if (user.talking) {
+                    updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
+                    updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking + user.talking) / (soiree.nbNoteTalking + 1);
+                }
+            }else {
+                updatesSoiree.talking = user.talking;
+            }
+            
+            if (soiree.alcohool) {
+                if (user.alcohool) {
+                    updatesSoiree.alcohool = (soiree.alcohool * soiree.nbNoteAlcohool + user.alcohool) / (soiree.nbNoteAlcohool + 1);
+                    updatesSoiree.nbNoteAlcohool = soiree.nbNoteAlcohool + 1;
+                } 
+            } else {
+                updatesSoiree.alcohool = user.alcohool;
+            }
+
+            updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
+            
 
             await tx.user.update({
                 where: {id: userId},
@@ -284,9 +321,7 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
             await tx.soiree.update({
                 where : {id: partyId},
                 data : {
-                    nombreParticipants : {
-                        increment: 1,
-                    },
+                    ...updatesSoiree,
                 },
             });
             await tx.groupe.create({
