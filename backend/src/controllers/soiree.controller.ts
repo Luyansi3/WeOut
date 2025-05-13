@@ -9,11 +9,8 @@ import {
     serviceGetSoireeByUserId,
     servicePostSoiree,
     serviceUpdateSoiree,
-<<<<<<< HEAD
-    serviceGetGroupsBySoireeId
-=======
+    serviceGetGroupsBySoireeId,
     serviceGetEventsByDatesAndId
->>>>>>> 65cfcd0 (edition of service and controller)
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     

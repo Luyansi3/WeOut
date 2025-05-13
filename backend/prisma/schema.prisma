@@ -22,6 +22,7 @@ model Compte {
   id        String @id @default(uuid())
   hashedMdp String
   email     String @unique
+  nom       String
 
   // A vérifier dans le code que uniquement un des deux soit NULL
   user      User?
@@ -35,6 +36,8 @@ model User {
   prenom String
   nom    String
   genre  Genre
+
+  nombreAmis Int @default(0)
 
   // Geolocalisation
   longitude         Float
