@@ -7,7 +7,7 @@ import {
     serviceGetUserById,
     serviceGetListFriends,
     serviceParticipateEvent,
-    serviceUpdateUser
+    serviceUpdateUserInfo
  } from "../services/user.services"
 
  import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -187,23 +187,33 @@ export const participateEvent = async (req: Request, res: Response) => {
     
 }
 
-export const putUser = async (req: Request, res: Response) => {
-    const id = req.params.id;
-
-    if (!id || typeof id !== "string") {
-        res.status(400).json({ error: "Invalid user ID" });
-        return;
-    }
-
-    const { prenom, nom, genre, latitude, longitude } = req.body;
-
+export const updateUserInfo = async (req: Request, res: Response) => {
+    const userId: string = req.params.id;
+    const updateData = req.body;
+  
     try {
-        const updated = await serviceUpdateUser(id, { prenom, nom, genre, latitude, longitude }, prisma);
-        res.status(200).json(updated);
+      const result = await serviceUpdateUserInfo(userId, updateData, prisma);
+  
+      if (!result.success) {
+        const statusCode =
+          'reason' in result && result.reason === 'Validation failed' ? 400 :
+          'reason' in result && result.reason === 'User not found' ? 404 :
+          500;
+  
+        res.status(statusCode).json(result);
+        return ;
+      }
+        res.status(200).json(result);
+      return ;
     } catch (error) {
-        if (error instanceof CustomErrors)
-            res.status(error.statusCode).json(error);
-        else
-            res.status(500).json({ error: "Server error" });
+      if (error instanceof CustomErrors) {
+         res.status(error.statusCode).json({ error: error.message });
+         return;
+      }
+  
+      console.error('Unexpected error in updateUserInfo:', error);
+       res.status(500).json({ error: 'Server error' });
+       return;
     }
-};
+  };
+

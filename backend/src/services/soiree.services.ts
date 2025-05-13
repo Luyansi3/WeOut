@@ -4,16 +4,15 @@ import { serviceGetUserById } from "./user.services";
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
-
 export const serviceGetSoireeById = async (id: number, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
         return await prisma.soiree.findUniqueOrThrow({
-            where : { id: id},
+            where: { id: id },
         });
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') 
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
             throw new DatabaseError(id, "Soiree", 400);
-        else 
+        else
             throw error;
     }
 };
@@ -48,14 +47,14 @@ const getSoireeInInterval = async (start: Date, end: Date, prisma: PrismaClient 
 
 
 
-export const serviceGetSoireeByName = async(name: string, prisma: PrismaClient | PrismaTransactionClient) => {
+export const serviceGetSoireeByName = async (name: string, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
         return await prisma.soiree.findMany({
             where: {
-                nom: {equals: name,},
+                nom: { equals: name, },
             }
         });
-    } catch(error) {
+    } catch (error) {
         throw (error)
     }
 };
@@ -105,40 +104,92 @@ export const getSoireeInIntervalAndId = async (start: Date, end: Date, id: strin
 
 
 
-export const serviceGetSoirees = async(now: Date, active:any, prisma: PrismaClient | PrismaTransactionClient) => {
+export const serviceGetSoirees = async (now: Date, active: any, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
         return await prisma.soiree.findMany({
             where: active === 'true' ? { fin: { gt: now } } : {},
         });
-    } catch(error) {
+    } catch (error) {
         throw (error)
     }
 };
 
-export const serviceDeleteSoiree = async (soireeId: number, prisma: PrismaClient | PrismaTransactionClient) => {
+
+
+
+
+export const serviceDeleteSoiree = async (
+    soireeId: number,
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
     if (!soireeId || isNaN(soireeId)) {
-        return { success: false, reason: "Invalid or missing soiree ID" };
+        return { success: false, reason: 'Invalid or missing soiree ID' };
     }
 
-    try {
-        const existingSoiree = await prisma.soiree.findUnique({
+    // ------------------------------------------------------
+    const run = async (tx: PrismaTransactionClient) => {
+        const existingSoiree = await tx.soiree.findUnique({
             where: { id: soireeId },
+            include: {
+                groupes: {
+                    include: { users: true },
+                },
+            },
         });
 
-        if (!existingSoiree) {
-            return { success: false, reason: "Soiree not found" };
+        if (!existingSoiree) throw new Error('NOT_FOUND');
+
+        const now = new Date();
+        const shouldDecrement = now < existingSoiree.debut; // soirée pas encore commencée ?
+
+        if (shouldDecrement) {
+            console.log("should decrement");
+            const userIds = new Set<string>();
+            existingSoiree.groupes.forEach((g: { users: { id: string }[] }) =>
+                g.users.forEach((u) => userIds.add(u.id))
+            );
+
+            // décrémente sans jamais passer en négatif
+            await Promise.all(
+                [...userIds].map((userId) =>
+                    tx.user.updateMany({
+                        where: { id: userId, nombreSoiree: { gt: 0 } },
+                        data: { nombreSoiree: { decrement: 1 } },
+                    })
+                )
+            );
         }
 
-        await prisma.soiree.delete({
+        await tx.commentaire.deleteMany({ where: { soireeId } });
+        await tx.photo.deleteMany({ where: { soireeId } });
+        await tx.groupe.deleteMany({ where: { soireeId } });
+
+        // déconnexion des tags (champ scalaire enum → pas besoin d’include)
+        await tx.soiree.update({
             where: { id: soireeId },
+            data: { tags: { set: [] } },
         });
 
-        return { success: true, message: "Soiree deleted successfully" };
+        await tx.soiree.delete({ where: { id: soireeId } });
+
+        return true;
+    };
+    // ------------------------------------------------------
+
+    try {
+        const ok =
+            prisma instanceof PrismaClient ? await prisma.$transaction(run) : await run(prisma);
+
+        return { success: ok, message: 'Soiree deleted successfully' };
     } catch (error) {
-        console.error("Error deleting soiree:", error);
-        return { success: false, reason: "Database error", error };
+        if (error instanceof Error && error.message === 'NOT_FOUND') {
+            return { success: false, reason: 'Soiree not found' };
+        }
+        console.error('Transaction failed:', error);
+        return { success: false, reason: 'Database error', error };
     }
 };
+
 
 
 
@@ -146,12 +197,12 @@ export const serviceGetSoireeByUserId = async (id: string, prisma: PrismaClient 
     try {
         await serviceGetUserById(id, prisma);
         const result = await prisma.soiree.findMany({
-            where : {
-                groupes : {
-                    some : {
-                        users : {
-                            some : {
-                                id : id,
+            where: {
+                groupes: {
+                    some: {
+                        users: {
+                            some: {
+                                id: id,
                             },
                         }
                     },
@@ -225,3 +276,65 @@ export const serviceUpdateSoiree = async (
         throw error;
     }
 };
+
+
+
+
+export const serviceGetGroupsBySoireeId = async (
+    soireeId: number,
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
+    try {
+        await serviceGetSoireeById(soireeId, prisma);
+        const groupes = await prisma.groupe.findMany({
+            where: { soireeId },
+            include: {
+                users: true,
+            },
+        });
+        return {
+            success: true,
+            groupes,
+        };
+    } catch (error) {
+        if (error instanceof DatabaseError) {
+            return {
+                success: false,
+                reason: 'Soiree not found',
+            };
+        }
+        console.error("Error fetching groups by soiree ID:", error);
+        return {
+            success: false,
+            reason: "Database error",
+            error,
+        };
+    }
+};
+
+
+
+
+export const serviceGetEventsByDatesAndId = async(id: string, isBefore : boolean ,
+    prisma: PrismaClient | PrismaTransactionClient,date: Date = new Date()) => {
+    console.log(date);
+    try {
+        await serviceGetUserById(id, prisma);
+        return await prisma.soiree.findMany({
+            where : {
+                groupes : {
+                    some : {
+                        users : {
+                            some : {
+                                id : id,
+                            },
+                        }
+                    },
+                },
+            },
+            //fin : (isBefore ? {lte: date} : {gt: date})
+        });
+    } catch (error) {
+        throw error;
+    }
+}

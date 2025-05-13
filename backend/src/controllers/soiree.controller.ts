@@ -8,7 +8,9 @@ import {
     serviceDeleteSoiree,
     serviceGetSoireeByUserId,
     servicePostSoiree,
-    serviceUpdateSoiree
+    serviceUpdateSoiree,
+    serviceGetGroupsBySoireeId,
+    serviceGetEventsByDatesAndId
  } from "../services/soiree.services"
  import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
     
@@ -27,11 +29,6 @@ export const getSoireeById = async (req: Request, res: Response) => {
 
     try {
         const soiree = await serviceGetSoireeById(id, prisma);
-        if (!soiree) {
-            res.status(404).json({ error: 'No soiree associated to the ID' });
-            return;
-        }
-
         res.status(200).json(soiree);
     } catch(error) {
         if (error instanceof CustomErrors)
@@ -149,7 +146,10 @@ export const deleteSoiree = async (req: Request, res: Response) => {
         res.status(200).json({ success: true, message: 'Soiree deleted successfully' });
     } catch (error) {
         console.error('Unexpected error in deleteSoiree:', error);
-        res.status(500).json({ success: false, reason: 'Server error' });
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
     return;
 };
@@ -207,7 +207,78 @@ export const putSoiree = async (req: Request, res: Response) => {
 
         res.status(200).json(updated);
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
     }
 };
+
+
+
+export const getGroupsBySoireeId = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const soireeId: number = parseInt(req.params.id, 10);
+
+    try {
+      const result = await serviceGetGroupsBySoireeId(soireeId, prisma);
+  
+      if (!result.success) {
+        const statusCode =
+          result.reason === 'Invalid soiree ID format' ? 400 :
+          result.reason === 'Soiree not found' ? 404 :
+          500;
+  
+         res.status(statusCode).json(result);
+         return ;
+      }
+  
+       res.status(200).json(result);
+       return ;
+    } catch (error) {
+      if (error instanceof CustomErrors) {
+        res.status(error.statusCode).json({ error: error.message });
+        return ;
+      }
+  
+      console.error('Unexpected error in getGroupsBySoireeId:', error);
+      res.status(500).json({ error: 'Server error' });
+      return ;
+    }
+  };
+export const getEventsByDatesAndId = async(req: Request, res: Response) => {
+    const id : string = req.params.id;
+
+    let result;
+
+    //Récupérer le paramètre isbefore t le check
+    const isBeforeRaw = req.query.isBefore;
+    if (!isBeforeRaw || typeof isBeforeRaw != 'string' || (isBeforeRaw != 'true' && isBeforeRaw != 'false')) {
+        res.status(400).json({error : 'Invalid isBefore boolean'});
+        return;
+    }
+
+    const isBefore : boolean = isBeforeRaw === 'true' ? true : false;
+    const dateRaw = req.query.date;
+
+    try {
+        if (dateRaw && typeof dateRaw ==='string') {
+            const dateString : string = dateRaw;
+            const dateObject : Date = new Date(dateString);
+            if (isNaN(dateObject.getTime())) {  
+                res.status(400).json({error: 'invalid date format'});
+                return;
+            }   
+            result = await serviceGetEventsByDatesAndId(id, isBefore, prisma, dateObject);
+        } else {
+            result = await serviceGetEventsByDatesAndId(id, isBefore, prisma);
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
+    }
+}
 

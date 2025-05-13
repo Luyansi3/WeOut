@@ -6,13 +6,16 @@ import {
     deleteSoiree,
     getSoireeByUserId,
     postSoiree,
-    putSoiree
+    putSoiree,
+    getGroupsBySoireeId,
+    getEventsByDatesAndId
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
 
 
 // GET /soirees/:id - récupérer une soirée par ID
+
 
 /**
  * @openapi
@@ -40,6 +43,7 @@ const router : Router = Router();
  *       500:
  *         description: Erreur serveur
  */
+router.get('/:id', getSoireeById);
 router.get('/:id', getSoireeById);
 
 /**
@@ -102,7 +106,7 @@ router.get('/name/:name', getSoireeByName);
 
 /**
  * @openapi
- * /api/soirees/{id}:
+ * /api/soirees/createSoiree/{id}:
  *   put:
  *     summary: Met à jour une soirée existante
  *     tags:
@@ -154,8 +158,7 @@ router.get('/name/:name', getSoireeByName);
  *         description: Requête invalide
  */
 
-router.put("/:id", putSoiree);
-
+router.put("createSoiree/:id", putSoiree);
 
 
 /**
@@ -291,6 +294,155 @@ router.post('/', postSoiree);
  *         description: Erreur serveur
  */
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
+
+
+
+
+/**
+ * @openapi
+ * /api/soirees/getByUserId/{id}:
+ *   GET:
+ *     tags:
+ *       - Soirées
+ *       - User
+ *     summary: Get toutes les soirées auxquelles participe ou a participé un User avant ou après une certaine date
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique du user dont on récupère les soirées
+ *       - in: query
+ *         name: isBoolean
+ *         required: true
+ *         schema:
+ *           type: boolean
+ *         description: true ou false pour définir si on prend les events avant ou après
+ *       - in: query
+ *         name: date
+ *         required: false
+ *         schema:
+ *           type: dateFormat "YYYY-MM-DDTHH:mm"
+ *         description: date au bon format avec laquelle on compare (now par défaut)
+ *     responses:
+ *       200:
+ *         description: Obtention réussie avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Requête invalide (ID manquant ou incorrect)
+ *       404:
+ *         description: Soirées ou User non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/getEventsByDateAndId/:id', getEventsByDatesAndId);
    
+
+// POST /soirees/:id - récupérer un utilisateur par ID
+
+/**
+ * @openapi
+ * /api/soirees/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Soirées
+ *     summary: Supprime une soirée par son ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique de la soirée à supprimer
+ *     responses:
+ *       200:
+ *         description: Soirée supprimée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Requête invalide (ID manquant ou incorrect)
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.delete('/delete/:id', deleteSoiree);
+
+
+
+// GET /soirees/getByUserId/:id - Récupérer toutes les soirées d'un user
+
+
+/**
+ * @openapi
+ * /api/soirees/getByUserId/{id}:
+ *   GET:
+ *     tags:
+ *       - Soirées
+ *       - User
+ *     summary: Get toutes les soirées auxquelles participe un User
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique du user dont on récupère les soirées
+ *     responses:
+ *       200:
+ *         description: Obtenir la liste de soirée d'un User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Requête invalide (ID manquant ou incorrect)
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
+/**
+ * @openapi
+ * /api/soirees/groups/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Récupère les groupes associés à une soirée donnée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la soirée
+ *     responses:
+ *       200:
+ *         description: Groupes récupérés avec succès
+ *       400:
+ *         description: Format de l’ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/groups/:id', getGroupsBySoireeId);
+
 export default router;
