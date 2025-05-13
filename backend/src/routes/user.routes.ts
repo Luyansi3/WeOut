@@ -7,10 +7,73 @@ import {
     getListFriends,
     participateEvent,
     putUser,
+    signupUser
 } from '../controllers/user.controller';
 
 const router : Router = Router();
 
+/**
+ * @openapi
+ * /signup:
+ *   post:
+ *     tags:
+ *       - Utilisateurs 
+ *     summary: Crée un nouvel utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - firstname
+ *               - lastname
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               firstname:
+ *                 type: string
+ *               lastname:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: clx1avc123456a0xyz
+ *                 prenom:
+ *                   type: string
+ *                   example: Jean
+ *                 nom:
+ *                   type: string
+ *                   example: Dupont
+ *                 pseudo:
+ *                   type: string
+ *                   example: jean.d
+ *       400:
+ *         description: Champs invalides ou manquants
+ *       409:
+ *         description: Email ou nom d'utilisateur déjà utilisé
+ *       500:
+ *         description: Erreur serveur
+ */
+
+router.post('/signup', signupUser);
 
 // GET /user/:id - récupérer un utilisateur par ID
 

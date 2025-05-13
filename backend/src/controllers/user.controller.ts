@@ -7,10 +7,13 @@ import {
     serviceGetUserById,
     serviceGetListFriends,
     serviceParticipateEvent,
-    serviceUpdateUser
+    serviceUpdateUser,
+    serviceSignupUser
  } from "../services/user.services"
-
- import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
+import { z } from 'zod';
+import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
+import { flushCompileCache } from "module";
+import { error } from "console";
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -200,9 +203,42 @@ export const putUser = async (req: Request, res: Response) => {
     try {
         const updated = await serviceUpdateUser(id, { prenom, nom, genre, latitude, longitude }, prisma);
         res.status(200).json(updated);
-    } catch (error) {
+    }
+    catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({ error: "Server error" });
+    }
+};
+
+const signupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const signupUser = async (req: Request, res: Response) => {
+    let {firstname, lastname, username, password, email} = req.body;
+    if(typeof firstname !== 'string' ||
+        typeof lastname !== 'string' ||
+        typeof username !== 'string' ||
+        typeof password !== 'string' ||
+        typeof email !== 'string'){
+        res.status(400).json({error:'Invalid or missing field(s)'});
+    }
+    const result = signupSchema.safeParse({email, password});
+    if(!result.success){
+        res.status(400).json({error: result.error.format()});
+    }
+
+
+    try {
+
+        const {compteCreated, user} = await serviceSignupUser({firstname, lastname, username, password, email}, prisma);
+        res.status(201).json(user);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json({error: error.message});
         else
             res.status(500).json({ error: "Server error" });
     }
