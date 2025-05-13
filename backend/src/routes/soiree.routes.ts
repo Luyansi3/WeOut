@@ -106,7 +106,7 @@ router.get('/name/:name', getSoireeByName);
  *   put:
  *     summary: Met à jour une soirée existante
  *     tags:
- *       - Soirees
+ *       - Soirées
  *     parameters:
  *       - in: path
  *         name: id
