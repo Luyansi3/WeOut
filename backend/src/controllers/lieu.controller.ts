@@ -4,6 +4,7 @@ import {
     serviceGetLieuById,
     serviceGetLieux,
  } from "../services/lieu.services"
+import { validateTags } from "../utils/tags.utils";
 
 
 const prisma : PrismaClient = new PrismaClient();
@@ -34,21 +35,16 @@ export const getLieuById = async (req: Request, res: Response) => {
 
 export const getLieux = async (req: Request, res: Response) => {
     try {
-        const { tags } = req.body;
-        const isStrictTagRaw = req.query.isStrictTag;
+        const tagsRaw = req.query.tags;
+        const isStrictTag = String(req.query.isStrictTag) === 'true';
 
-        // Validation du paramètre isStrictTag
-        if (
-            !isStrictTagRaw ||
-            typeof isStrictTagRaw !== 'string' ||
-            (isStrictTagRaw !== 'true' && isStrictTagRaw !== 'false')
-        ) {
-            res.status(400).json({ error: 'Invalid boolean for isStrictTag' });
-            return;
-        }
+        const tags = Array.isArray(tagsRaw)
+            ? tagsRaw
+            : typeof tagsRaw === 'string'
+                ? [tagsRaw]
+                : [];
 
-        const isStrictTag = isStrictTagRaw === 'true';
-        const tagExtracted = validateTags(tags); // Doit retourner un tableau de Tag valides
+        const tagExtracted = validateTags(tags);
 
         const lieux = await serviceGetLieux(isStrictTag, tagExtracted, prisma);
 
@@ -59,4 +55,5 @@ export const getLieux = async (req: Request, res: Response) => {
         res.status(500).json({ error: message });
     }
 };
+
 

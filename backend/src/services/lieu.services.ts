@@ -1,5 +1,8 @@
-import { PrismaClient, Tag } from "@prisma/client";
-import PrismaTransactionClient from "@prisma/client";
+import { PrismaClient, Prisma, Tag } from "@prisma/client";
+import { DatabaseError, BadStateDataBase, CustomErrors, ImpossibleToParticipate } from "../errors/customErrors";
+import { serviceGetUserById } from "./user.services";
+import {validateTags} from "../utils/tags.utils"
+type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 import { connect } from "http2";
 import { userInfo } from "os";
@@ -18,6 +21,8 @@ export const serviceGetLieuById = async(id: number) => {
         }        
 };
 
+
+
 export const serviceGetLieux = async (
     isStrictTag: boolean,
     tags: Tag[],
@@ -34,10 +39,7 @@ export const serviceGetLieux = async (
                     }
                     : {}),
             },
-            include: {
-                tags: true,
-                soirees: true,
-            },
+            
         });
     } catch (error) {
         throw error;

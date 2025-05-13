@@ -4,11 +4,9 @@ import {
     getLieux,
 } from '../controllers/lieu.controller';
 
-const router : Router = Router();
-
+const router: Router = Router();
 
 // GET /lieux/:id - récupérer un lieu par ID
-
 /**
  * @openapi
  * /api/lieux/id/{id}:
@@ -37,13 +35,11 @@ const router : Router = Router();
  */
 router.get('/:id', getLieuById);
 
-
-
 // GET /lieux - récupérer tous les lieux avec filtres de tags
 /**
  * @openapi
  * /api/lieux:
- *   post:
+ *   get:
  *     tags:
  *       - Lieux
  *     summary: Récupère tous les lieux correspondant à une liste de tags
@@ -53,23 +49,17 @@ router.get('/:id', getLieuById);
  *         required: true
  *         schema:
  *           type: boolean
- *         description:
- *           'true' pour que tous les tags soient requis (hasEvery),
- *           'false' pour qu'au moins un des tags soit requis (hasSome)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["ELECTRO", "HOUSE"]
- *             required:
- *               - tags
+ *         description: "'true' pour que tous les tags soient requis (hasEvery), 'false' pour qu'au moins un des tags soit requis (hasSome)"
+ *       - in: query
+ *         name: tags
+ *         required: false
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         style: form
+ *         explode: true
+ *         description: Liste des tags à filtrer
  *     responses:
  *       200:
  *         description: Liste des lieux correspondant aux filtres
@@ -84,9 +74,6 @@ router.get('/:id', getLieuById);
  *       500:
  *         description: Erreur serveur
  */
-
 router.get('/', getLieux);
-
-export default router;
 
 export default router;
