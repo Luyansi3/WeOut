@@ -35,13 +35,13 @@ model User {
   id     String @id @default(uuid())
   prenom String
   nom    String
-  genre  Genre
+  genre  Genre?
 
   nombreAmis Int @default(0)
 
   // Geolocalisation
-  longitude         Float
-  latitude          Float
+  longitude         Float?
+  latitude          Float?
   dateActualisation DateTime @updatedAt
 
   // Relation d'amities

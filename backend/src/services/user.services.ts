@@ -5,8 +5,10 @@ import {
     serviceGetSoireeById,
     getSoireeInIntervalAndId
 } from "../services/soiree.services";
-import { DatabaseError, BadStateDataBase, ImpossibleToParticipate } from "../errors/customErrors";
-
+import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttributeAlreadyExists } from "../errors/customErrors";
+import { hashPassword } from '../utils/hash';
+import jwt from 'jsonwebtoken';
+       
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
@@ -267,15 +269,49 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
     try {
         //Faire une transaction
         await serviceGetUserById(userId, prisma);
-        await prisma.$transaction(async (tx) => {
-            const soiree = await serviceGetSoireeById(partyId, tx);
-            const user = await serviceGetUserById(userId, tx);
-            const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
-            if (concurrentParties.length !== 0) {
-                throw new ImpossibleToParticipate(400, partyId, userId);
-            }
+        await prisma.$transaction( async(tx) => {
+        const soiree = await serviceGetSoireeById(partyId, tx);
+        const user = await serviceGetUserById(userId, tx);
+        const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
+        if (concurrentParties.length !== 0) {
+            throw new ImpossibleToParticipate(400, partyId, userId);
+        }
 
-            const updatesSoiree : Partial<Soiree> = {};
+        const updatesSoiree : Partial<Soiree> = {};
+
+        
+        
+        
+
+        if (soiree.dancing) {
+            if (user.dancing) {
+                updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
+                updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing + user.dancing) / (soiree.nbNoteDancing + 1);
+            } 
+        } else {
+            updatesSoiree.dancing = user.dancing;
+        }
+
+        if (soiree.talking) {
+            if (user.talking) {
+                updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
+                updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking + user.talking) / (soiree.nbNoteTalking + 1);
+            }
+        }else {
+            updatesSoiree.talking = user.talking;
+        }
+        
+        if (soiree.alcohool) {
+            if (user.alcohool) {
+                updatesSoiree.alcohool = (soiree.alcohool * soiree.nbNoteAlcohool + user.alcohool) / (soiree.nbNoteAlcohool + 1);
+                updatesSoiree.nbNoteAlcohool = soiree.nbNoteAlcohool + 1;
+            } 
+        } else {
+            updatesSoiree.alcohool = user.alcohool;
+        }
+
+        updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
+        
 
             
             
@@ -356,6 +392,58 @@ type UserUpdateData = {
     genre?: Genre;
     longitude?: number;
     latitude?: number;
+}
+export const serviceSignupUser = async (data: {firstname:string, lastname:string, username:string, email: string; password: string }, prisma: PrismaClient) => {
+    
+    const hashed = await hashPassword(data.password);
+
+    const existingEmail = await prisma.compte.findUnique({
+        where: { email: data.email },
+    });
+    if (existingEmail) {
+
+        throw new UniqueAttributeAlreadyExists(400, 'Email already used');
+    }
+
+    const existingUsername = await prisma.user.findUnique({
+        where: { pseudo: data.username },
+    });
+
+    if (existingUsername) {
+        throw new UniqueAttributeAlreadyExists(400, 'Username already used');
+    }
+
+    try{
+
+    const compteCreated = await prisma.compte.create({
+        data: {
+        email: data.email,
+        hashedMdp: hashed,
+    }});
+
+    const user = await prisma.user.create({
+        data:{
+            prenom: data.firstname,
+            nom: data.lastname,
+            pseudo: data.username,
+            compte: {connect: { id:compteCreated.id}}
+        }
+    });
+    return {compteCreated, user};
+  }
+  catch(error){
+    throw error;
+  }
+    
+    
+};
+
+
+
+export const generateToken = (userId: string) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
+    expiresIn: '7d',
+  });
 };
 function validateUserUpdateData(data: UserUpdateData): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
