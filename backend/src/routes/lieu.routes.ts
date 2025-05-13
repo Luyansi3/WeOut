@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
     getLieuById,
-    getAllLieux,
+    getLieux,
 } from '../controllers/lieu.controller';
 
 const router : Router = Router();
@@ -39,28 +39,37 @@ router.get('/:id', getLieuById);
 
 
 
-// GET /lieux - récupérer tous les lieux avec filtres
+// GET /lieux - récupérer tous les lieux avec filtres de tags
 /**
  * @openapi
  * /api/lieux:
- *   get:
+ *   post:
  *     tags:
  *       - Lieux
- *     summary: Récupère tous les lieux avec filtres optionnels
+ *     summary: Récupère tous les lieux correspondant à une liste de tags
  *     parameters:
  *       - in: query
- *         name: tags
- *         required: false
+ *         name: isStrictTag
+ *         required: true
  *         schema:
- *           type: string
- *         description: Liste de tags séparés par des virgules (ex: ELECTRO,HOUSE)
- *       - in: query
- *         name: date
- *         required: false
- *         schema:
- *           type: string
- *           format: date-time
- *         description: Date à laquelle une soirée doit être en cours
+ *           type: boolean
+ *         description:
+ *           'true' pour que tous les tags soient requis (hasEvery),
+ *           'false' pour qu'au moins un des tags soit requis (hasSome)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["ELECTRO", "HOUSE"]
+ *             required:
+ *               - tags
  *     responses:
  *       200:
  *         description: Liste des lieux correspondant aux filtres
@@ -70,10 +79,13 @@ router.get('/:id', getLieuById);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Lieu'
+ *       400:
+ *         description: Requête invalide (paramètre manquant ou mal formé)
  *       500:
  *         description: Erreur serveur
  */
-router.get('/', getAllLieux);
+
+router.get('/', getLieux);
 
 export default router;
 
