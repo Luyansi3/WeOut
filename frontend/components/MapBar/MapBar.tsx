@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { View, Text, XStack } from 'tamagui';
-import { CalendarDays, ListFilter } from '@tamagui/lucide-icons';
+import { View, Text, XStack, Select, Adapt, Sheet, Portal, YStack, SelectProps } from 'tamagui';
+import { CalendarDays, Check, ChevronDown, ChevronUp, ListFilter } from '@tamagui/lucide-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MapBarProps } from '@/types/Map';
+import { LinearGradient } from 'tamagui/linear-gradient';
+import MapSelect from '../MapSelect/MapSelect';
 
 export default function MapBar({onDateChange}: MapBarProps) {
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
+  const selectTriggerRef = useRef<any>(null);
+
+  const openTagSelector = () => {
+    if (selectTriggerRef.current) {
+      selectTriggerRef.current?.press?.(); // Simulate press on the hidden trigger
+    }
+  };
 
   const onChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -28,12 +38,7 @@ export default function MapBar({onDateChange}: MapBarProps) {
           </XStack>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.filterButton}>
-          <XStack gap={7} alignItems="center">
-            <ListFilter width={30} height={30} color={"#8F00FF"} />
-            <Text style={styles.filterText}>Filter</Text>
-          </XStack>
-        </TouchableOpacity>
+        <MapSelect id="select-demo-2" />
       </View>
 
       {showPicker && <DateTimePicker
@@ -82,5 +87,10 @@ const styles = StyleSheet.create({
     fontFamily: "Raleway-SemiBold",
     fontWeight: 'semibold',
     color: '#8F00FF',
+  },
+
+  filterSelect: {
+    position: 'absolute',
+    bottom: "50%",
   }
 })

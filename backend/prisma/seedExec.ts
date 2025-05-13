@@ -73,6 +73,7 @@ const seed = async() => {
         nom: 'Party Organizers Inc.',
         note: 4.7,
         tags: [Tag.ELECTRO, Tag.HOUSE],
+        photo: "eventimage.jpg"
       },
       tagList: [Tag.ELECTRO, Tag.HOUSE],
     };

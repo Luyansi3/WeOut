@@ -35,7 +35,7 @@ export default function IndexScreen() {
         fetchEventsWithLocations();
     }, []);
 
-    if (loading) return <ActivityIndicator size="large" />;
+    if (loading) return <ActivityIndicator style={{alignContent: "center", alignItems: "center"}} size="large" />;
     
     return (
         <View flex={1} justifyContent="center" alignItems="center"
@@ -55,6 +55,7 @@ export default function IndexScreen() {
                         console.log(`${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${event.photoCouverturePath}`)
                         return (
                             <EventCard
+                            key={index}
                             image={event.photoCouverturePath}
                             title={event.nom}
                             description={event.description}

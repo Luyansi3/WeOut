@@ -30,7 +30,6 @@ const Map = () => {
   const [markerData, setMarkerData] = useState();
 
   const toggleCard = (markerData: any) => {
-    console.log('selectedMarker', selectedMarker);
     const isSameMarker = selectedMarker?.id === markerData.id;
     setMarkerData(markerData);
     const coords = {
@@ -61,7 +60,6 @@ const Map = () => {
         useNativeDriver: false,
       }).start();
     }
-    console.log('Rendering card for marker:', selectedMarker);
   };
 
   useEffect(() => {
