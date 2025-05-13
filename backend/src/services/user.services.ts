@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, Soiree } from "@prisma/client";
+import { PrismaClient, Prisma, Soiree, Tag } from "@prisma/client";
 import { connect } from "http2";
 import { userInfo } from "os";
 import {
@@ -319,15 +319,12 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
         updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
         
 
-            
-            
-            
 
             if (soiree.dancing) {
                 if (user.dancing) {
                     updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
                     updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing + user.dancing) / (soiree.nbNoteDancing + 1);
-                } 
+                }
             } else {
                 updatesSoiree.dancing = user.dancing;
             }
@@ -337,21 +334,21 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
                     updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
                     updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking + user.talking) / (soiree.nbNoteTalking + 1);
                 }
-            }else {
+            } else {
                 updatesSoiree.talking = user.talking;
             }
-            
+
             if (soiree.alcohool) {
                 if (user.alcohool) {
                     updatesSoiree.alcohool = (soiree.alcohool * soiree.nbNoteAlcohool + user.alcohool) / (soiree.nbNoteAlcohool + 1);
                     updatesSoiree.nbNoteAlcohool = soiree.nbNoteAlcohool + 1;
-                } 
+                }
             } else {
                 updatesSoiree.alcohool = user.alcohool;
             }
 
             updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
-            
+
 
             await tx.user.update({
                 where: { id: userId },
@@ -362,8 +359,8 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
                 },
             });
             await tx.soiree.update({
-                where : {id: partyId},
-                data : {
+                where: { id: partyId },
+                data: {
                     ...updatesSoiree,
                 },
             });
@@ -485,45 +482,45 @@ export const serviceUpdateUserInfo = async (
     // Validate fields before transaction to fail fast
     const { valid, errors } = validateUserUpdateData(data);
     if (!valid) {
-      return {
-        success: false,
-        reason: 'Validation failed',
-        errors,
-      };
+        return {
+            success: false,
+            reason: 'Validation failed',
+            errors,
+        };
     }
-  
+
     const run = async (tx: PrismaTransactionClient) => {
-      // Ensure user exists
-      await serviceGetUserById(userId, tx);
-  
-      // Update only provided fields, and force updated timestamp
-      const updatedUser = await tx.user.update({
-        where: { id: userId },
-        data: {
-          ...(data.prenom !== undefined && { prenom: data.prenom }),
-          ...(data.nom !== undefined && { nom: data.nom }),
-          ...(data.genre !== undefined && { genre: data.genre }),
-          ...(data.longitude !== undefined && { longitude: data.longitude }),
-          ...(data.latitude !== undefined && { latitude: data.latitude }),
-          dateActualisation: new Date(),
-        },
-      });
-  
-      return {
-        success: true,
-        message: 'User updated successfully',
-        user: updatedUser,
-      };
+        // Ensure user exists
+        await serviceGetUserById(userId, tx);
+
+        // Update only provided fields, and force updated timestamp
+        const updatedUser = await tx.user.update({
+            where: { id: userId },
+            data: {
+                ...(data.prenom !== undefined && { prenom: data.prenom }),
+                ...(data.nom !== undefined && { nom: data.nom }),
+                ...(data.genre !== undefined && { genre: data.genre }),
+                ...(data.longitude !== undefined && { longitude: data.longitude }),
+                ...(data.latitude !== undefined && { latitude: data.latitude }),
+                dateActualisation: new Date(),
+            },
+        });
+
+        return {
+            success: true,
+            message: 'User updated successfully',
+            user: updatedUser,
+        };
     };
-  
+
     try {
-      const result = await prisma.$transaction((tx) => run(tx))
-          
-  
-      return result;
+        const result = await prisma.$transaction((tx) => run(tx))
+
+
+        return result;
     } catch (error) {
-      console.error('Error updating user in transaction:', error);
-      return { success: false, reason: 'Database error', error };
+        console.error('Error updating user in transaction:', error);
+        return { success: false, reason: 'Database error', error };
     }
 };
 
