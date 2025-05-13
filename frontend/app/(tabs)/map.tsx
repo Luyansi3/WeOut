@@ -5,10 +5,10 @@ import { Image } from "tamagui";
 import MapView, { Callout, Marker } from "react-native-maps";
 import CustomMapButton from "@/components/CustomMapButton/CustomMapButton";
 import { LocateFixed, Compass } from "@tamagui/lucide-icons";
-import { EventResponse } from "@/types/Event";
+import { EventResponse, SoireeParams } from "@/types/Event";
 import { LocationResponse } from "@/types/Location";
 import { fetchLocationById } from "@/services/locationService";
-import { fetchAllEvents } from "@/services/eventService";
+import { fetchEvents } from "@/services/eventService";
 import { LinearGradient } from "tamagui/linear-gradient";
 import MapCard from "@/components/MapCard/MapCard";
 import MapBar from "@/components/MapBar/MapBar";
@@ -22,7 +22,8 @@ const Map = () => {
   const [events, setEvents] = useState([] as EventResponse[]);
   const [locations, setLocations] = useState([] as LocationResponse[]);
   const [loading, setLoading] = useState(true);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date() as Date);
+  const [tags, setTags] = useState([] as string[]);
 
   const slideAnim = useRef(new Animated.Value(height)).current;
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -62,10 +63,10 @@ const Map = () => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
       const fetchEventsWithLocations = async () => {
           try {
-          const eventsData = await fetchAllEvents({});
+          const eventsData = await fetchEvents({});
           setEvents(eventsData);
 
           const locationPromises = eventsData.map((event) =>
@@ -82,7 +83,40 @@ const Map = () => {
       };
 
       fetchEventsWithLocations();
-  }, []);
+  }, []); */
+
+  const fetchEventsByDateAndTagsWithLocations = async () => {
+      try {
+        const start = date
+        start.setHours(7, 0, 0, 0)
+        const end = new Date(start)
+        end.setDate(start.getDate() + 1)
+        const parameters: SoireeParams = {
+            from: start,
+            to: end,
+            isStrictTag: true,
+            tags: tags,
+        }
+        console.log("parameters", parameters)
+      const eventsData = await fetchEvents(parameters);
+      setEvents(eventsData);
+
+      const locationPromises = eventsData.map((event) =>
+          fetchLocationById(event.lieuId)
+      );
+
+      const locationsData = await Promise.all(locationPromises);
+      setLocations(locationsData);
+      } catch (err) {
+      console.log("Error fetching events or locations:", err);
+      } finally {
+      setLoading(false);
+      }
+  };
+
+  useEffect(() => {
+      fetchEventsByDateAndTagsWithLocations();
+  }, [date, tags]);
 
   const setLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -206,7 +240,12 @@ const Map = () => {
             )}
         </MapView>
         )}
-        {!selectedMarker && <MapBar onDateChange={setDate} />}
+        {!selectedMarker && <MapBar 
+          date={date}
+          setDate={setDate}
+          tags={tags}
+          setTags={setTags}
+        />}
         {selectedMarker && <TouchableWithoutFeedback>
           <MapCard 
             slideAnim={slideAnim} 

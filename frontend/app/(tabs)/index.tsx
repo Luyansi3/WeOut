@@ -1,10 +1,10 @@
 import { View, YStack, ScrollView } from 'tamagui';
 import Header from '@/components/Header/Header';
 import EventCard from '@/components/EventCard/EventCard';
-import { fetchAllEvents } from '@/services/eventService';
+import { fetchEvents } from '@/services/eventService';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
-import { EventResponse } from '@/types/Event';
+import { EventResponse, SoireeParams } from '@/types/Event';
 import { fetchLocationById } from '@/services/locationService';
 import { LocationResponse } from '@/types/Location';
 
@@ -16,7 +16,11 @@ export default function IndexScreen() {
     useEffect(() => {
         const fetchEventsWithLocations = async () => {
             try {
-            const eventsData = await fetchAllEvents({});
+            const parameters: SoireeParams = {
+                isStrictTag: false,
+                tags: [],
+            };
+            const eventsData = await fetchEvents(parameters);
             setEvents(eventsData);
 
             const locationPromises = eventsData.map((event) =>

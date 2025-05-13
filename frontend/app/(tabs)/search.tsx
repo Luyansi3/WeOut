@@ -4,7 +4,7 @@ import EventCard from '@/components/EventCard/EventCard';
 import { useEffect, useState } from 'react';
 import { EventResponse } from '@/types/Event';
 import { LocationResponse } from '@/types/Location';
-import { fetchAllEvents, fetchEventsByName } from '@/services/eventService';
+import { fetchEvents, fetchEventsByName } from '@/services/eventService';
 import { fetchLocationById } from '@/services/locationService';
 import { ActivityIndicator } from 'react-native';
 

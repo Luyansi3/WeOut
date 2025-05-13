@@ -70,7 +70,7 @@ export const getSoirees = async (req: Request, res: Response) => {
     try {
         const fromRaw = req.query.from;
         const toRaw = req.query.to;
-        const {tags} = req.body;
+        const tags = req.query.tags;
         const isStrictTagRaw = req.query.isStrictTag;
 
         const from = parseDate(fromRaw);

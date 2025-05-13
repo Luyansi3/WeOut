@@ -1,12 +1,21 @@
-import { EventResponse, AllEventParams } from '@/types/Event';
+import { EventResponse, SoireeParams } from '@/types/Event';
 import { convertURLWithParams } from '@/utils/convertURLWithParams';
 
-export const fetchAllEvents = async (parameters: AllEventParams): Promise<EventResponse[]> => {
+export const fetchEvents = async (parameters: SoireeParams): Promise<EventResponse[]> => {
   try {
     let url: string = convertURLWithParams(`http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees`, parameters);
     console.log('Fetching events from:', url);
-    const response = await fetch(url);
+    const response = await fetch(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const events: EventResponse[] = await response.json();
+    console.log('Events fetched:', events);
     return events;
   } catch (error) {
     console.error('Error fetching events:', error);

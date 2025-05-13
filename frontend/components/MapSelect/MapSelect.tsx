@@ -12,7 +12,13 @@ import { XStack } from 'tamagui'
 
 const options = ['Music', 'Food', 'Tech', 'Ar', 'Musi', 'Foo', 'Tec']
 
-export default function MapSelect() {
+export default function MapSelect({
+  tags,
+  setTags,
+}: {
+  tags: string[];
+  setTags: (tags: string[]) => void;
+}) {
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [modalVisible, setModalVisible] = useState(false)
 
@@ -22,7 +28,10 @@ export default function MapSelect() {
         ? prev.filter((val) => val !== item)
         : [...prev, item]
     )
-  }
+      setTags(selectedItems.includes(item)
+          ? selectedItems.filter((val) => val !== item)
+          : [...selectedItems, item]
+      )}
 
   return (
     <View style={styles.container}>
@@ -55,7 +64,9 @@ export default function MapSelect() {
             />
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                setModalVisible(false);
+              }}
             >
               <Text style={styles.closeText}>Done</Text>
             </TouchableOpacity>

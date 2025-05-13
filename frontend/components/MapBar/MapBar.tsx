@@ -3,12 +3,22 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { View, Text, XStack, Select, Adapt, Sheet, Portal, YStack, SelectProps } from 'tamagui';
 import { CalendarDays, Check, ChevronDown, ChevronUp, ListFilter } from '@tamagui/lucide-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { MapBarProps } from '@/types/Map';
 import { LinearGradient } from 'tamagui/linear-gradient';
 import MapSelect from '../MapSelect/MapSelect';
+import { DateExtractor } from '@/types/Extractor';
 
-export default function MapBar({onDateChange}: MapBarProps) {
-  const [date, setDate] = useState(new Date());
+
+export default function MapBar({
+  date,
+  setDate,
+  tags,
+  setTags,
+}: {
+  date: Date;
+  setDate: (date: Date) => void;
+  tags: string[];
+  setTags: (tags: string[]) => void;
+}) {
   const [showPicker, setShowPicker] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
   const selectTriggerRef = useRef<any>(null);
@@ -20,10 +30,9 @@ export default function MapBar({onDateChange}: MapBarProps) {
   };
 
   const onChange = (event: any, selectedDate?: Date) => {
-    setShowPicker(false);
+  setShowPicker(false);
     if (selectedDate) {
       setDate(selectedDate);
-      onDateChange(selectedDate);
     }
   };
   return (
@@ -38,7 +47,7 @@ export default function MapBar({onDateChange}: MapBarProps) {
           </XStack>
         </TouchableOpacity>
 
-        <MapSelect id="select-demo-2" />
+        <MapSelect tags={tags} setTags={setTags} />
       </View>
 
       {showPicker && <DateTimePicker
@@ -47,6 +56,7 @@ export default function MapBar({onDateChange}: MapBarProps) {
           display="spinner"
           onChange={onChange}
           minimumDate={new Date()}
+
         />}
     </>
   );

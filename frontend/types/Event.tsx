@@ -11,8 +11,11 @@ export type EventResponse = {
     tags: string[]
 };
 
-export type AllEventParams = {
-    active?: boolean;
+export type SoireeParams = {
+    from?: Date;
+    to?: Date;
+    isStrictTag: boolean;
+    tags: string[];
 }
 
 export type EventCardProps = {
