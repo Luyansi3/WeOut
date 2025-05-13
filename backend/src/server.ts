@@ -9,6 +9,7 @@ import TagRoutes from './routes/tag.routes';
 import dotenv from 'dotenv';
 import { setupSwagger } from './swagger';
 import path from 'path';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ setupSwagger(app);
 
 // Middleware pour parser le JSON
 app.use(express.json());
+app.use(cors({origin:'*', credentials: true}));
 
 app.use('/static', express.static(path.join(__dirname, '../uploads')));
 
