@@ -11,6 +11,7 @@ import { fetchLocationById } from "@/services/locationService";
 import { fetchAllEvents } from "@/services/eventService";
 import { LinearGradient } from "tamagui/linear-gradient";
 import MapCard from "@/components/MapCard/MapCard";
+import MapBar from "@/components/MapBar/MapBar";
 
 const { height } = Dimensions.get('window');
 export const MAP_CARD_HEIGHT = 0.45 * height;
@@ -206,8 +207,8 @@ const Map = () => {
             )}
         </MapView>
         )}
-    
-        {selectedMarker && <TouchableWithoutFeedback onPress={() => toggleCard(selectedMarker)}>
+        {!selectedMarker && <MapBar />}
+        {selectedMarker && <TouchableWithoutFeedback>
           <MapCard 
             slideAnim={slideAnim} 
             selectedMarker={selectedMarker} 
