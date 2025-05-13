@@ -214,39 +214,39 @@ export const serviceGetSoireeByUserId = async (id: string, prisma: PrismaClient 
         throw error;
     }
 }
-function validateTags(inputTags: string[], ): Tag[] {
-  const validTags = Object.values(Tag);
+function validateTags(inputTags: string[],): Tag[] {
+    const validTags = Object.values(Tag);
 
-  for (const tag of inputTags) {
-    if (!validTags.includes(tag as Tag)) {
-      throw new Error(`Invalid tag value: "${tag}". Allowed values are: ${validTags.join(', ')}`);
+    for (const tag of inputTags) {
+        if (!validTags.includes(tag as Tag)) {
+            throw new Error(`Invalid tag value: "${tag}". Allowed values are: ${validTags.join(', ')}`);
+        }
     }
-  }
 
-  return inputTags as Tag[];
+    return inputTags as Tag[];
 }
-export const servicePostSoiree = async(nom:string,
-                                        description:string,
-                                        photoCouverturePath:string,
-                                        debut:Date,
-                                        fin:Date,
-                                        lieuId:number,
-                                        organismeId:string,
-                                        tags:unknown,prisma: PrismaClient | PrismaTransactionClient) => {
+export const servicePostSoiree = async (nom: string,
+    description: string,
+    photoCouverturePath: string,
+    debut: Date,
+    fin: Date,
+    lieuId: number,
+    organismeId: string,
+    tags: unknown, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
-         return await prisma.soiree.create({
+        return await prisma.soiree.create({
             data: {
-            nom,
-            description,
-            photoCouverturePath,
-            debut: new Date(debut),
-            fin: new Date(fin),
-            lieu: { connect: { id: Number(lieuId) } },
-            organsime: { connect: { id: organismeId } },
-            tags: tags && Array.isArray(tags)  ? validateTags(tags) : [],
+                nom,
+                description,
+                photoCouverturePath,
+                debut: new Date(debut),
+                fin: new Date(fin),
+                lieu: { connect: { id: Number(lieuId) } },
+                organsime: { connect: { id: organismeId } },
+                tags: tags && Array.isArray(tags) ? validateTags(tags) : [],
             }
         });
-    } catch(error) {
+    } catch (error) {
         throw (error)
     }
 }
@@ -315,18 +315,18 @@ export const serviceGetGroupsBySoireeId = async (
 
 
 
-export const serviceGetEventsByDatesAndId = async(id: string, isBefore : boolean ,
-    prisma: PrismaClient | PrismaTransactionClient,date: Date = new Date()) => {
+export const serviceGetEventsByDatesAndId = async (id: string, isBefore: boolean,
+    prisma: PrismaClient | PrismaTransactionClient, date: Date = new Date()) => {
     console.log(date);
     try {
         await serviceGetUserById(id, prisma);
         return await prisma.soiree.findMany({
-            where : {
-                groupes : {
-                    some : {
-                        users : {
-                            some : {
-                                id : id,
+            where: {
+                groupes: {
+                    some: {
+                        users: {
+                            some: {
+                                id: id,
                             },
                         }
                     },
@@ -338,3 +338,43 @@ export const serviceGetEventsByDatesAndId = async(id: string, isBefore : boolean
         throw error;
     }
 }
+
+
+export const serviceGetSoireeParticipants = async (
+    soireeId: number,
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
+    try {
+        await serviceGetSoireeById(soireeId, prisma);
+        const groupes = await prisma.groupe.findMany({
+            where: { soireeId },
+            include: { users: true },
+        });
+        const participantsMap = new Map<string, any>();
+        groupes.forEach(group =>
+            group.users.forEach(user => {
+                participantsMap.set(user.id, user);
+            })
+        );
+        return {
+            success: true,
+            participants: Array.from(participantsMap.values()),
+        };
+    } catch (error) {
+        if (error instanceof DatabaseError) {
+            return {
+                success: false,
+                reason: 'Soiree not found',
+                id: error.id,
+                code: error.code,
+            };
+        }
+
+        console.error('Error retrieving soiree participants:', error);
+        return {
+            success: false,
+            reason: 'Database error',
+            error,
+        };
+    }
+};
