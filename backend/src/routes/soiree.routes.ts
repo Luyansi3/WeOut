@@ -8,7 +8,9 @@ import {
     postSoiree,
     putSoiree,
     getGroupsBySoireeId,
-    getEventsByDatesAndId
+    getEventsByDatesAndId,
+    getParticipants,
+    getComments
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -444,5 +446,75 @@ router.get('/getSoireesByUserId/:id', getSoireeByUserId);
  *         description: Erreur serveur
  */
 router.get('/groups/:id', getGroupsBySoireeId);
+
+
+
+
+/**
+ * @openapi
+ * /api/soirees/participants/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *       - Participants
+ *     summary: Récupère les participants d'une soirée donnée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID unique de la soirée
+ *     responses:
+ *       200:
+ *         description: Participants récupérés avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 participants:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Format de l’ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/participants/:id', getParticipants);
+
+
+
+/**
+ * @openapi
+ * /api/soirees/comments/{id}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *       - Commentaires
+ *     summary: Récupère les commentaires d'une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID unique de la soirée
+ *     responses:
+ *       200:
+ *         description: Commentaires récupérés avec succès
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/comments/:id', getComments);
 
 export default router;
