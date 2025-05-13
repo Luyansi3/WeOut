@@ -7,7 +7,8 @@ import {
     getListFriends,
     participateEvent,
     updateUserInfo,
-    signupUser
+    signupUser,
+    checkFriendshipStatus
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -55,16 +56,51 @@ const router : Router = Router();
  *               properties:
  *                 id:
  *                   type: string
- *                   example: clx1avc123456a0xyz
+ *                   format: uuid
  *                 prenom:
  *                   type: string
- *                   example: Jean
  *                 nom:
  *                   type: string
- *                   example: Dupont
+ *                 genre:
+ *                   type: string
+ *                   nullable: true
+ *                 longitude:
+ *                   type: number
+ *                   nullable: true
+ *                 latitude:
+ *                   type: number
+ *                   nullable: true
+ *                 dateActualisation:
+ *                   type: string
+ *                   format: date-time
+ *                 bio:
+ *                   type: string
+ *                   nullable: true
+ *                 photoProfil:
+ *                   type: string
+ *                   nullable: true
  *                 pseudo:
  *                   type: string
- *                   example: jean.d
+ *                 lienInsta:
+ *                   type: string
+ *                   nullable: true
+ *                 lienTwitter:
+ *                   type: string
+ *                   nullable: true
+ *                 dancing:
+ *                   type: string
+ *                   nullable: true
+ *                 talking:
+ *                   type: string
+ *                   nullable: true
+ *                 alcohool:
+ *                   type: string
+ *                   nullable: true
+ *                 compteId:
+ *                   type: string
+ *                   format: uuid
+ *                 nombreSoiree:
+ *                   type: integer
  *       400:
  *         description: Champs invalides ou manquants
  *       409:
@@ -347,5 +383,44 @@ router.post('/participate/:id', participateEvent);
  *         description: Erreur serveur
  */
 router.patch('/updateUserInfo/:id', updateUserInfo);
+
+
+
+
+/**
+ * @openapi
+ * /api/users/updateUserInfo/{id}:
+ *   patch:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Renvoie le status entre deux users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur actif (dont on cherche le status)
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l'utilisateur avec lequel la relation est
+ *     responses:
+ *       200:
+ *         description: Mise à jour réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               enum : {blocked, blocked_by, already_friends, already_sent, already_received}
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/friendhsipStatus/:id', checkFriendshipStatus);
 
 export default router;
