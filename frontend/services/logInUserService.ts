@@ -7,12 +7,18 @@ export async function logInUser(
     email: string,
     password: string
 ): Promise<void> {
+
+    let user_data = {
+        email: email,
+        password: password
+    };
+
     try {
         let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/login`;
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify(user_data),
         });
         if (!res.ok) throw new Error('Login failed');
         const token = await res.json();

@@ -27,6 +27,10 @@ export default function IndexScreen() {
         console.error('Error during authentication check:', error);
     }
 
+
+
+    
+
     const [events, setEvents] = useState([] as EventResponse[]);
     const [locations, setLocations] = useState([] as LocationResponse[]);
     const [loading, setLoading] = useState(true);
