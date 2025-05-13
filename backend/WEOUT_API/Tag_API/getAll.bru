@@ -1,0 +1,11 @@
+meta {
+  name: getAll
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://{{localhost}}/api/tags
+  body: none
+  auth: inherit
+}
