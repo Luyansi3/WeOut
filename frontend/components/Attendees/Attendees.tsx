@@ -1,4 +1,4 @@
-// components/Attendies/Attendies.tsx
+// components/Attendees/Attendees.tsx
 import React from 'react';
 import { XStack, Image, Text, YStack } from 'tamagui';
 
