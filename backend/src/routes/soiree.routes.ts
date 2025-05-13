@@ -106,7 +106,7 @@ router.get('/name/:name', getSoireeByName);
  *   put:
  *     summary: Met à jour une soirée existante
  *     tags:
- *       - Soirees
+ *       - Soirées
  *     parameters:
  *       - in: path
  *         name: id
@@ -156,7 +156,7 @@ router.get('/name/:name', getSoireeByName);
 
 router.put("/:id", putSoiree);
 
-// POST /soirees/:id - récupérer un utilisateur par ID
+
 
 /**
  * @openapi
@@ -192,6 +192,11 @@ router.put("/:id", putSoiree);
  *         description: Erreur serveur
  */
 router.delete('/delete/:id', deleteSoiree);
+
+
+
+
+
 /**
  * @openapi
  * /api/soirees:
@@ -287,5 +292,5 @@ router.post('/', postSoiree);
  */
 router.get('/getSoireesByUserId/:id', getSoireeByUserId);
    
-
+   
 export default router;

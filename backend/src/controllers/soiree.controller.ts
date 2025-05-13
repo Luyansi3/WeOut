@@ -28,9 +28,9 @@ export const getSoireeById = async (req: Request, res: Response) => {
     try {
         const soiree = await serviceGetSoireeById(id, prisma);
         if (!soiree) {
-            res.status(404).json({error : 'No soiree associated to the ID'});
+            res.status(404).json({ error: 'No soiree associated to the ID' });
             return;
-        } 
+        }
 
         res.status(200).json(soiree);
     } catch(error) {
