@@ -9,7 +9,8 @@ import {
     serviceParticipateEvent,
     serviceUpdateUserInfo,
     serviceSignupUser,
-    serviceCheckFriendshipStatus
+    serviceCheckFriendshipStatus,
+    serviceSigninUser
  } from "../services/user.services"
 import { z } from 'zod';
 import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -244,7 +245,7 @@ export const signupUser = async (req: Request, res: Response) => {
 
     try {
 
-        const {compteCreated, user} = await serviceSignupUser({firstname, lastname, username, password, email}, prisma);
+        const {compteCreated, user} = await serviceSignupUser({firstname, lastname, username, email, password}, prisma);
         res.status(201).json(user);
     } catch (error) {
         if (error instanceof CustomErrors)
@@ -267,11 +268,30 @@ export const checkFriendshipStatus = async(req: Request, res: Response) => {
 
     try {
         const result = await serviceCheckFriendshipStatus(activeId, passiveIdRaw, prisma);
-        res.status(200).json(result);
+        res.status(200).json(result);}
+    catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json({error: error.message});
+        else
+            res.status(500).json({ error: "Server error" });
+    }
+};
+
+export const signinUser = async (req: Request, res: Response) => {
+    let {email, password} = req.body;
+    if(typeof email !== 'string' ||
+        typeof password !== 'string'){
+        res.status(400).json({error:'Invalid or missing field(s)'});
+        return;
+    }
+
+    try {
+        const token = await serviceSigninUser({email, password}, prisma);
+        res.status(201).json({token});
     } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json({error: error.message});
         else
             res.status(500).json({ error: "Server error" });
     }
-}
+};
