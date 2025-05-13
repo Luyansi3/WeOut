@@ -59,3 +59,10 @@ export class UniqueAttributeAlreadyExists extends CustomErrors {
     Error.captureStackTrace(this, this.constructor);  // Capture la stack trace
   }
 }
+
+export class InvalidCredentials extends CustomErrors {
+  constructor(statusCode: number, message:string) {
+    super(statusCode, message);
+    Error.captureStackTrace(this, this.constructor);  // Capture la stack trace
+  }
+}

@@ -5,10 +5,11 @@ import {
     serviceGetSoireeById,
     getSoireeInIntervalAndId
 } from "../services/soiree.services";
-import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttributeAlreadyExists } from "../errors/customErrors";
-import { hashPassword } from '../utils/hash';
+import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttributeAlreadyExists, InvalidCredentials } from "../errors/customErrors";
+import { hashPassword, comparePassword } from '../utils/hash';
+import { SECRET_KEY } from "../server";
 import jwt from 'jsonwebtoken';
-       
+
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
@@ -445,11 +446,7 @@ export const serviceSignupUser = async (data: {firstname:string, lastname:string
 
 
 
-export const generateToken = (userId: string) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
-    expiresIn: '7d',
-  });
-};
+
 function validateUserUpdateData(data: UserUpdateData): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
@@ -528,4 +525,34 @@ export const serviceUpdateUserInfo = async (
       console.error('Error updating user in transaction:', error);
       return { success: false, reason: 'Database error', error };
     }
-  };
+};
+
+export const generateToken = (userId: string) => {
+  return jwt.sign({ id: userId }, SECRET_KEY!, {
+    expiresIn: '7d',
+  });
+};
+
+export const serviceSigninUser = async (data: {email: string; password: string }, prisma: PrismaClient) => {
+
+    try{
+        const compte = await prisma.compte.findUnique({ where: { email:data.email } });
+
+        if (!compte || !(await comparePassword(data.password, compte.hashedMdp))) {
+            throw new InvalidCredentials(401, 'Email or password incorrect');
+        }
+
+        
+        const user = await prisma.user.findUnique({ where: { compteId:compte.id } });
+        if (!user) {
+            throw new InvalidCredentials(401, "No user linked to this account");
+        }
+
+        const token =  generateToken(user.id);
+        
+        return token;
+    }
+    catch(error){
+        throw error;
+    }
+};

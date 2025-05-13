@@ -13,7 +13,7 @@ import path from 'path';
 dotenv.config();
 
 const port = process.env.NODE_PORT || 3000;
-const SECRET_KEY = process.env.JWT_SECRET || 'fallback_secret';
+export const SECRET_KEY = process.env.JWT_SECRET || 'fallback_secret';
 
 const app : Application = express();
 const prisma : PrismaClient = new PrismaClient();
