@@ -8,14 +8,61 @@ import {
     participateEvent,
     updateUserInfo,
     signupUser,
-    checkFriendshipStatus
+    checkFriendshipStatus,
+    signinUser
 } from '../controllers/user.controller';
+import { requireBody } from '../middlewares/requireBody.middlewares';
 
 const router : Router = Router();
 
+
 /**
  * @openapi
- * /signup:
+ * /users/signin:
+ *   post:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Connexion d’un utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, JWT retourné
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Données invalides
+ *       401:
+ *         description: Email ou mot de passe incorrect
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/signin', requireBody, signinUser);
+
+
+/**
+ * @openapi
+ * /users/signup:
  *   post:
  *     tags:
  *       - Utilisateurs 
