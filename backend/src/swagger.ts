@@ -11,6 +11,13 @@ const options: swaggerJSDoc.Options = {
       description: 'Documentation Swagger générée à partir des commentaires @openapi',
     },
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
       schemas: {
         Soiree: {
           type: 'object',

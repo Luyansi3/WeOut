@@ -9,12 +9,54 @@ import {
     updateUserInfo,
     signupUser,
     checkFriendshipStatus,
-    signinUser
+    signinUser,
+    getMeUser
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';
+import { authenticateToken } from '../middlewares/auth.middlewares';
 
 const router : Router = Router();
 
+/**
+ * @openapi
+ * /users/me:
+ *   get:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Récupère les informations de l’utilisateur connecté
+ *     description: Nécessite un token JWT valide dans l'en-tête Authorization
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Informations de l’utilisateur connecté
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: clx123abc
+ *                 prenom:
+ *                   type: string
+ *                   example: Luc
+ *                 nom:
+ *                   type: string
+ *                   example: Martin
+ *                 pseudo:
+ *                   type: string
+ *                   example: lucinho
+ *                 bio:
+ *                   type: string
+ *                   nullable: true
+ *                   example: J’aime sortir et danser
+ *       401:
+ *         description: Requête non autorisée (token manquant ou invalide)
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.get('/me', authenticateToken, getMeUser);
 
 /**
  * @openapi

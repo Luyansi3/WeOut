@@ -10,7 +10,8 @@ import {
     serviceUpdateUserInfo,
     serviceSignupUser,
     serviceCheckFriendshipStatus,
-    serviceSigninUser
+    serviceSigninUser,
+    serviceGetMeUser
  } from "../services/user.services"
 import { z } from 'zod';
 import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -294,4 +295,24 @@ export const signinUser = async (req: Request, res: Response) => {
         else
             res.status(500).json({ error: "Server error" });
     }
+};
+
+export const getMeUser = async (req: Request, res: Response) => {
+    const id : string = (req as any).userId;
+    if (!id) {
+        res.status(401).json({ message: 'Permission denied' });
+        return;
+    }
+    try {
+        const user = await serviceGetMeUser(id, prisma);
+        res.status(200).json(user);
+
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({error : 'Server error'});
+    }    
+
+    return;
 };

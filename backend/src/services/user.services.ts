@@ -556,3 +556,17 @@ export const serviceSigninUser = async (data: {email: string; password: string }
         throw error;
     }
 };
+
+export const serviceGetMeUser = async (id: string, prisma: PrismaClient | PrismaTransactionClient) => {
+    try {
+
+        return await prisma.user.findUniqueOrThrow({
+            where: { id },
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
+            throw new DatabaseError(id, "User", 400);
+        else
+            throw error;
+    }
+};
