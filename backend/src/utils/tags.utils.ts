@@ -1,6 +1,9 @@
 import { Tag } from "@prisma/client";
 
 export const validateTags = (inputTags: unknown): Tag[] => {
+    if (inputTags === undefined) {
+        return [] as Tag[];
+    }
     if (!Array.isArray(inputTags)) {
         throw new Error('Input must be an array.');
     }

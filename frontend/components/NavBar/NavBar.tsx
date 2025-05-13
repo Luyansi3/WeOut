@@ -60,7 +60,9 @@ export default function NavigationBar ({ state, descriptors, navigation }: Botto
 const styles = StyleSheet.create({
     navbar: {
       elevation: 10,
-      zIndex: 1,
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(26, 27, 65, 0.1)',
+      zIndex: 1000,
       position:'absolute',
       height:90,
       bottom:0,

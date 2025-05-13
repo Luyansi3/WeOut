@@ -1,10 +1,10 @@
 import { View, YStack, ScrollView } from 'tamagui';
 import Header from '@/components/Header/Header';
 import EventCard from '@/components/EventCard/EventCard';
-import { fetchAllEvents } from '@/services/eventService';
+import { fetchEvents } from '@/services/eventService';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
-import { EventResponse } from '@/types/Event';
+import { EventResponse, SoireeParams } from '@/types/Event';
 import { fetchLocationById } from '@/services/locationService';
 import { LocationResponse } from '@/types/Location';
 
@@ -16,7 +16,11 @@ export default function IndexScreen() {
     useEffect(() => {
         const fetchEventsWithLocations = async () => {
             try {
-            const eventsData = await fetchAllEvents({});
+            const parameters: SoireeParams = {
+                isStrictTag: false,
+                tags: [],
+            };
+            const eventsData = await fetchEvents(parameters);
             setEvents(eventsData);
 
             const locationPromises = eventsData.map((event) =>
@@ -35,7 +39,7 @@ export default function IndexScreen() {
         fetchEventsWithLocations();
     }, []);
 
-    if (loading) return <ActivityIndicator size="large" />;
+    if (loading) return <ActivityIndicator style={{alignContent: "center", alignItems: "center"}} size="large" />;
     
     return (
         <View flex={1} justifyContent="center" alignItems="center"
@@ -44,7 +48,7 @@ export default function IndexScreen() {
 
             <ScrollView
                 width="100%"
-                backgroundColor="#F2F2F2"
+                backgroundColor="F5F5F7"
                 padding={"$4"}
             >
 
@@ -55,6 +59,7 @@ export default function IndexScreen() {
                         console.log(`${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${event.photoCouverturePath}`)
                         return (
                             <EventCard
+                            key={index}
                             image={event.photoCouverturePath}
                             title={event.nom}
                             description={event.description}

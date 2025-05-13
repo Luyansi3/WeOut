@@ -1,0 +1,1 @@
+export type DateExtractor = (date: Date) => void;
