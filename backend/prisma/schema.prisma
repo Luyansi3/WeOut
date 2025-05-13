@@ -53,6 +53,16 @@ model User {
   demandeEnvoye User[] @relation("Demande")
   demandeRecue  User[] @relation("Demande")
 
+  //Caractéristiques
+  bio String?
+  photoProfil String?
+  pseudo String
+  lienInsta String?
+  lienTwitter String?
+  dancing Int?
+  talking Int?
+  alcohool Int?
+
   // Groupes d'appartenance
   groupes Groupe[]
 
@@ -78,7 +88,7 @@ model Organisme {
   // Soirees organisees
   soirees Soiree[]
 
-  // Tag de l'organsime
+  // Les champs ID pour chaque tag
   tags Tag[]
 
   // Compte associé
@@ -97,14 +107,15 @@ model Lieux {
   id   Int       @id @default(autoincrement())
   nom  String
   type TypeLieux
-  note Float
+  note Float?
+  nombreNote Int @default(0)
 
   // adresse
   adresse   String @unique
   longitude Float
   latitude  Float
 
-  // Tags associés
+  // Les champs ID pour chaque tag
   tags Tag[]
 
   // Soirees hebergees
@@ -123,6 +134,15 @@ model Soiree {
   nom                 String
   description         String
   photoCouverturePath String?
+
+
+  //Caractéristiques
+  dancing Int?
+  nbNoteDancing Int @default(0) 
+  talking Int?
+  nbNoteTalking Int @default(0)
+  alcohool Int?
+  nbNoteAlcohool Int @default(0)
 
   // date
   debut DateTime
@@ -145,8 +165,9 @@ model Soiree {
   // Commentaires de la soirée
   commentaires Commentaire[]
 
-  // Tags associés
+  // Les champs ID pour chaque tag
   tags Tag[]
+
 
   //Nombre de participants
   nombreParticipants Int @default(0)

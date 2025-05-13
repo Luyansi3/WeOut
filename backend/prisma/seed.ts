@@ -16,7 +16,7 @@ export const generateRandomString = (length: number): string => {
   return result;
 }
 
-export const createUser = async (hashedMdp: string, email: string, prenom: string, nom: string) => {
+export const createUser = async (hashedMdp: string, email: string, prenom: string, nom: string, pseudo: string) => {
     try {
         await prisma.$transaction( async(tx) => {
             const compte = await tx.compte.create({
@@ -27,12 +27,16 @@ export const createUser = async (hashedMdp: string, email: string, prenom: strin
             });
             await tx.user.create({
                 data: {
+                    pseudo: pseudo,
                     prenom: prenom,
                     nom: nom,
                     genre: "HOMME",
                     compteId: compte.id,
                     longitude: Math.random() * 100.5,
                     latitude: Math.random() * 100.5,
+                    alcohool: Math.floor(Math.random() * 101),
+                    dancing: Math.floor(Math.random() * 101),
+                    talking: Math.floor(Math.random() * 101),
                 },
             });
         });
@@ -96,7 +100,7 @@ export const sendRequest = async (sender: string, receiver:string) => {
 
 export const createMultipleUsersRandomly = (iterations: number) => {
     for(let i = 0; i<iterations; i++) {
-        createUser(generateRandomString(10), generateRandomString(10) + "@" + generateRandomString(5), generateRandomString(5), generateRandomString(7));
+        createUser(generateRandomString(10), generateRandomString(10) + "@" + generateRandomString(5), generateRandomString(5), generateRandomString(7), generateRandomString(5));
     }
 };
 
@@ -107,8 +111,6 @@ export const createEvent = async ({
   debut,
   fin,
   lieuId,
-  organismeId,
-  tagList = [],
 }: {
   nom: string;
   description: string;
@@ -116,8 +118,6 @@ export const createEvent = async ({
   debut: Date;
   fin: Date;
   lieuId: number;
-  organismeId: string;
-  tagList?: string[]; // array of strings matching the enum names
 }) => {
   try {
     const soiree = await prisma.soiree.create({
@@ -130,10 +130,6 @@ export const createEvent = async ({
         lieu: {
           connect: { id: lieuId },
         },
-        organsime: {
-          connect: { id: organismeId },
-        },
-        tags: tagList as any, // You can add validation here
       },
     });
     return soiree;
@@ -148,21 +144,18 @@ export const createLieu = async (lieuData: {
   nom: string;
   type: 'BOITE' | 'BAR' | 'BARDANSANT' | 'CAFE'; // Enum TypeLieux
   adresse: string;
-  note: number;
   longitude: number;
   latitude: number;
-  tags: Tag[];
 }) => {
   try {
     const createdLieu = await prisma.lieux.create({
       data: {
         nom: lieuData.nom,
         type: lieuData.type,
-        note: lieuData.note,
         adresse: lieuData.adresse,
         longitude: lieuData.longitude,
         latitude: lieuData.latitude,
-        tags: lieuData.tags
+        tags: [] as Tag[]
       },
     });
 
@@ -179,7 +172,6 @@ export const createOrganisme = async (organismeData: {
   nom: string;
   note: number;
   compteId: string;
-  tags: Tag[];
 }) => {
   try {
     const createdOrganisme = await prisma.organisme.create({
@@ -187,7 +179,6 @@ export const createOrganisme = async (organismeData: {
         nom: organismeData.nom,
         compteId: organismeData.compteId,
         note: organismeData.note,
-        tags: organismeData.tags
       },
     });
 
@@ -208,7 +199,6 @@ export const createEventWithLieuAndOrganisme = async ({
   compteData,  // Contains all data for the Compte
   lieuData,  // Contains all data for the Lieu
   organismeData,  // Contains all data for the Organisme
-  tagList = [],  // Tags for the event (optional)
 }: {
   nomEvent: string;
   descriptionEvent: string;
@@ -226,14 +216,11 @@ export const createEventWithLieuAndOrganisme = async ({
     note: number;
     longitude: number;
     latitude: number;
-    tags: Tag[];  // Array of tags
   };
   organismeData: {
     nom: string;
     note: number;
-    tags: Tag[];  // Tags for the organisme
   };
-  tagList?: Tag[];  // Tags for the event (optional)
 }) => {
   try {
     // Start a transaction to ensure atomicity (all-or-nothing)
@@ -256,7 +243,7 @@ export const createEventWithLieuAndOrganisme = async ({
           adresse: lieuData.adresse,
           longitude: lieuData.longitude,
           latitude: lieuData.latitude,
-          tags: lieuData.tags
+          tags: [] as Tag[]
         },
       });
 
@@ -266,7 +253,6 @@ export const createEventWithLieuAndOrganisme = async ({
           nom: organismeData.nom,
           note: organismeData.note,
           compteId: createdCompte.id,  // Linking the organisme to the created compte
-          tags: organismeData.tags
         },
       });
 
@@ -280,7 +266,6 @@ export const createEventWithLieuAndOrganisme = async ({
           fin: fin,
           lieuId: createdLieu.id,  // Linking to the created Lieu
           organismeId: createdOrganisme.id,  // Linking to the created Organisme
-          tags: tagList
         },
       });
 
@@ -294,3 +279,10 @@ export const createEventWithLieuAndOrganisme = async ({
     throw error;
   }
 };
+
+
+export const createMultipleEventRandomly = async(iterations: number, lieuxId: number) => {
+  for (let i =0; i< iterations; i++)
+    createEvent({nom: generateRandomString(5), photoCouverturePath: generateRandomString(10),
+  debut: new Date(), fin: new Date(Date.now() + 24 * 60 * 60 * 1000), lieuId: lieuxId, description: generateRandomString(30)});
+}
