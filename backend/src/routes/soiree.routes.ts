@@ -508,6 +508,35 @@ router.get('/participants/:id', getParticipants);
  *     responses:
  *       200:
  *         description: Commentaires récupérés avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 commentaires:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       contenu:
+ *                         type: string
+ *                       soireeId:
+ *                         type: integer
+ *                       userId:
+ *                         type: string
+ *                       createur:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           prenom:
+ *                             type: string
+ *                           nom:
+ *                             type: string
  *       400:
  *         description: ID invalide
  *       404:
@@ -516,5 +545,6 @@ router.get('/participants/:id', getParticipants);
  *         description: Erreur serveur
  */
 router.get('/comments/:id', getComments);
+
 
 export default router;
