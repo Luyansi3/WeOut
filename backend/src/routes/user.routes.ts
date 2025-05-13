@@ -24,7 +24,7 @@ const router : Router = Router();
  *     tags:
  *       - Utilisateurs
  *     summary: Récupère les informations de l’utilisateur connecté
- *     description: Nécessite un token JWT valide dans l'en-tête Authorization : Bearer <token>
+ *     description: Nécessite un token JWT valide dans l'en-tête "Authorization  Bearer <token>"
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -193,7 +193,7 @@ router.post('/signin', requireBody, signinUser);
  *         description: Erreur serveur
  */
 
-router.post('/signup', signupUser);
+router.post('/signup', requireBody, signupUser);
 
 // GET /user/:id - récupérer un utilisateur par ID
 
@@ -264,7 +264,7 @@ router.get('/:id', getUserById);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/sendFriendRequest/:id', sendFriendRequest);
+router.post('/sendFriendRequest/:id', requireBody, sendFriendRequest);
 
 
 // POST /user/declineFriendRequest/:id - refuser relation d'amitié
@@ -304,7 +304,7 @@ router.post('/sendFriendRequest/:id', sendFriendRequest);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/declineFriendRequest/:id', declineFriendRequest);
+router.post('/declineFriendRequest/:id', requireBody, declineFriendRequest);
 
 
 
@@ -345,7 +345,7 @@ router.post('/declineFriendRequest/:id', declineFriendRequest);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/acceptFriendRequest/:id', acceptFriendRequest);
+router.post('/acceptFriendRequest/:id', requireBody, acceptFriendRequest);
 
 
 
@@ -416,7 +416,7 @@ router.get('/getListFriends/:id', getListFriends);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/participate/:id', participateEvent);
+router.post('/participate/:id', requireBody, participateEvent);
 
 
 
