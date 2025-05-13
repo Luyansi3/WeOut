@@ -44,7 +44,7 @@ export default function IndexScreen() {
 
             <ScrollView
                 width="100%"
-                backgroundColor="#F2F2F2"
+                backgroundColor="F5F5F7"
                 padding={"$4"}
             >
 
