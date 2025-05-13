@@ -172,6 +172,7 @@ export const createOrganisme = async (organismeData: {
   nom: string;
   note: number;
   compteId: string;
+  photo: string;
 }) => {
   try {
     const createdOrganisme = await prisma.organisme.create({
@@ -179,6 +180,7 @@ export const createOrganisme = async (organismeData: {
         nom: organismeData.nom,
         compteId: organismeData.compteId,
         note: organismeData.note,
+        photo: organismeData.photo
       },
     });
 
@@ -220,6 +222,7 @@ export const createEventWithLieuAndOrganisme = async ({
   organismeData: {
     nom: string;
     note: number;
+    photo: string;
   };
 }) => {
   try {
@@ -253,6 +256,7 @@ export const createEventWithLieuAndOrganisme = async ({
           nom: organismeData.nom,
           note: organismeData.note,
           compteId: createdCompte.id,  // Linking the organisme to the created compte
+          photo: organismeData.photo
         },
       });
 

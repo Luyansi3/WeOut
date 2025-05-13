@@ -10,7 +10,8 @@ import {
     getGroupsBySoireeId,
     getEventsByDatesAndId,
     getParticipants,
-    getComments
+    getComments,
+    searchSoireeByText
 } from '../controllers/soiree.controller';
 
 const router : Router = Router();
@@ -46,7 +47,7 @@ const router : Router = Router();
  *         description: Erreur serveur
  */
 router.get('/:id', getSoireeById);
-router.get('/:id', getSoireeById);
+
 
 /**
  * @openapi
@@ -546,5 +547,42 @@ router.get('/participants/:id', getParticipants);
  */
 router.get('/comments/:id', getComments);
 
+
+/**
+ * @openapi
+ * /api/soirees/search/Bytext?text={query}:
+ *   get:
+ *     tags:
+ *       - Soirées
+ *     summary: Recherche des soirées par texte libre (nom, description, lieu, tag)
+ *     parameters:
+ *       - in: query
+ *         name: text
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Mot-clé à rechercher
+ *     responses:
+ *       200:
+ *         description: Résultats de la recherche
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 count:
+ *                   type: integer
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Soiree'
+ *       400:
+ *         description: Paramètre de recherche invalide
+ *       500:
+ *         description: Erreur interne serveur
+ */
+router.get('/search/Bytext', searchSoireeByText);
 
 export default router;

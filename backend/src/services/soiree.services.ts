@@ -419,3 +419,78 @@ export const serviceGetCommentsBySoireeId = async (
       };
     }
   };
+
+
+  export const serviceSearchSoireeByText = async (
+    query: string,
+    prisma: PrismaClient | PrismaTransactionClient
+  ) => {
+    if (!query || query.trim().length < 2) {
+      return {
+        success: false,
+        reason: 'Query is too short or empty',
+      };
+    }
+  
+    const lowered = query.toLowerCase();
+    const upper   = query.toUpperCase() as Tag;
+  
+    const matchingTags: Tag[] = Object
+      .values(Tag)
+      .filter(tag => tag.toLowerCase().includes(lowered)) as Tag[];
+  
+    try {
+      const whereOR: Prisma.SoireeWhereInput[] = [
+        {
+          nom: {
+            contains: lowered,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: lowered,
+            mode: 'insensitive',
+          },
+        },
+        {
+          lieu: {
+            nom: {
+              contains: lowered,
+              mode: 'insensitive',
+            },
+          },
+        },
+      ];
+   
+      matchingTags.forEach(tagVal => {
+        whereOR.push({
+          tags: {
+            has: tagVal,
+          },
+        });
+      });
+  
+      const soirees = await prisma.soiree.findMany({
+        where: {
+          OR: whereOR,
+        },
+        include: {
+          lieu: true,           
+        },
+      });
+  
+      return {
+        success: true,
+        count: soirees.length,
+        results: soirees,
+      };
+    } catch (error) {
+      console.error('Error in serviceSearchSoireeByText:', error);
+      return {
+        success: false,
+        reason: 'Database error',
+        error,
+      };
+    }
+  };
