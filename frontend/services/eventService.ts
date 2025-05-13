@@ -30,3 +30,18 @@ export const fetchEventsByName = async (name: string): Promise<EventResponse[]> 
   }
 }
 
+export const fetchEventByUserId = async (userId: string): Promise<EventResponse[]> => {
+  try {
+    const url = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees/getSoireesByUserId/${userId}`;
+    console.log('Fetching events by user ID from:', url);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error fetching events: ${response.statusText}`);
+    }
+    const events: EventResponse[] = await response.json();
+    return events;
+  } catch (error) {
+    console.error('Error fetching events by user ID:', error);
+    throw error;
+  }
+}

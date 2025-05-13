@@ -2,14 +2,17 @@ import { View, Input, Button, Text, Image, XStack, YStack, SizableText, Tabs, Se
 import { Instagram, Twitter, Users2, PartyPopper } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { fetchUserProfile } from '@/services/profileService';
+import { fetchUserFriends, fetchUserProfile } from '@/services/profileService';
 import { ActivityIndicator } from 'react-native';
 import { UserProfileResponse } from '@/types/UserProfile';
+import { EventResponse } from '@/types/Event';
+import { fetchEventByUserId } from '@/services/eventService';
 
 export default function UserprofileScreen() {
     const router = useRouter();``
-    const userId = "52f81189-9e7f-4bc2-9036-7e875b7c9118"; 
+    const userId = "008e59b7-329f-4779-bc9e-f4eca8e17222"; 
     const [userProfile, setUserProfile] = useState({} as UserProfileResponse);
+    const [userFriends, setUserFriends] = useState([] as UserProfileResponse[]);
     const [loading, setLoading] = useState(true);
     
         useEffect(() => {
@@ -17,6 +20,10 @@ export default function UserprofileScreen() {
                 try {
                 const userData: UserProfileResponse = await fetchUserProfile(userId);
                 setUserProfile(userData);
+
+                const friendsData: UserProfileResponse[] = await fetchUserFriends(userId)
+                setUserFriends(friendsData);
+
                 } catch (err) {
                 console.log("Error fetching user:", err);
                 } finally {
@@ -63,14 +70,14 @@ export default function UserprofileScreen() {
                                 width={24}
                                 height={24}
                             />
-                            <Text fontSize="$6"> {userProfile.ami ? userProfile.ami.length : "0 (Error)"} </Text>
+                            <Text fontSize="$6"> {userFriends ? userFriends.length : "0 (Error)"} </Text>
                         </XStack>
                         <XStack gap="$2">
                             <PartyPopper
                                 width={24}
                                 height={24}
                             />
-                            <Text fontSize="$6">24</Text>
+                            <Text fontSize="$6"> {userProfile.nombreSoiree} </Text>
                         </XStack>
                     </XStack>
                     <XStack

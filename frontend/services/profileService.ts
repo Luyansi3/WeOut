@@ -20,3 +20,24 @@ export const fetchUserProfile = async (userId: string): Promise<any> => {
         throw error;
     }
 };
+
+export const fetchUserFriends = async (userId: string): Promise<any> => {
+    try {
+        let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/getListFriends/${userId}`;
+        console.log('Fetching user friends from:', url);
+        const response = await fetch(url);
+        const userFriends: UserProfileResponse[] = await response.json();
+        console.log('User friends fetched:', userFriends.length);
+        if (!response.ok) {
+            throw new Error(`Error fetching user friends: ${response.statusText}`);
+        }
+        if (userFriends.length === 0) {
+            throw new Error('User friends not found');
+        }
+
+        return userFriends;
+    } catch (error) {
+        console.error('Error fetching user friends:', error);
+        throw error;
+    }
+}

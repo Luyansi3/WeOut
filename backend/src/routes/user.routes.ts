@@ -171,7 +171,7 @@ router.post('/acceptFriendRequest/:id', acceptFriendRequest);
 
 /**
  * @openapi
- * /api/users/{id}:
+ * /api/users/getListFriends/{id}:
  *   get:
  *     tags:
  *       - Utilisateurs

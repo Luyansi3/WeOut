@@ -8,6 +8,7 @@ export type UserProfileResponse = {
     compte: string
     compteId: string,
     ami: UserProfileResponse[],
+    nombreSoiree: number,
 }
 
 export type UserProfileUsable = {
