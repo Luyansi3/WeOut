@@ -11,6 +11,9 @@ import { setupSwagger } from './swagger';
 import path from 'path';
 import cors from 'cors';
 
+import cors from 'cors'; // pour autoriser les requêtes cross-origin
+
+
 dotenv.config();
 
 const port = process.env.NODE_PORT || 3000;
@@ -21,6 +24,12 @@ const prisma : PrismaClient = new PrismaClient();
 
 setupSwagger(app);
 
+// Middleware pour gérer les CORS
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
+
 // Middleware pour parser le JSON
 app.use(express.json());
 app.use(cors({origin:'*', credentials: true}));
@@ -29,6 +38,7 @@ app.use('/static', express.static(path.join(__dirname, '../uploads')));
 
 
 // Routes de l'API  
+
 app.use('/api/users', UserRoutes);
 app.use('/api/soirees', SoireeRoutes);
 app.use('/api/lieux', LieuRoutes);

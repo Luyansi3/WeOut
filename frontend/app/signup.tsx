@@ -68,7 +68,7 @@ const SignupScreen = () => {
         let firstName: string;
         let lastName: string;
         firstName = fullName.split(' ')[0];
-        lastName = fullName.split(' ')[1];
+        lastName = fullName.split(' ').slice(1).join(' '); // prendre le reste de la liste à partir de 1
 
         // Check if the first name and last name are not empty
         if (!firstName || !lastName) {
@@ -79,7 +79,7 @@ const SignupScreen = () => {
 
         try {
             await signUpUser(firstName, lastName, username, email, password);
-            // Redirect to login page after successful signup TO DO
+            router.push('/login'); // Redirect to login page after successful signup
         } catch (error) {
             console.error('Error during signup:', error);
             alert('An error occurred during signup. Please try again.');

@@ -1,12 +1,5 @@
 import { convertURLWithParams } from '@/utils/convertURLWithParams';
 
-export interface SignupData {
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-    password: string;
-}
 
 export async function signUpUser(
     firstName: string,
@@ -15,11 +8,13 @@ export async function signUpUser(
     email: string,
     password: string): Promise<void> {
 
-    
-
-
-    // Check if the username is already taken TO DO
-    // Check if the email is already taken TO DO
+    let user_data = {
+        firstname: firstName,
+        lastname: lastName,
+        username: username,
+        email: email,
+        password: password
+    };
 
 
 
@@ -30,11 +25,12 @@ export async function signUpUser(
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({firstName, lastName, username, email, password }),
+            body: JSON.stringify(user_data),
         });
         if (!res.ok) throw new Error('Registration failed');
-        alert('Registration successful! Please log in.');
+        
     } catch (e) {
+        console.error('Error during signup:', e);
         alert('Registration error');
     }
 }

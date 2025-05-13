@@ -7,8 +7,11 @@ import { ActivityIndicator, FlatList } from 'react-native';
 import { EventResponse, SoireeParams } from '@/types/Event';
 import { fetchLocationById } from '@/services/locationService';
 import { LocationResponse } from '@/types/Location';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 export default function IndexScreen() {
+    useAuthRedirect(); // check if user is logged in
+
     const [events, setEvents] = useState([] as EventResponse[]);
     const [locations, setLocations] = useState([] as LocationResponse[]);
     const [loading, setLoading] = useState(true);

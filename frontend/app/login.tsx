@@ -19,6 +19,11 @@ import { Button, Switch, Text, XStack, YStack } from 'tamagui';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 
+// Pour le login "remember me":
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 
 const SignInScreen: React.FC = () => {
@@ -26,6 +31,7 @@ const SignInScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
 
   // Custom colors:
   const customColors = {
@@ -40,9 +46,40 @@ const SignInScreen: React.FC = () => {
   const router = useRouter();
 
 
+  useEffect(() => {
+    const loadRememberedEmail = async () => {
+      const savedEmail = await AsyncStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRemember(true);
+      }
+    };
+    loadRememberedEmail();
+  }, []);
+
+
+
+
+
   const handleSignIn = async () => {
-    console.log("Sign in pressed");
+    if (remember) { // pour la prochaine fois
+      await AsyncStorage.setItem('rememberedEmail', email);
+    } else {
+      await AsyncStorage.removeItem('rememberedEmail');
+    }
+    try {
+      console.log("Call API TO DO for LOGIN");
+    }
+    catch (error) {
+      console.error("Error during sign in:", error);
+      alert('Sign in error');
+    }
   }
+
+
+
+
+
 
 
   return (

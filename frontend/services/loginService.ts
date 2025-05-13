@@ -2,11 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // npm ins
 
 // doc : https://react-native-async-storage.github.io/async-storage/docs/usage/
 
-export interface loginData {
-    email: string;
-    password: string;
-}
-
 
 export async function loginUser(
     email: string,
