@@ -15,6 +15,8 @@ import {
     serviceGetCommentsBySoireeId
 } from "../services/soiree.services"
 import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
+import {parseDate} from "../utils/date.utils";
+import { validateTags } from "../utils/tags.utils";
 
 
 
@@ -66,9 +68,25 @@ export const getSoireeByName = async (req: Request, res: Response) => {
 export const getSoirees = async (req: Request, res: Response) => {
 
     try {
-        const active: unknown = req.query.active;
-        const now = new Date();
-        const soirees = await serviceGetSoirees(now, active, prisma);
+        const fromRaw = req.query.from;
+        const toRaw = req.query.to;
+        const {tags} = req.body;
+        const isStrictTagRaw = req.query.isStrictTag;
+
+        const from = parseDate(fromRaw);
+        const to = parseDate(toRaw);
+        const tagExtracted = validateTags(tags);
+
+        if (!isStrictTagRaw || typeof isStrictTagRaw !== 'string' 
+            || (isStrictTagRaw !== 'true' && isStrictTagRaw !== 'false')
+        ) {
+            res.status(400).json({error: "Invalid boolean for isStrictTagRaw"});
+            return;
+        }
+        const isStrictTag = (isStrictTagRaw === 'true' ? true : false);
+
+
+        const soirees = await serviceGetSoirees(isStrictTag, from, to, tagExtracted, prisma);
         res.status(200).json(soirees)
     }
     catch (error) {
@@ -90,26 +108,27 @@ export const postSoiree = async (req: Request, res: Response) => {
         tags,
     } = req.body;
 
+
+    debut = parseDate(debut);
+    fin = parseDate(fin);
     if (
         typeof nom !== 'string' ||
         typeof description !== 'string' ||
         typeof photoCouverturePath !== 'string' ||
-        typeof debut !== 'string' ||
-        typeof fin !== 'string' ||
         typeof lieuId !== 'number' ||
-        typeof organismeId !== 'string'
+        typeof organismeId !== 'string' ||
+        !debut || !fin
     ) {
         res.status(400).json({ error: 'Invalid or missing field(s)' });
+        return;
     }
 
-    const isArrayOfStrings = (arr: any): arr is string[] => Array.isArray(arr) && arr.every(item => typeof item === 'string');
-    const isArrayOfInt = (arr: any): arr is number[] => Array.isArray(arr) && arr.every(item => typeof item === 'number');
 
     if ((tags !== undefined && !Array.isArray(tags))) {
         res.status(400).json({ error: 'tags must be arrays if provided' });
+        return;
     }
-    debut = new Date(debut);
-    fin = new Date(fin);
+    
     try {
         const soirees = await servicePostSoiree(nom,
             description,
