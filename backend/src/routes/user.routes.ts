@@ -24,7 +24,7 @@ const router : Router = Router();
  *     tags:
  *       - Utilisateurs
  *     summary: Récupère les informations de l’utilisateur connecté
- *     description: Nécessite un token JWT valide dans l'en-tête Authorization
+ *     description: Nécessite un token JWT valide dans l'en-tête Authorization : Bearer <token>
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -37,20 +37,15 @@ const router : Router = Router();
  *               properties:
  *                 id:
  *                   type: string
- *                   example: clx123abc
  *                 prenom:
  *                   type: string
- *                   example: Luc
  *                 nom:
  *                   type: string
- *                   example: Martin
  *                 pseudo:
  *                   type: string
- *                   example: lucinho
  *                 bio:
  *                   type: string
  *                   nullable: true
- *                   example: J’aime sortir et danser
  *       401:
  *         description: Requête non autorisée (token manquant ou invalide)
  *       404:
