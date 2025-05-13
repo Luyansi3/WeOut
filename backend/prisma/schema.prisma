@@ -22,7 +22,7 @@ model Compte {
   id        String @id @default(uuid())
   hashedMdp String
   email     String @unique
-  nom       String
+  
 
   // A vérifier dans le code que uniquement un des deux soit NULL
   user      User?
@@ -58,10 +58,12 @@ model User {
 
   //Caractéristiques
   bio String?
-  photoProfil String?
-  pseudo String
-  lienInsta String?
-  lienTwitter String?
+  
+  photoProfil String? @unique
+  pseudo String @unique
+  lienInsta String? @unique
+  lienTwitter String? @unique
+
   dancing Int?
   talking Int?
   alcohool Int?
@@ -86,7 +88,11 @@ model User {
 model Organisme {
   id   String @id @default(uuid())
   nom  String @unique
-  note Float
+  note Float?
+
+  //Photo de profil
+  photo String
+
 
   // Soirees organisees
   soirees Soiree[]

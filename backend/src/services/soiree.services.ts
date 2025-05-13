@@ -316,8 +316,8 @@ export const serviceGetGroupsBySoireeId = async (
 
 
 export const serviceGetEventsByDatesAndId = async(id: string, isBefore : boolean ,
-     prisma: PrismaClient | PrismaTransactionClient,date: Date = new Date()) => {
-
+    prisma: PrismaClient | PrismaTransactionClient,date: Date = new Date()) => {
+    console.log(date);
     try {
         await serviceGetUserById(id, prisma);
         return await prisma.soiree.findMany({
@@ -326,13 +326,13 @@ export const serviceGetEventsByDatesAndId = async(id: string, isBefore : boolean
                     some : {
                         users : {
                             some : {
-                                id: id
+                                id : id,
                             },
-                        },
+                        }
                     },
                 },
-                fin : (isBefore ? {lt: date} : {gt: date})
             },
+            //fin : (isBefore ? {lte: date} : {gt: date})
         });
     } catch (error) {
         throw error;

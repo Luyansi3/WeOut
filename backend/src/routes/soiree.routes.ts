@@ -313,9 +313,21 @@ router.get('/getSoireesByUserId/:id', getSoireeByUserId);
  *         schema:
  *           type: integer
  *         description: ID unique du user dont on récupère les soirées
+ *       - in: query
+ *         name: isBoolean
+ *         required: true
+ *         schema:
+ *           type: boolean
+ *         description: true ou false pour définir si on prend les events avant ou après
+ *       - in: query
+ *         name: date
+ *         required: false
+ *         schema:
+ *           type: dateFormat "YYYY-MM-DDTHH:mm"
+ *         description: date au bon format avec laquelle on compare (now par défaut)
  *     responses:
  *       200:
- *         description: Obtenir la liste de soirée d'un User
+ *         description: Obtention réussie avec succès
  *         content:
  *           application/json:
  *             schema:
@@ -325,7 +337,7 @@ router.get('/getSoireesByUserId/:id', getSoireeByUserId);
  *       400:
  *         description: Requête invalide (ID manquant ou incorrect)
  *       404:
- *         description: Soirée non trouvée
+ *         description: Soirées ou User non trouvée
  *       500:
  *         description: Erreur serveur
  */

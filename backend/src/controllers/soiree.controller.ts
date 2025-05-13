@@ -252,7 +252,7 @@ export const getEventsByDatesAndId = async(req: Request, res: Response) => {
     let result;
 
     //Récupérer le paramètre isbefore t le check
-    const isBeforeRaw = req.query.isBoolean;
+    const isBeforeRaw = req.query.isBefore;
     if (!isBeforeRaw || typeof isBeforeRaw != 'string' || (isBeforeRaw != 'true' && isBeforeRaw != 'false')) {
         res.status(400).json({error : 'Invalid isBefore boolean'});
         return;
@@ -269,9 +269,9 @@ export const getEventsByDatesAndId = async(req: Request, res: Response) => {
                 res.status(400).json({error: 'invalid date format'});
                 return;
             }   
-            result = serviceGetEventsByDatesAndId(id, isBefore, prisma, dateObject);
+            result = await serviceGetEventsByDatesAndId(id, isBefore, prisma, dateObject);
         } else {
-            result = serviceGetEventsByDatesAndId(id, isBefore, prisma);
+            result = await serviceGetEventsByDatesAndId(id, isBefore, prisma);
         }
         res.status(200).json(result);
     } catch (error) {
