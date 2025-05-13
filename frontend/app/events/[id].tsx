@@ -18,13 +18,14 @@ export default function EventDetailScreen() {
   const [location, setLocation] = useState<LocationResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // État pour l'onglet actif
+  const [selectedTab, setSelectedTab] = useState<'About' | 'People'>('About');
+
   useEffect(() => {
     if (!id) return;
-    // Fetch event details
     fetchEventById(id)
       .then(evt => {
         setEvent(evt);
-        // Fetch location using lieuId from event
         return fetchLocationById(evt.lieuId);
       })
       .then(loc => setLocation(loc))
@@ -39,10 +40,16 @@ export default function EventDetailScreen() {
   const truncatedTags = event.tags.slice(0, 4).map(tag => truncateText(tag, 6));
 
   // Formats de date
-  const dateFull = new Date(event.debut).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  const dateFull = new Date(event.debut).toLocaleDateString('en-US', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
   const weekday = new Date(event.debut).toLocaleDateString('en-US', { weekday: 'long' });
-  const timeStart = new Date(event.debut).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  const timeEnd = new Date(event.fin).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  const timeStart = new Date(event.debut).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: 'numeric', hour12: true
+  });
+  const timeEnd = new Date(event.fin).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: 'numeric', hour12: true
+  });
 
   return (
     <ScrollView flex={1} backgroundColor="#fff">
@@ -110,16 +117,21 @@ export default function EventDetailScreen() {
         })}
       </YStack>
 
-      {/* Sliders statiques */}
+      {/* Sliders conditionnels */}
       <YStack mt={10} space={10} px="$4">
-        <Slider title="Dancing" value={75} max={100} icon="💃" width={314} height={10} />
-        <Slider title="Alcohol" value={50} max={100} icon="🍹" width={314} height={10} />
-        <Slider title="Talk"    value={100} max={100} icon="🗣️" width={314} height={10} />
+        {event.dancing != null && (
+          <Slider title="Dancing" value={event.dancing} max={100} icon="💃" width={314} height={10} />
+        )}
+        {event.alcohool != null && (
+          <Slider title="Alcohol" value={event.alcohool} max={100} icon="🍹" width={314} height={10} />
+        )}
+        {event.talking != null && (
+          <Slider title="Talk" value={event.talking} max={100} icon="🗣️" width={314} height={10} />
+        )}
       </YStack>
 
       {/* Section calendrier et horaires */}
       <XStack mt={10} px="$4">
-        {/* Rectangle rose avec icône CalendarDays */}
         <YStack
           width={48}
           height={48}
@@ -131,7 +143,6 @@ export default function EventDetailScreen() {
           <CalendarDays width={24} height={24} color="#FF3C78" />
         </YStack>
 
-        {/* Texte date et horaire */}
         <YStack ml={14} justifyContent="center">
           <Text
             fontFamily="Raleway"
@@ -155,7 +166,6 @@ export default function EventDetailScreen() {
 
       {/* Section lieu sous calendar */}
       <XStack mt={20} px="$4">
-        {/* Rectangle rose avec icône MapPinned */}
         <YStack
           width={48}
           height={48}
@@ -167,7 +177,6 @@ export default function EventDetailScreen() {
           <MapPinned width={24} height={24} color="#FF3C78" />
         </YStack>
 
-        {/* Texte lieu */}
         <YStack ml={14} justifyContent="center">
           <Text
             fontFamily="Raleway"
@@ -188,6 +197,84 @@ export default function EventDetailScreen() {
           </Text>
         </YStack>
       </XStack>
+
+      {/* Onglets About / People */}
+      <XStack
+        mt={20}
+        px="$4"
+        height={40}
+        alignItems="center"
+        justifyContent="center"
+      >
+        {/* About */}
+        <Pressable onPress={() => setSelectedTab('About')}>
+          <Text
+            fontFamily="Raleway"
+            fontWeight="700"
+            fontSize={16}
+            color={selectedTab === 'About' ? '#FF3C78' : '#747688'}
+          >
+            About
+          </Text>
+        </Pressable>
+
+        {/* Séparateur vertical */}
+        <YStack
+          width={1}
+          height={20}
+          backgroundColor="#1A1B41"
+          opacity={0.25}
+          mx={10}
+        />
+
+        {/* People */}
+        <Pressable onPress={() => setSelectedTab('People')}>
+          <Text
+            fontFamily="Raleway"
+            fontWeight="700"
+            fontSize={16}
+            color={selectedTab === 'People' ? '#FF3C78' : '#747688'}
+          >
+            People
+          </Text>
+        </Pressable>
+      </XStack>
+
+      {/* Contenu des onglets */}
+      <YStack px="$4" mt={10}>
+        {selectedTab === 'About' ? (
+          <>
+            <Text
+              fontFamily="Raleway"
+              fontWeight="600"
+              fontSize={18}
+              color="#1A1B41"
+              opacity={0.84}
+              mb={8}
+            >
+              About Event
+            </Text>
+            <Text
+              fontFamily="Raleway"
+              fontWeight="500"
+              fontSize={16}
+              color="#747688"
+              lineHeight={22}
+            >
+              {event.description}
+            </Text>
+          </>
+        ) : (
+          <Text
+            fontFamily="Raleway"
+            fontWeight="400"
+            fontSize={14}
+            color="#1A1B41"
+          >
+            Voici les participants de la soirée
+          </Text>
+        )}
+      </YStack>
     </ScrollView>
   );
 }
