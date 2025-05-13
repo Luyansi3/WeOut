@@ -9,29 +9,33 @@ export type AttendeesProps = {
 
 export default function Attendees({ avatars }: AttendeesProps) {
   const count = avatars.length;
-  // On n'affiche que les 3 premiers avatars
   const displayed = avatars.slice(0, 3);
-  // Décalage horizontal pour le chevauchement
   const overlap = -12;
 
   return (
-    <YStack width="100%" alignItems="center">
-      <XStack alignItems="center" justifyContent={count <= 3 ? 'center' : 'flex-start'}>
-        {displayed.map((uri, idx) => (
-          <Image
-            key={idx}
-            source={{ uri }}
-            width={34.18}
-            height={34.18}
-            borderRadius={999}
-            ml={idx === 0 ? 0 : overlap}
-            zIndex={idx + 1}
-          />
-        ))}
+    <YStack alignItems="flex-start">
+      <XStack alignItems="center" justifyContent="flex-start">
+        {displayed.map((uri, idx) => {
+          // on inverse l’ordre de zIndex pour que l’avatar de gauche soit au-dessus
+          const z = displayed.length - idx;
+          return (
+            <Image
+              key={idx}
+              source={{ uri }}
+              width={34.18}
+              height={34.18}
+              borderRadius={999}
+              borderWidth={2}
+              borderColor="#fff"
+              ml={idx === 0 ? 0 : overlap}
+              zIndex={z}
+            />
+          );
+        })}
 
         {count > 3 && (
           <Text
-            ml={12}
+            ml={8}
             fontFamily="Raleway"
             fontWeight="700"
             fontSize={15}
