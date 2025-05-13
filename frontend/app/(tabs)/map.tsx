@@ -22,6 +22,7 @@ const Map = () => {
   const [events, setEvents] = useState([] as EventResponse[]);
   const [locations, setLocations] = useState([] as LocationResponse[]);
   const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(new Date());
 
   const slideAnim = useRef(new Animated.Value(height)).current;
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -207,7 +208,7 @@ const Map = () => {
             )}
         </MapView>
         )}
-        {!selectedMarker && <MapBar />}
+        {!selectedMarker && <MapBar onDateChange={setDate} />}
         {selectedMarker && <TouchableWithoutFeedback>
           <MapCard 
             slideAnim={slideAnim} 

@@ -1,26 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { View, Text, XStack } from 'tamagui';
 import { CalendarDays, ListFilter } from '@tamagui/lucide-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { MapBarProps } from '@/types/Map';
 
-export default function MapBar () {
- return (
-  <View style={styles.filterBar}>
-    <TouchableOpacity style={styles.filterButton}>
-      <XStack gap={7} alignItems="center">
-        <CalendarDays width={30} height={30} color={"#8F00FF"} />
-        <Text style={styles.filterText}>Today</Text>
-      </XStack>
-    </TouchableOpacity>
+export default function MapBar({onDateChange}: MapBarProps) {
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
-    <TouchableOpacity style={styles.filterButton}>
-      <XStack gap={7} alignItems="center">
-        <ListFilter width={30} height={30} color={"#8F00FF"} />
-        <Text style={styles.filterText}>Filter</Text>
-      </XStack>
-    </TouchableOpacity>
-  </View>
-)}
+  const onChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+      onDateChange(selectedDate);
+    }
+  };
+  return (
+    <>
+      <View style={styles.filterBar}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setShowPicker(true)}>
+          <XStack gap={7} alignItems="center">
+            <CalendarDays width={30} height={30} color={"#8F00FF"} />
+            <Text style={styles.filterText}>
+              {date.toDateString().split(' ').slice(1).join(' ')}
+            </Text>
+          </XStack>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.filterButton}>
+          <XStack gap={7} alignItems="center">
+            <ListFilter width={30} height={30} color={"#8F00FF"} />
+            <Text style={styles.filterText}>Filter</Text>
+          </XStack>
+        </TouchableOpacity>
+      </View>
+
+      {showPicker && <DateTimePicker
+          value={date}
+          mode="date"
+          display="spinner"
+          onChange={onChange}
+          minimumDate={new Date()}
+        />}
+    </>
+  );
+}
 
 const styles = StyleSheet.create({
   filterBar: {

@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     elevation: 5,
     width: '100%',
+    zIndex: 999,
   },
   title: {
     fontSize: 18,
