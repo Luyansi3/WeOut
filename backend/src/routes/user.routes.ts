@@ -7,7 +7,8 @@ import {
     getListFriends,
     participateEvent,
     updateUserInfo,
-    signupUser
+    signupUser,
+    checkFriendshipStatus
 } from '../controllers/user.controller';
 
 const router : Router = Router();
@@ -382,5 +383,44 @@ router.post('/participate/:id', participateEvent);
  *         description: Erreur serveur
  */
 router.patch('/updateUserInfo/:id', updateUserInfo);
+
+
+
+
+/**
+ * @openapi
+ * /api/users/updateUserInfo/{id}:
+ *   patch:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Renvoie le status entre deux users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur actif (dont on cherche le status)
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l'utilisateur avec lequel la relation est
+ *     responses:
+ *       200:
+ *         description: Mise à jour réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               enum : {blocked, blocked_by, already_friends, already_sent, already_received}
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/friendhsipStatus/:id', checkFriendshipStatus);
 
 export default router;

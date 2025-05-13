@@ -46,7 +46,7 @@ const router : Router = Router();
  *         description: Erreur serveur
  */
 router.get('/:id', getSoireeById);
-router.get('/:id', getSoireeById);
+
 
 /**
  * @openapi
@@ -58,11 +58,32 @@ router.get('/:id', getSoireeById);
  *     description: Renvoie toutes les soirées enregistrées. Peut filtrer celles à venir avec le paramètre `active=true`.
  *     parameters:
  *       - in: query
- *         name: active
+ *         name: from
+ *         required: false
+ *         schema:
+ *           type: DateFormat "YYYY-MM-dd HH:mm"
+ *         description: Date à partir de laquelle on cherche les soirées, si pas renseigné depuis le debut
+ *       - in: query
+ *         name: to
+ *         required: false
+ *         schema:
+ *           type: DateFormat "YYYY-MM-dd HH:mm"
+ *         description: Date à partir de laquelle on cherche les soirées, si pas renseigné jusqu'à la fin
+ *       - in: query
+ *         name: isStrictTag
+ *         required: true
  *         schema:
  *           type: boolean
- *         required: false
- *         description: Si `true`, retourne uniquement les soirées futures.
+ *         description: si true; les soirées doivent inclure tous les tags, sinon au moins un
+ *       - in: body
+ *         name: tags
+ *         required: true
+ *         schema:
+ *           tags:
+ *             type: array
+ *             items:
+ *               type: string
+ *         description: liste des tags pour la recherche, si vide pas de filtre
  *     responses:
  *       200:
  *         description: Liste des soirées récupérée avec succès
