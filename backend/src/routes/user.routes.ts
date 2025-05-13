@@ -55,16 +55,51 @@ const router : Router = Router();
  *               properties:
  *                 id:
  *                   type: string
- *                   example: clx1avc123456a0xyz
+ *                   format: uuid
  *                 prenom:
  *                   type: string
- *                   example: Jean
  *                 nom:
  *                   type: string
- *                   example: Dupont
+ *                 genre:
+ *                   type: string
+ *                   nullable: true
+ *                 longitude:
+ *                   type: number
+ *                   nullable: true
+ *                 latitude:
+ *                   type: number
+ *                   nullable: true
+ *                 dateActualisation:
+ *                   type: string
+ *                   format: date-time
+ *                 bio:
+ *                   type: string
+ *                   nullable: true
+ *                 photoProfil:
+ *                   type: string
+ *                   nullable: true
  *                 pseudo:
  *                   type: string
- *                   example: jean.d
+ *                 lienInsta:
+ *                   type: string
+ *                   nullable: true
+ *                 lienTwitter:
+ *                   type: string
+ *                   nullable: true
+ *                 dancing:
+ *                   type: string
+ *                   nullable: true
+ *                 talking:
+ *                   type: string
+ *                   nullable: true
+ *                 alcohool:
+ *                   type: string
+ *                   nullable: true
+ *                 compteId:
+ *                   type: string
+ *                   format: uuid
+ *                 nombreSoiree:
+ *                   type: integer
  *       400:
  *         description: Champs invalides ou manquants
  *       409:
