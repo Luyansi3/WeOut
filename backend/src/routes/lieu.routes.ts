@@ -48,7 +48,8 @@ router.get('/:id', getLieuById);
  *         name: isStrictTag
  *         required: true
  *         schema:
- *           type: boolean
+ *           type: string
+ *           enum: [true, false]
  *         description: "'true' pour que tous les tags soient requis (hasEvery), 'false' pour qu'au moins un des tags soit requis (hasSome)"
  *       - in: query
  *         name: tags
@@ -59,7 +60,7 @@ router.get('/:id', getLieuById);
  *             type: string
  *         style: form
  *         explode: true
- *         description: Liste des tags à filtrer
+ *         description: Liste des tags à filtrer (ex. tags=HOUSE&tags=TECHNO)
  *     responses:
  *       200:
  *         description: Liste des lieux correspondant aux filtres
@@ -75,5 +76,6 @@ router.get('/:id', getLieuById);
  *         description: Erreur serveur
  */
 router.get('/', getLieux);
+
 
 export default router;
