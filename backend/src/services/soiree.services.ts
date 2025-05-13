@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma, Tag } from "@prisma/client";
 import { DatabaseError, BadStateDataBase, CustomErrors, ImpossibleToParticipate } from "../errors/customErrors";
 import { serviceGetUserById } from "./user.services";
+import {validateTags} from "../utils/tags.utils"
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
 
@@ -104,10 +105,17 @@ export const getSoireeInIntervalAndId = async (start: Date, end: Date, id: strin
 
 
 
-export const serviceGetSoirees = async (now: Date, active: any, prisma: PrismaClient | PrismaTransactionClient) => {
+export const serviceGetSoirees = async (isStrictTag: boolean,from: Date | null, to: Date | null, tags : Tag[] ,prisma: PrismaClient | PrismaTransactionClient) => {
+    
     try {
         return await prisma.soiree.findMany({
-            where: active === 'true' ? { fin: { gt: now } } : {},
+            where: {
+            ...(from !== null ? {debut : {gte : from}} : {}),
+            ...(to !== null ? {fin : {lte : to}} : {}),
+            ...(tags.length ? {tags : {
+                [isStrictTag ? 'hasEvery' : 'hasSome'] : tags
+            }} : {}),
+            },            
         });
     } catch (error) {
         throw (error)
@@ -214,17 +222,7 @@ export const serviceGetSoireeByUserId = async (id: string, prisma: PrismaClient 
         throw error;
     }
 }
-function validateTags(inputTags: string[],): Tag[] {
-    const validTags = Object.values(Tag);
 
-    for (const tag of inputTags) {
-        if (!validTags.includes(tag as Tag)) {
-            throw new Error(`Invalid tag value: "${tag}". Allowed values are: ${validTags.join(', ')}`);
-        }
-    }
-
-    return inputTags as Tag[];
-}
 export const servicePostSoiree = async (nom: string,
     description: string,
     photoCouverturePath: string,
@@ -232,7 +230,7 @@ export const servicePostSoiree = async (nom: string,
     fin: Date,
     lieuId: number,
     organismeId: string,
-    tags: unknown, prisma: PrismaClient | PrismaTransactionClient) => {
+    tags: Tag[] | unknown, prisma: PrismaClient | PrismaTransactionClient) => {
     try {
         return await prisma.soiree.create({
             data: {
@@ -243,7 +241,7 @@ export const servicePostSoiree = async (nom: string,
                 fin: new Date(fin),
                 lieu: { connect: { id: Number(lieuId) } },
                 organsime: { connect: { id: organismeId } },
-                tags: tags && Array.isArray(tags) ? validateTags(tags) : [],
+                tags: validateTags(tags),
             }
         });
     } catch (error) {
