@@ -14,11 +14,10 @@ const router : Router = Router();
 
 
 // GET /soirees/:id - récupérer une soirée par ID
-// GET /soirees/:id - récupérer une soirée par ID
+
 
 /**
  * @openapi
- * /api/soirees/{id}:
  * /api/soirees/{id}:
  *   get:
  *     tags:
@@ -106,7 +105,7 @@ router.get('/name/:name', getSoireeByName);
 
 /**
  * @openapi
- * /api/soirees/{id}:
+ * /api/soirees/createSoiree/{id}:
  *   put:
  *     summary: Met à jour une soirée existante
  *     tags:
@@ -158,7 +157,7 @@ router.get('/name/:name', getSoireeByName);
  *         description: Requête invalide
  */
 
-router.put("/:id", putSoiree);
+router.put("createSoiree/:id", putSoiree);
 
 
 /**

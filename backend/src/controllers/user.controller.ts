@@ -216,7 +216,4 @@ export const updateUserInfo = async (req: Request, res: Response) => {
        return;
     }
   };
-<<<<<<< HEAD
-=======
 
->>>>>>> ad86a1a (fixed redef of updateUser)

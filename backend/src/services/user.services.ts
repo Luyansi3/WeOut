@@ -391,8 +391,7 @@ function validateUserUpdateData(data: UserUpdateData): { valid: boolean; errors:
 export const serviceUpdateUserInfo = async (
     userId: string,
     data: UserUpdateData,
-    prisma: PrismaClient | PrismaTransactionClient
-  ) => {
+    prisma: PrismaClient) => {
     // Validate fields before transaction to fail fast
     const { valid, errors } = validateUserUpdateData(data);
     if (!valid) {
@@ -428,10 +427,8 @@ export const serviceUpdateUserInfo = async (
     };
   
     try {
-      const result =
-        prisma instanceof PrismaClient
-          ? await prisma.$transaction((tx: PrismaTransactionClient) => run(tx))
-          : await run(prisma);
+      const result = await prisma.$transaction((tx) => run(tx))
+          
   
       return result;
     } catch (error) {
