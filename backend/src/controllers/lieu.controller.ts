@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Tag } from "@prisma/client";
 import { 
     serviceGetLieuById
  } from "../services/lieu.services"
@@ -29,5 +29,61 @@ export const getLieuById = async (req: Request, res: Response) => {
     }
 
     return;
+};
+
+
+export const getAllLieux = async (req: Request, res: Response) => {
+    try {
+        const { tags, date } = req.query;
+
+        // Filtrage par tags
+        const tagArray: Tag[] = tags
+            ? (String(tags)
+                .split(',')
+                .map((tag) => tag.trim())
+                .filter((tag) => Object.values(Tag).includes(tag as Tag)) as Tag[])
+            : [];
+
+        // Filtrage par date (soiree active à ce moment-là)
+        const dateFilter = date ? new Date(String(date)) : null;
+
+        const lieux = await prisma.lieux.findMany({
+            where: {
+                AND: [
+                    tagArray.length > 0
+                        ? {
+                            tags: {
+                                hasSome: tagArray,
+                            },
+                        }
+                        : {},
+
+                    dateFilter
+                        ? {
+                            soirees: {
+                                some: {
+                                    debut: {
+                                        lte: dateFilter,
+                                    },
+                                    fin: {
+                                        gte: dateFilter,
+                                    },
+                                },
+                            },
+                        }
+                        : {},
+                ],
+            },
+            include: {
+                tags: true,
+                soirees: true,
+            },
+        });
+
+        res.status(200).json(lieux);
+    } catch (error) {
+        console.error('Error in getAllLieux:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 };
 
