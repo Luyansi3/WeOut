@@ -12,7 +12,8 @@ import {
     serviceGetGroupsBySoireeId,
     serviceGetEventsByDatesAndId,
     serviceGetSoireeParticipants,
-    serviceGetCommentsBySoireeId
+    serviceGetCommentsBySoireeId,
+    serviceSearchSoireeByText
 } from "../services/soiree.services"
 import { CustomErrors, BadStateDataBase, DatabaseError, ImpossibleToParticipate } from "../errors/customErrors";
 import {parseDate} from "../utils/date.utils";
@@ -373,3 +374,33 @@ export const getComments = async (req: Request, res: Response) => {
             res.status(500).json({ error: 'Server error' });
     }
 };
+
+
+
+export const searchSoireeByText = async (req: Request, res: Response) => {
+    const query = req.query.text;
+    if (!query || typeof query !== 'string' || query.trim().length < 2) {
+       res.status(400).json({
+        success: false,
+        reason: 'Missing or invalid query parameter',
+      });
+      return;
+    }
+    try {
+      const result = await serviceSearchSoireeByText(query, prisma);
+       res.status(200).json(result);
+       return;
+    } catch (error) {
+      if (error instanceof CustomErrors) {
+         res.status(error.statusCode).json({ success: false, reason: error.message });
+         return;
+      }
+  
+      console.error('Unexpected error in searchSoireeByTextController:', error);
+       res.status(500).json({
+        success: false,
+        reason: 'Server error',
+      });
+      return;
+    }
+  };
