@@ -42,6 +42,35 @@ const router: Router = Router();
  */
 router.post("/", postNote);
 
+/**
+ * @openapi
+ * /api/notes/getNote/{id}:
+ *   get:
+ *     tags:
+ *       - Notes
+ *     summary: Récupère la note globale d'une soirée ou les notes en live si elle est en cours
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la soirée
+ *     responses:
+ *       200:
+ *         description: Données de notation récupérées
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               description: Peut contenir les notes live (si soirée en cours) ou la moyenne globale
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/getNote/:id', getNoteSoiree);
 export default router;
 
