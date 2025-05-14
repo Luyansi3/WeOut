@@ -65,10 +65,10 @@ export default function MapBar({
 const styles = StyleSheet.create({
   filterBar: {
     position: 'absolute',
-    bottom: "10%",
+    bottom: "5%",
     left: 0,
     right: 0,
-    height: "5%",
+    height: "7%",
     backgroundColor: '#F5F5F7',
     borderTopWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',

@@ -48,13 +48,13 @@ const Header: React.FC = () => {
   return (
     <View
       width="100%"
-      height={120}>
+      height={"18%"}>
       <XStack
         position="absolute"
         top={0}
         left={0}
         width="100%"
-        height={120}
+        height={"100"}
         backgroundColor="#FF3C78"
         zIndex={1}
       >
