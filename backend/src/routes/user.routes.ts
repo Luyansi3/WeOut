@@ -10,12 +10,28 @@ import {
     signupUser,
     checkFriendshipStatus,
     signinUser,
-    getMeUser
+    getMeUser,
+    signoutUser
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';
 import { authenticateToken } from '../middlewares/auth.middlewares';
 
 const router : Router = Router();
+
+
+/**
+ * @openapi
+ * /signout:
+ *   post:
+ *     tags:
+ *       - Authentification
+ *     summary: Déconnecte l’utilisateur
+ *     description: Invalide le token côté client (aucune action serveur)
+ *     responses:
+ *       200:
+ *         description: Déconnexion réussie
+ */
+router.post('/signout', signoutUser);
 
 /**
  * @openapi

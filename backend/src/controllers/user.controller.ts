@@ -316,3 +316,7 @@ export const getMeUser = async (req: Request, res: Response) => {
 
     return;
 };
+
+export const signoutUser = async (req: Request, res: Response) => {
+  res.status(200).json({ message: 'Déconnexion réussie' });
+};
