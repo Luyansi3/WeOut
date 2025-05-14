@@ -1,6 +1,7 @@
 import { Genre, PrismaClient, User, Groupe, Commentaire, Photo, Compte, Tag, TypeLieux } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
+import { hashPassword } from '../src/utils/hash';
 
 export function generateNightOutTime(): {} {
   // Random date within the next 30 days
@@ -36,15 +37,18 @@ export async function seedComptes(
         hashedMdp: hashedMdp,
       },
     });
-
   for (let i = 0; i < 20; i++) {
+    const password = faker.internet.password();
+    const mail = faker.internet.email({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+    })
+    const hashed = await hashPassword(password);
+    console.log("mail, password", mail, password);
     await prisma.compte.create({
       data: {
-        email: faker.internet.email({
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-        }),
-        hashedMdp: faker.internet.password(),
+        email: mail,
+        hashedMdp: hashed,
       },
     });
   }

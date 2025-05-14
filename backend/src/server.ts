@@ -11,8 +11,6 @@ import { setupSwagger } from './swagger';
 import path from 'path';
 import cors from 'cors';
 
-import cors from 'cors'; // pour autoriser les requêtes cross-origin
-
 
 dotenv.config();
 
