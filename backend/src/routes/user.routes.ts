@@ -12,7 +12,8 @@ import {
     signinUser,
     getMeUser,
     signoutUser,
-    unsubscribeEvent
+    unsubscribeEvent,
+    isSubscribed
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';
 import { authenticateToken } from '../middlewares/auth.middlewares';
@@ -563,5 +564,47 @@ router.get('/friendhsipStatus/:id', checkFriendshipStatus);
  *         description: Erreur serveur
  */
 router.post('/unsubscribeFromEvent/:id', unsubscribeEvent);
+
+
+
+
+
+/**
+ * @openapi
+ * /api/users/unsubscribeFromEvent/{id}:
+ *   patch:
+ *     tags:
+ *       - Utilisateurs
+ *       - Soirees
+ *     summary: Vérifie si un user est inscrit à une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: ID unique de la soirée
+ *     responses:
+ *       201:
+ *         description: Mise à jour réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *              result :
+ *                type: boolean
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/isSubscribed/:id', isSubscribed);
 
 export default router;

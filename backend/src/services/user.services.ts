@@ -9,6 +9,7 @@ import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttribu
 import { hashPassword, comparePassword } from '../utils/hash';
 import { SECRET_KEY } from "../server";
 import jwt from 'jsonwebtoken';
+import { error } from "console";
 
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
@@ -281,6 +282,10 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
     try {
         //Faire une transaction
         await prisma.$transaction( async(tx) => {
+
+        if (await serviceIsSubscribed(userId, partyId, tx)) {
+            throw new Error("The user already participate to the party");
+        }
         const soiree = await serviceGetSoireeById(partyId, tx);
         const user = await serviceGetUserById(userId, tx);
         const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
@@ -541,17 +546,45 @@ export const serviceGetMeUser = async (id: string, prisma: PrismaClient | Prisma
     }
 };
 
+export const serviceIsSubscribed = async (userId: string, eventId: number,
+     prisma : PrismaClient | PrismaTransactionClient) : Promise<boolean> => {
 
+    try {
+        await serviceGetUserById(userId, prisma);
+        await serviceGetSoireeById(eventId, prisma);
+
+        const result = await prisma.soiree.findFirst({
+            where: {
+                groupes : {
+                    some : {
+                        users : {
+                            some : {
+                                id : userId
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        return (result != null);
+    } catch(error) {
+        throw error;
+    }
+};
 
 
 export const serviceUnsubscribreEvent = async(userId: string, eventId: number, prisma: PrismaClient) => {
     try {
+        
 
         await prisma.$transaction( async (tx) => {
+        if (! await serviceIsSubscribed(userId, eventId, tx)) {
+            throw new Error("The user is not subscribed to the party");
+        }
+        const user = await serviceGetUserById(userId, tx);
+        const soiree = await serviceGetSoireeById(eventId, tx);
 
-
-        const user = await serviceGetUserById(userId, prisma);
-        const soiree = await serviceGetSoireeById(eventId, prisma);
+        
         const updatesSoiree : Partial<Soiree> = {};
 
         
