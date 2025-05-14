@@ -9,7 +9,11 @@ import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttribu
 import { hashPassword, comparePassword } from '../utils/hash';
 import { SECRET_KEY } from "../server";
 import jwt from 'jsonwebtoken';
+<<<<<<< HEAD
 import { error } from "console";
+=======
+import { calculateCompatibility } from "../utils/score.utils";
+>>>>>>> b626b10 (recommendations ready)
 
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
@@ -52,7 +56,7 @@ export const serviceCheckFriendshipStatus = async (senderId: string, receiverId:
                 ami: true
             },
         });
-    } catch(error) {
+    } catch (error) {
         throw error;
     }
 
@@ -374,8 +378,8 @@ type UserUpdateData = {
     longitude?: number;
     latitude?: number;
 }
-export const serviceSignupUser = async (data: {firstname:string, lastname:string, username:string, email: string; password: string }, prisma: PrismaClient) => {
-    
+export const serviceSignupUser = async (data: { firstname: string, lastname: string, username: string, email: string; password: string }, prisma: PrismaClient) => {
+
     const hashed = await hashPassword(data.password);
 
     const existingEmail = await prisma.compte.findUnique({
@@ -394,29 +398,30 @@ export const serviceSignupUser = async (data: {firstname:string, lastname:string
         throw new UniqueAttributeAlreadyExists(400, 'Username already used');
     }
 
-    try{
+    try {
 
-    const compteCreated = await prisma.compte.create({
-        data: {
-        email: data.email,
-        hashedMdp: hashed,
-    }});
+        const compteCreated = await prisma.compte.create({
+            data: {
+                email: data.email,
+                hashedMdp: hashed,
+            }
+        });
 
-    const user = await prisma.user.create({
-        data:{
-            prenom: data.firstname,
-            nom: data.lastname,
-            pseudo: data.username,
-            compte: {connect: { id:compteCreated.id}}
-        }
-    });
-    return {compteCreated, user};
-  }
-  catch(error){
-    throw error;
-  }
-    
-    
+        const user = await prisma.user.create({
+            data: {
+                prenom: data.firstname,
+                nom: data.lastname,
+                pseudo: data.username,
+                compte: { connect: { id: compteCreated.id } }
+            }
+        });
+        return { compteCreated, user };
+    }
+    catch (error) {
+        throw error;
+    }
+
+
 };
 
 
@@ -503,31 +508,31 @@ export const serviceUpdateUserInfo = async (
 };
 
 export const generateToken = (userId: string) => {
-  return jwt.sign({ id: userId }, SECRET_KEY!, {
-    expiresIn: '7d',
-  });
+    return jwt.sign({ id: userId }, SECRET_KEY!, {
+        expiresIn: '7d',
+    });
 };
 
-export const serviceSigninUser = async (data: {email: string; password: string }, prisma: PrismaClient) => {
+export const serviceSigninUser = async (data: { email: string; password: string }, prisma: PrismaClient) => {
 
-    try{
-        const compte = await prisma.compte.findUnique({ where: { email:data.email } });
+    try {
+        const compte = await prisma.compte.findUnique({ where: { email: data.email } });
 
         if (!compte || !(await comparePassword(data.password, compte.hashedMdp))) {
             throw new InvalidCredentials(401, 'Email or password incorrect');
         }
 
-        
-        const user = await prisma.user.findUnique({ where: { compteId:compte.id } });
+
+        const user = await prisma.user.findUnique({ where: { compteId: compte.id } });
         if (!user) {
             throw new InvalidCredentials(401, "No user linked to this account");
         }
 
-        const token =  generateToken(user.id);
-        
+        const token = generateToken(user.id);
+
         return token;
     }
-    catch(error){
+    catch (error) {
         throw error;
     }
 };
@@ -686,5 +691,68 @@ export const serviceUnsubscribreEvent = async(userId: string, eventId: number, p
         return {success: true};
     } catch(error) {
         throw error;
+    }
+};
+
+
+export const serviceGetSoireeRecommendations = async (
+    userId: string,
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
+    try {
+        const user = await prisma.user.findUniqueOrThrow({
+            where: { id: userId },
+            include: {
+                ami: { select: { id: true } }
+            },
+        });
+
+        const friendIds = user.ami.map((f: { id: string }) => f.id);
+
+        const now = new Date();
+        const soirees = await prisma.soiree.findMany({
+            where: { debut: { gt: now } },
+            include: {
+                lieu: true,
+                groupes: { include: { users: { select: { id: true } } } },
+            },
+        });
+
+        const scored = soirees.map((s) => {
+            const friendCount = new Set(
+                s.groupes.flatMap((g) => g.users.map((u) => u.id)).filter((id) => friendIds.includes(id))
+            ).size;
+
+            const score = calculateCompatibility(
+                s.lieu?.latitude ?? 0,
+                s.lieu?.longitude ?? 0,
+                (s as any).alcohol ?? 0,
+                (s as any).dancing ?? 0,
+                (s as any).talking ?? 0,
+                friendCount,
+                user.latitude ?? (s.lieu?.latitude ??0),
+                user.longitude??(s.lieu?.longitude ??0),
+                (user as any).alcohol ?? 0,
+                (user as any).dancing ?? 0,
+                (user as any).talking ?? 0
+            );
+
+            return { soiree: s, score };
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+        const top = scored.slice(0, 100);
+
+        return {
+            success: true,
+            recommendations: top,
+        };
+    } catch (error) {
+        console.error('Error in serviceGetSoireeRecommendations:', error);
+        return {
+            success: false,
+            reason: 'Database error',
+            error,
+        };
     }
 };
