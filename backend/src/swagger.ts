@@ -85,8 +85,22 @@ const options: swaggerJSDoc.Options = {
             id: { type: 'integer' },
             nom: { type: 'string' },
             adresse: { type: 'string' },
-            latitude: { type: 'float' },
-            longitude: { type: 'float' }
+            latitude: { type: 'number', format: 'float' },
+            longitude: { type: 'number', format: 'float' },
+            type: {
+              type: 'string',
+              enum: ['BOITE', 'BAR', 'BARDANSANT', 'CAFE']
+            },
+            note: {
+              type: 'number',
+              format: 'float',
+              nullable: true
+            },
+            nombreNote: { type: 'integer' },
+            tags: {
+              type: 'array',
+              items: { type: 'string' }
+            }
           }
         },
         Groupe: {
