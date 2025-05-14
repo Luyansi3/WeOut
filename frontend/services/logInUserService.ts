@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'; // npm install @react-native-async-storage/async-storage --legacy-peer-deps
+import { router } from 'expo-router';
 
 // doc : https://react-native-async-storage.github.io/async-storage/docs/usage/
 
@@ -28,7 +29,6 @@ export async function logInUser(
         await AsyncStorage.setItem('token', token);  
     } catch (e) {
         alert('Login error');
-        await AsyncStorage.removeItem('token'); // remove token if console.error();
-        
+        await AsyncStorage.removeItem('token'); // remove token if console.error();        
     }
 }

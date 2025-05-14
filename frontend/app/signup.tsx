@@ -52,7 +52,6 @@ const SignupScreen = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
 
 
-
     const handleSignUp = async () => {
         // Check if all fields are filled
         if (!fullName || !username || !email || !password) {
@@ -77,13 +76,7 @@ const SignupScreen = () => {
         }
 
 
-        try {
-            await signUpUser(firstName, lastName, username, email, password);
-            router.push('/login'); // Redirect to login page after successful signup
-        } catch (error) {
-            console.error('Error during signup:', error);
-            alert('An error occurred during signup. Please try again.');
-        }
+            await signUpUser(firstName, lastName, username, email, password, router);
     };
 
 
@@ -91,7 +84,7 @@ const SignupScreen = () => {
 
 
     return (
-        <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
+        <YStack flex={1} padding={24} backgroundColor={customColors.background}>
             <XStack alignItems="center" marginBottom={8}>
                 <Pressable onPress={() => router.back()}>
                     <ArrowLeft size={24} color={customColors.textMain} />

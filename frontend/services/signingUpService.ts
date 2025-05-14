@@ -6,7 +6,8 @@ export async function signUpUser(
     lastName: string,
     username: string,
     email: string,
-    password: string): Promise<void> {
+    password: string,
+    router: any): Promise<void> {
 
     let user_data = {
         firstname: firstName,
@@ -28,9 +29,9 @@ export async function signUpUser(
             body: JSON.stringify(user_data),
         });
         if (!res.ok) throw new Error('Registration failed');
-        
+        router.push('/login');
     } catch (e) {
         console.error('Error during signup:', e);
-        alert('Registration error');
+        alert('Registration error' + e);
     }
 }
