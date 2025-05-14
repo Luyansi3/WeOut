@@ -22,7 +22,7 @@ export const serviceGetLieuById = async(id: number) => {
 
 export const serviceGetLieuxFromGooglePlaces = async (type:string,location:number[],radius:number ) => {
 //   const types = ['bar', 'night_club', 'cafe'];
-    const apiKey = "AIzaSyDDUNy8ugM3PqlvynbQ2fW8kBrN6WEip7w"//process.env.GOOGLE_API_KEY;
+    const apiKey = process.env.GOOGLE_API_KEY;
     const locationString = `${location[0]},${location[1]}`;
 
     const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}&location=${locationString}&radius=${radius}&key=${apiKey}`;
