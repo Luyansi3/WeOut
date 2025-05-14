@@ -9,11 +9,8 @@ import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttribu
 import { hashPassword, comparePassword } from '../utils/hash';
 import { SECRET_KEY } from "../server";
 import jwt from 'jsonwebtoken';
-<<<<<<< HEAD
 import { error } from "console";
-=======
 import { calculateCompatibility } from "../utils/score.utils";
->>>>>>> b626b10 (recommendations ready)
 
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
