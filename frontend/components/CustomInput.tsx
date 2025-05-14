@@ -4,14 +4,8 @@ import {
   EyeOff,
 } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-
+import { StyleSheet, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';;
+import { Text } from 'tamagui';
 // COMPONENTS:
 import { CustomInputType } from '../types/CustomTypeInput';
 
@@ -69,7 +63,7 @@ interface CustomInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
 //   text: { IconLeft: TextCursorInput, placeholder: '', secure: false },
 // };
 
-const CustomInput: React.FC<CustomInputProps> = ({ value='', placeholder = '', leftIcon = null, inputType = 'text', style, onChangeText, ...rest }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ value = '', placeholder = '', leftIcon = null, inputType = 'text', style, onChangeText, ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Configure per-type
@@ -77,13 +71,14 @@ const CustomInput: React.FC<CustomInputProps> = ({ value='', placeholder = '', l
 
   return (
     <View style={[styles.container] as any}>
-      {leftIcon && // pour ajouter le style il faut cloner
-        React.isValidElement(leftIcon)
-        ? React.cloneElement(leftIcon, {
-          paddingRight: 8 ,
-          color: customColors.textSecond,
-        })
-        : leftIcon
+      {leftIcon &&
+        (React.isValidElement(leftIcon)
+          ? React.cloneElement(leftIcon, {
+            paddingRight: 8,
+            color: customColors.textSecond,
+          })
+          : <Text style={{ paddingRight: 8, color: customColors.textSecond }}>{leftIcon}</Text>
+        )
       }
       <TextInput
         style={[styles.input]}

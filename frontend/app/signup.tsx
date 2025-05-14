@@ -41,8 +41,7 @@ const customColors = {
     textMain: "#1A1B41"
 };
 
-// Router for navigation
-const router = useRouter();
+
 
 const SignupScreen = () => {
     const [fullName, setFullName] = useState('');
@@ -51,6 +50,8 @@ const SignupScreen = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    // Router for navigation
+    const router = useRouter();
 
 
     const handleSignUp = async () => {
@@ -215,7 +216,7 @@ const SignupScreen = () => {
 
 
                 <XStack justifyContent="center" alignItems="center" marginTop={24}>
-                    <Text fontSize="$3" fontFamily={"Raleway-Regular"} color="#000">Already have an account? </Text>
+                    <Text fontSize="$3" fontFamily={"Raleway-Regular"} color="#000"> Already have an account? </Text>
                     <Pressable onPress={() => { router.push('/login'); }}>
                         <Text fontSize="$3" color={customColors.purple} fontFamily={"Raleway-Regular"} >
                             Sign in
