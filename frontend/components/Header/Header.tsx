@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { XStack, Image, YStack, View, Button } from 'tamagui';
 import { Bell } from '@tamagui/lucide-icons';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// services:
+import { setMe } from '@/services/setMeService'
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 /**
  * Header component with fixed dimensions and absolute positioning.
@@ -19,6 +23,26 @@ const Header: React.FC = () => {
   const gap = 10;
   const bellCircleSize = profileSize;
   const bellRight = profileRight + profileSize + gap;
+
+  const router = useRouter();
+
+  // user info:
+  let [profilePicturePath, setprofilePicturePath] = useState("");
+
+
+  useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
+  useEffect(() => {
+    (async () => {
+      await setMe(router); // set the user in AsyncStorage
+      const userString = await AsyncStorage.getItem('user');
+      const user_obj = JSON.parse(userString);
+      setprofilePicturePath(user_obj.photoProfil);
+    })();
+  }, []);
+
+
+
+
 
   return (
     <View
@@ -83,8 +107,9 @@ const Header: React.FC = () => {
           }
         ></Button>
         <Image
+          source={{ uri: `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${profilePicturePath}` }}
+
           testID='ProfileImage'
-          source={require('@/assets/profile_pictures/hamza_wirane.png')}
           alt="Profile"
           position="absolute"
           right={profileRight}

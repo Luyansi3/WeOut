@@ -35,11 +35,7 @@ export default function IndexScreen() {
     // HOOKS:
     // Checking authentication:
     useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
-    useEffect(() => {
-        (async () => {
-            await setMe(router); // set the user in AsyncStorage
-        })();
-    }, []);
+    
 
     // Fetching events and locations:
     useEffect(() => {
@@ -57,7 +53,7 @@ export default function IndexScreen() {
                 );
 
                 const locationsData = await Promise.all(locationPromises);
-                setLocations(locationsData);
+                setLocations(locationsData);    
             } catch (err) {
                 console.log("Error fetching events or locations:", err);
             } finally {
