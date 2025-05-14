@@ -366,6 +366,7 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
 
 
 
+
 type Genre = 'HOMME' | 'FEMME' | 'AUTRE';
 
 type UserUpdateData = {
@@ -575,6 +576,8 @@ export const serviceIsSubscribed = async (userId: string, eventId: number,
 };
 
 
+
+
 export const serviceUnsubscribreEvent = async(userId: string, eventId: number, prisma: PrismaClient) => {
     try {
         
@@ -691,7 +694,6 @@ export const serviceUnsubscribreEvent = async(userId: string, eventId: number, p
     }
 };
 
-
 export const serviceGetSoireeRecommendations = async (
     userId: string,
     prisma: PrismaClient | PrismaTransactionClient
@@ -753,3 +755,4 @@ export const serviceGetSoireeRecommendations = async (
         };
     }
 };
+
