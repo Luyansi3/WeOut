@@ -1,8 +1,6 @@
 import { PrismaClient, Prisma, Tag } from "@prisma/client";
 import { serviceGetSoireeById } from "./soiree.services"
-import { number } from "zod";
-import { group } from "console";
-import { updateUserInfo } from "../controllers/user.controller";
+import { DatabaseError } from "../errors/customErrors";
 
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
@@ -69,3 +67,46 @@ export const serviceGetNoteDef = async (eventId: number, prisma: PrismaClient | 
         throw error;
     }
 }
+
+
+export const servicePostNote = async (
+    userId: string,
+    soireeId: number,
+    note: number,
+    prisma: PrismaClient | PrismaTransactionClient
+) => {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+    try {
+        const recentNote = await prisma.note.findFirst({
+            where: {
+                userId,
+                soireeId,
+                createdAt: {
+                    gte: oneHourAgo,
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        if (recentNote) {
+            // Si une note existe déjà dans la dernière heure, on lève une erreur
+            throw new DatabaseError("Note", "Note déjà existante dans l'heure", 429);
+        }
+
+        const newNote = await prisma.note.create({
+            data: {
+                userId,
+                soireeId,
+                note,
+            },
+        });
+
+        return newNote;
+    } catch (error) {
+        throw error;
+    }
+};
+
