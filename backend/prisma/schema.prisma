@@ -18,17 +18,16 @@ enum Genre {
   AUTRE
 }
 model Compte {
-// Compte qui regroupe organisateur et user
+  // Compte qui regroupe organisateur et user
   id        String @id @default(uuid())
   hashedMdp String
   email     String @unique
-  
 
   // A vérifier dans le code que uniquement un des deux soit NULL
   user      User?
   organisme Organisme?
 
-  //Nombre d'evenement organise
+  // Nombre d'evenement organise
   nombreSoiree Int @default(0)
 }
 model User {
@@ -46,7 +45,7 @@ model User {
 
   // Relation d'amities
   ami   User[] @relation("Amis")
-  amiDe User[] @relation("Amis")   //Nécessité de bidirectionnalité, mais nous l'ignorerons !
+  amiDe User[] @relation("Amis") // Nécessité de bidirectionnalité, mais nous l'ignorerons !
 
   // Relatoin de blockage
   bloque   User[] @relation("Bloque")
@@ -56,16 +55,16 @@ model User {
   demandeEnvoye User[] @relation("Demande")
   demandeRecue  User[] @relation("Demande")
 
-  //Caractéristiques
+  // Caractéristiques
   bio String?
-  
+
   photoProfil String? @unique
-  pseudo String @unique
-  lienInsta String? @unique
+  pseudo      String  @unique
+  lienInsta   String? @unique
   lienTwitter String? @unique
 
-  dancing Int?
-  talking Int?
+  dancing  Int?
+  talking  Int?
   alcohool Int?
 
   // Groupes d'appartenance
@@ -82,7 +81,7 @@ model User {
   compte   Compte @relation(fields: [compteId], references: [id])
   compteId String @unique
 
-  //Nombre de soirée participée
+  // Nombre de soirée participée
   nombreSoiree Int @default(0)
 }
 model Organisme {
@@ -90,9 +89,8 @@ model Organisme {
   nom  String @unique
   note Float?
 
-  //Photo de profil
+  // Photo de profil
   photo String
-
 
   // Soirees organisees
   soirees Soiree[]
@@ -113,11 +111,11 @@ enum TypeLieux {
   CAFE
 }
 model Lieux {
-  id   Int       @id @default(autoincrement())
-  nom  String
-  type TypeLieux
-  note Float?
-  nombreNote Int @default(0)
+  id         Int       @id @default(autoincrement())
+  nom        String
+  type       TypeLieux
+  note       Float?
+  nombreNote Int       @default(0)
 
   // adresse
   adresse   String @unique
@@ -139,19 +137,18 @@ enum Tag {
   COMMERCIAL
 }
 model Soiree {
-  id                  Int    @id @default(autoincrement())
+  id                  Int     @id @default(autoincrement())
   nom                 String
   description         String
   photoCouverturePath String?
 
-
-  //Caractéristiques
-  dancing Int?
-  nbNoteDancing Int @default(0) 
-  talking Int?
-  nbNoteTalking Int @default(0)
-  alcohool Int?
-  nbNoteAlcohool Int @default(0)
+  // Caractéristiques
+  dancing        Int?
+  nbNoteDancing  Int  @default(0)
+  talking        Int?
+  nbNoteTalking  Int  @default(0)
+  alcohool       Int?
+  nbNoteAlcohool Int  @default(0)
 
   // date
   debut DateTime
@@ -177,8 +174,7 @@ model Soiree {
   // Les champs ID pour chaque tag
   tags Tag[]
 
-
-  //Nombre de participants
+  // Nombre de participants
   nombreParticipants Int @default(0)
 }
 model Groupe {
@@ -216,4 +212,23 @@ model Commentaire {
   // User qui a posté le commentaire
   createur User   @relation(fields: [userId], references: [id])
   userId   String
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  note      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation vers l'utilisateur qui a noté
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  // Relation vers la soirée notée
+  soiree   Soiree @relation(fields: [soireeId], references: [id])
+  soireeId Int
+
+  @@index([soireeId]) // recherche plus rapide
+  @@index([userId]) // recherche plus rapide
+  @@index([userId, soireeId]) // recherche plus rapide
 }
