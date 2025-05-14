@@ -11,7 +11,12 @@ const router: Router = Router();
  *   post:
  *     tags:
  *       - Notes
- *     summary: Ajoute une note ou met à jour une note pour une soirée (1/h max)
+ *     summary: Ajoute une note pour une soirée (1 par heure max, si soirée en cours et user participant)
+ *     description: >
+ *       L'utilisateur peut noter une soirée uniquement si :
+ *       - Il participe à la soirée
+ *       - La soirée est actuellement en cours
+ *       - Il n'a pas déjà noté dans la dernière heure
  *     requestBody:
  *       required: true
  *       content:
@@ -25,8 +30,10 @@ const router: Router = Router();
  *             properties:
  *               userId:
  *                 type: string
+ *                 description: ID de l'utilisateur
  *               soireeId:
  *                 type: integer
+ *                 description: ID de la soirée
  *               note:
  *                 type: integer
  *                 description: "Valeur de la note (ex: 1 à 5)"
@@ -34,13 +41,16 @@ const router: Router = Router();
  *       201:
  *         description: Note créée avec succès
  *       400:
- *         description: Requête invalide
+ *         description: Champs requis manquants ou format invalide
+ *       403:
+ *         description: Utilisateur non participant ou soirée non en cours
  *       429:
- *         description: Limite d’une note par heure atteinte
+ *         description: L'utilisateur a déjà noté cette soirée il y a moins d'une heure
  *       500:
  *         description: Erreur serveur
  */
 router.post("/", postNote);
+
 
 /**
  * @openapi

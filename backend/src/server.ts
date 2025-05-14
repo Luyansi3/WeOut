@@ -10,6 +10,8 @@ import NotesRoutes from './routes/note.routes';
 import dotenv from 'dotenv';
 import { setupSwagger } from './swagger';
 import path from 'path';
+import cors from 'cors';
+
 
 
 dotenv.config();
