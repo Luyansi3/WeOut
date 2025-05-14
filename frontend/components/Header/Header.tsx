@@ -37,6 +37,7 @@ const Header: React.FC = () => {
       const userString = await AsyncStorage.getItem('user');
       const user_obj = JSON.parse(userString);
       setprofilePicturePath(user_obj.photoProfil);
+      await AsyncStorage.removeItem('user');
     })();
   }, []);
 

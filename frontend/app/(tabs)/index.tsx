@@ -2,8 +2,9 @@ import { View, YStack, ScrollView } from 'tamagui';
 
 
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList } from 'react-native';
+import { ActivityIndicator, Button, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // components:
@@ -35,25 +36,25 @@ export default function IndexScreen() {
     // HOOKS:
     // Checking authentication:
     useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
-    
+
 
     // Fetching events and locations:
     useEffect(() => {
         const fetchEventsWithLocations = async () => {
             try {
-            const parameters: SoireeParams = {
-                isStrictTag: false,
-                tags: [],
-            };
-            const eventsData = await fetchEvents(parameters);
-            setEvents(eventsData);
+                const parameters: SoireeParams = {
+                    isStrictTag: false,
+                    tags: [],
+                };
+                const eventsData = await fetchEvents(parameters);
+                setEvents(eventsData);
 
                 const locationPromises = eventsData.map((event) =>
                     fetchLocationById(event.lieuId)
                 );
 
                 const locationsData = await Promise.all(locationPromises);
-                setLocations(locationsData);    
+                setLocations(locationsData);
             } catch (err) {
                 console.log("Error fetching events or locations:", err);
             } finally {
@@ -64,8 +65,8 @@ export default function IndexScreen() {
         fetchEventsWithLocations();
     }, []);
 
-    if (loading) return <ActivityIndicator style={{alignContent: "center", alignItems: "center"}} size="large" />;
-    
+    if (loading) return <ActivityIndicator style={{ alignContent: "center", alignItems: "center" }} size="large" />;
+
     return (
         <View flex={1} justifyContent="center" alignItems="center"
             backgroundColor="#ECECEC">
@@ -84,18 +85,37 @@ export default function IndexScreen() {
                         console.log(`${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${event.photoCouverturePath}`)
                         return (
                             <EventCard
-                            key={index}
-                            image={event.photoCouverturePath}
-                            title={event.nom}
-                            description={event.description}
-                            date={new Date(event.debut).toLocaleDateString().replace(/-/g, "/")}
-                            location={location ? location.adresse : "Unknown location"}
+                                key={index}
+                                image={event.photoCouverturePath}
+                                title={event.nom}
+                                description={event.description}
+                                date={new Date(event.debut).toLocaleDateString().replace(/-/g, "/")}
+                                location={location ? location.adresse : "Unknown location"}
                             />
                         );
                     })}
+                    <Button
+                        title="Log out"
+
+                        position="absolute"
+                        top={16}
+                        right={16}
+                        padding={8}
+                        backgroundColor="#FFF"
+                        borderRadius={8}
+                        onPress={async () => {
+                            await AsyncStorage.removeItem('token');
+                            await AsyncStorage.removeItem('user'); // optionnel
+                            router.replace('/login');
+                        }}
+                    />
+
+
                 </YStack>
 
             </ScrollView>
+
+
         </View>
     );
 }
