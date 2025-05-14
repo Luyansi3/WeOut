@@ -29,7 +29,7 @@ const router: Router = Router();
  *                 type: integer
  *               note:
  *                 type: integer
- *                 description: Valeur de la note (ex: 1 à 5)
+ *                 description: "Valeur de la note (ex: 1 à 5)"
  *     responses:
  *       201:
  *         description: Note créée avec succès
