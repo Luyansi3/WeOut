@@ -5,11 +5,13 @@ import { useRouter } from 'expo-router';
 import { YStack, XStack, Text } from 'tamagui';
 import {
     ArrowLeft,
-    Mail
+    Mail,
+    ArrowRight,
 } from '@tamagui/lucide-icons';
 
 // Custom components:
 import CustomInput from '../components/CustomInput';
+import CustomButton from '../components/CustomButton';
 
 
 
@@ -29,31 +31,54 @@ export default function ResetPasswordScreen() {
 
     return (
         <YStack flex={1} padding={24} backgroundColor={customColors.background}> {/* Pour mettre le sign in a gauche ? */}
-            <XStack alignItems="center" marginBottom={8}>
-                <Pressable onPress={() => router.back()}>
-                    <ArrowLeft size={24} color={customColors.textMain} />
-                </Pressable>
+
+            <Pressable onPress={() => router.back()}>
+                <ArrowLeft size={24} color={customColors.textMain} />
+            </Pressable>
+
+
+
+
+            <Text marginTop={10} fontSize={28} fontFamily={"Raleway-Bold"} color={customColors.textMain}>
+                Reset Password
+            </Text>
+
+            <Text marginTop={10} fontSize={16} paddingRight={70} fontFamily={"Raleway-Regular"} marginBottom={10} color={customColors.textMain}>
+                Please enter your email address to request a password reset
+            </Text>
+
+
+            <CustomInput value={email}
+                leftIcon={<Mail />}
+                placeholder='Your email'
+                inputType="email"
+                onChangeText={setEmail} />
+
+
+            <XStack justifyContent="center" alignItems="center" marginTop={10} >
+
+                <CustomButton
+                    title="Send"
+                    endCircle={true}
+                    fontFamily="Raleway-SemiBold"
+                    onPress={() => { console.log("Send button press");/* TO DO*/ }}
+                    backgroundColor={customColors.pink}
+                    endIcon={<ArrowRight size={15} />}
+                    minWidth={150}
+                    minHeight={50}
+                    borderRadius={20}
+                    pressStyle={{ backgroundColor: customColors.pink }}
+                    focusStyle={{ backgroundColor: customColors.pink }}
+                    hoverStyle={{ backgroundColor: customColors.pink }}
+
+                />
+
             </XStack>
 
 
 
-            <YStack width="100%" space={16}>
 
-                <Text fontSize={28} fontFamily={"Raleway-Bold"} marginLeft={8} color={customColors.textMain}>
-                    Reset Password
-                </Text>
 
-                <Text fontSize={16} fontFamily={"Raleway-Regular"} marginBottom={24} color={customColors.textMain}>
-                    Please enter your email address to request a password reset
-                </Text>
-
-                <CustomInput value={email}
-                    leftIcon={<Mail />}
-                    placeholder='Your email'
-                    inputType="email"
-                    onChangeText={setEmail} />
-
-            </YStack>
 
         </YStack>
     );

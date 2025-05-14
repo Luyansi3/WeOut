@@ -9,7 +9,6 @@ interface CustomButtonProps extends ButtonProps {
     endCircle?: boolean;
     textColor?: string;
     fontSize?: number;
-    fontWeight?: string;
     fontFamily?: string;
 
 }
@@ -34,7 +33,6 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     endCircle = false,
     textColor = "white",
     fontSize = 16,
-    fontWeight = "500",
     fontFamily = "Raleway-Regular",
     ...rest
 }) => {
@@ -83,7 +81,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             {startIcon}
             <XStack alignItems="center" justifyContent="center">
 
-                <Text fontSize={fontSize} fontWeight={fontWeight} color={textColor} fontFamily={fontFamily}>
+                <Text fontSize={fontSize} color={textColor} fontFamily={fontFamily}>
                     {title}
                 </Text>
 
