@@ -13,28 +13,27 @@ import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 // services:
 import { fetchLocationById } from '@/services/locationService';
-import { setMeService } from '@/services/setMeService';
+import { setMe } from '@/services/setMeService';
+import { fetchAllEvents } from '@/services/eventService';
 
 
 export default function IndexScreen() {
-    
-    // CHECKING AUTHENTICATION:
-    try{
-        useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
-        setMeService(); // if there is a token in AsyncStorage, fetch the user data
-    }
-    catch (error) {
-        console.error('Error during authentication check:', error);
-    }
 
-
-
-    
-
+    // VARS:
     const [events, setEvents] = useState([] as EventResponse[]);
     const [locations, setLocations] = useState([] as LocationResponse[]);
     const [loading, setLoading] = useState(true);
 
+    // HOOKS:
+    // Checking authentication:
+    useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
+    useEffect(() => {
+        (async () => {
+            await setMe(); // set the user in AsyncStorage
+        })();
+    }, []);
+
+    // Fetching events and locations:
     useEffect(() => {
         const fetchEventsWithLocations = async () => {
             try {
@@ -45,16 +44,16 @@ export default function IndexScreen() {
             const eventsData = await fetchEvents(parameters);
             setEvents(eventsData);
 
-            const locationPromises = eventsData.map((event) =>
-                fetchLocationById(event.lieuId)
-            );
+                const locationPromises = eventsData.map((event) =>
+                    fetchLocationById(event.lieuId)
+                );
 
-            const locationsData = await Promise.all(locationPromises);
-            setLocations(locationsData);
+                const locationsData = await Promise.all(locationPromises);
+                setLocations(locationsData);
             } catch (err) {
-            console.log("Error fetching events or locations:", err);
+                console.log("Error fetching events or locations:", err);
             } finally {
-            setLoading(false);
+                setLoading(false);
             }
         };
 

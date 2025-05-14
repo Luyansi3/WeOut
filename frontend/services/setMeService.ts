@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
-export async function getMeService() {
+export async function setMe() {
     const router = useRouter();
 
     // Retrieve the token from AsyncStorage

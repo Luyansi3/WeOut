@@ -14,7 +14,7 @@ export async function logInUser(
     };
 
     try {
-        let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/login`;
+        let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/signin`;
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
