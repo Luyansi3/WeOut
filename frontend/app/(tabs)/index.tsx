@@ -1,11 +1,17 @@
 import { View, YStack, ScrollView } from 'tamagui';
-import Header from '@/components/Header/Header';
-import EventCard from '@/components/EventCard/EventCard';
-import { fetchEvents } from '@/services/eventService';
+
+
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
+import { useRouter } from 'expo-router';
+
+
+// components:
+import Header from '@/components/Header/Header';
+import EventCard from '@/components/EventCard/EventCard';
+
+// types:
 import { EventResponse, SoireeParams } from '@/types/Event';
-import { fetchLocationById } from '@/services/locationService';
 import { LocationResponse } from '@/types/Location';
 
 // hooks:
@@ -14,7 +20,7 @@ import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 // services:
 import { fetchLocationById } from '@/services/locationService';
 import { setMe } from '@/services/setMeService';
-import { fetchAllEvents } from '@/services/eventService';
+import { fetchEvents } from '@/services/eventService';
 
 
 export default function IndexScreen() {
@@ -24,12 +30,14 @@ export default function IndexScreen() {
     const [locations, setLocations] = useState([] as LocationResponse[]);
     const [loading, setLoading] = useState(true);
 
+    const router = useRouter();
+
     // HOOKS:
     // Checking authentication:
     useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
     useEffect(() => {
         (async () => {
-            await setMe(); // set the user in AsyncStorage
+            await setMe(router); // set the user in AsyncStorage
         })();
     }, []);
 

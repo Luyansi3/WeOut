@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Animated, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import * as Location from "expo-location";
 import { Image } from "tamagui";
-import MapView, { Callout, Marker } from "react-native-maps";
+// import MapView, { Callout, Marker } from "react-native-maps";
 import CustomMapButton from "@/components/CustomMapButton/CustomMapButton";
 import { LocateFixed, Compass } from "@tamagui/lucide-icons";
 import { EventResponse, SoireeParams } from "@/types/Event";
@@ -174,72 +174,8 @@ const Map = () => {
               right: 20,
             }}
         />
-        {region && (
-        <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={region}
-            showsUserLocation={true}
-            showsMyLocationButton={false}
-        >
-            {locations.map((location: LocationResponse, index) => {
-              const event = events[index];
-              return (
-                  <Marker
-                    key={index}
-                    coordinate={{
-                      latitude: location.latitude,
-                      longitude: location.longitude,
-                    }}
-                    onPress={() =>
-                      toggleCard({
-                        id: index,
-                        coords: {
-                          latitude: location.latitude,
-                          longitude: location.longitude,
-                          latitudeDelta: 0.05,
-                          longitudeDelta: 0.05,
-                        },
-                        image:event.photoCouverturePath,
-                        title:event.nom,
-                        description:event.description,
-                        date:new Date(event.debut).toLocaleDateString().replace(/-/g, "/"),
-                        location:location.adresse,
-                      })
-                    }
-                  >
-                  <TouchableOpacity>
-                      <LinearGradient
-                        width={33}
-                        height={33}
-                        borderRadius={120}
-                        colors={['#FF3C78', '#8F00FF']}
-                        alignItems="center"
-                        justifyContent="center"
-                        p={1}
-                      >
-                        <View
-                          width={29}
-                          height={29}
-                          borderRadius={50}
-                          overflow="hidden"
-                        >
-                        <Image 
-                          testID='EventImage'
-                          alignSelf='center'
-                          source={{ uri: `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${event.photoCouverturePath}` }}
-                          width="100%"
-                          height="100%"
-                          resizeMode="cover"
-                        />
-                        </View>
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  </Marker>
-              )}
-            )}
-        </MapView>
-        )}
+        
+        
         {!selectedMarker && <MapBar 
           date={date}
           setDate={setDate}

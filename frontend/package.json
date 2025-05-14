@@ -45,13 +45,11 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "tamagui": "^1.126.9",
-    "tamagui-expo": "^1.0.1",
-    "undefined": "tamagui/sheet"
+    "tamagui-expo": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@testing-library/react-native": "^13.2.0",
-    "@types/cors": "^2.8.18",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.0.10",
     "ajv": "^7.2.4",
@@ -62,7 +60,7 @@
     "typescript": "~5.8.3"
   },
   "private": true,
-  "jest": {
+  "jest": { 
     "preset": "jest-expo",
     "transformIgnorePatterns": [
       "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg))"

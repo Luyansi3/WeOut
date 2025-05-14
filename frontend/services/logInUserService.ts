@@ -21,11 +21,14 @@ export async function logInUser(
             body: JSON.stringify(user_data),
         });
         if (!res.ok) throw new Error('Login failed');
-        const token = await res.json();
+        const json = await res.json();
+        const token = json.token;
 
         // Store the token in AsyncStorage
         await AsyncStorage.setItem('token', token);  
     } catch (e) {
         alert('Login error');
+        await AsyncStorage.removeItem('token'); // remove token if console.error();
+        
     }
 }

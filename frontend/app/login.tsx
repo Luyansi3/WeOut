@@ -72,10 +72,12 @@ const SignInScreen: React.FC = () => {
     // Log in user service :
     try {
       await logInUser(email, password);
+      router.push('/'); // Redirect to home page after successful Login
     }
     catch (error) {
       console.error("Error during log in:", error);
       alert('Sign in error');
+      router.replace('/login'); // Redirect to login page
     }
 
     // Redirect to home page after successful login
