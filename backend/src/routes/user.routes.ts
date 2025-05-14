@@ -42,7 +42,7 @@ router.post('/signout', signoutUser);
  *     tags:
  *       - Utilisateurs
  *     summary: Récupère les informations de l’utilisateur connecté
- *     description: Nécessite un token JWT valide dans l'en-tête "Authorization  Bearer <token>"
+ *     description: Nécessite un token JWT valide dans l'en-tête "Authorization Bearer <token>"
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -59,11 +59,49 @@ router.post('/signout', signoutUser);
  *                   type: string
  *                 nom:
  *                   type: string
- *                 pseudo:
+ *                 genre:
  *                   type: string
+ *                   nullable: true
+ *                 nombreAmis:
+ *                   type: integer
+ *                 longitude:
+ *                   type: number
+ *                   format: float
+ *                   nullable: true
+ *                 latitude:
+ *                   type: number
+ *                   format: float
+ *                   nullable: true
+ *                 dateActualisation:
+ *                   type: string
+ *                   format: date-time
  *                 bio:
  *                   type: string
  *                   nullable: true
+ *                 photoProfil:
+ *                   type: string
+ *                   nullable: true
+ *                 pseudo:
+ *                   type: string
+ *                 lienInsta:
+ *                   type: string
+ *                   nullable: true
+ *                 lienTwitter:
+ *                   type: string
+ *                   nullable: true
+ *                 dancing:
+ *                   type: integer
+ *                   nullable: true
+ *                 talking:
+ *                   type: integer
+ *                   nullable: true
+ *                 alcohool:
+ *                   type: integer
+ *                   nullable: true
+ *                 compteId:
+ *                   type: string
+ *                 nombreSoiree:
+ *                   type: integer
  *       401:
  *         description: Requête non autorisée (token manquant ou invalide)
  *       404:
