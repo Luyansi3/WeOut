@@ -46,7 +46,9 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "tamagui": "^1.126.9",
-    "tamagui-expo": "^1.0.1"
+    "tamagui-expo": "^1.0.1",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "expo-linear-gradient": "~14.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
