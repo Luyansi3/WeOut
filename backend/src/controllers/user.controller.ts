@@ -12,11 +12,8 @@ import {
     serviceCheckFriendshipStatus,
     serviceSigninUser,
     serviceGetMeUser,
-<<<<<<< HEAD
     serviceUnsubscribreEvent,
     serviceIsSubscribed,
-=======
->>>>>>> b626b10f6b2d065ee8098557642f2c9d0ad26d17
     serviceGetSoireeRecommendations
  } from "../services/user.services"
 import { z } from 'zod';
@@ -325,7 +322,6 @@ export const getMeUser = async (req: Request, res: Response) => {
     return;
 };
 
-<<<<<<< HEAD
 export const signoutUser = async (req: Request, res: Response) => {
   res.status(200).json({ message: 'Déconnexion réussie' });
 }
@@ -376,8 +372,6 @@ export const isSubscribed = async(req: Request, res: Response) => {
             res.status(500).json({error : 'Server error', message : error.message});
     }
 }
-=======
->>>>>>> b626b10f6b2d065ee8098557642f2c9d0ad26d17
 
 export const getSoireeRecommendations = async (req: Request, res: Response) => {
     const userId = req.params.userId;
@@ -407,8 +401,5 @@ export const getSoireeRecommendations = async (req: Request, res: Response) => {
       }
     }
   };
-<<<<<<< HEAD
   
-=======
   
->>>>>>> b626b10f6b2d065ee8098557642f2c9d0ad26d17
