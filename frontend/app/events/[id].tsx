@@ -617,6 +617,18 @@ export default function EventDetailScreen() {
             </>
           ) : (
             sortedParticipants.map(p => (
+              <Pressable
+              key={p.id}
+              onPress={() => {
+                console.log('[EventDetail] navigate to profile of', p.id);
+                router.push({
+                  pathname: '/userprofile/[id]', 
+                  params: { id: p.id },
+                });
+              }}
+              style={{ marginVertical: 4 * scale }}
+              >
+              
               <XStack
                 key={p.id}
                 width={327 * scale}
@@ -674,6 +686,7 @@ export default function EventDetailScreen() {
                   )}
                 </YStack>
               </XStack>
+              </Pressable>
             ))
           )}
         </YStack>
