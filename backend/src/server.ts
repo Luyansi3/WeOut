@@ -6,6 +6,7 @@ import LieuRoutes from './routes/lieu.routes';
 import UploadRoutes from './routes/upload.routes';
 import OrgaRoutes from './routes/orga.routes';
 import TagRoutes from './routes/tag.routes';
+import NoteRoutes from './routes/note.routes';
 import dotenv from 'dotenv';
 import { setupSwagger } from './swagger';
 import path from 'path';
@@ -43,6 +44,7 @@ app.use('/api/lieux', LieuRoutes);
 app.use('/api/uploads', UploadRoutes);
 app.use('/api/orgas/', OrgaRoutes);
 app.use('/api/tags', TagRoutes);
+app.use('/api/notes', NoteRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {
