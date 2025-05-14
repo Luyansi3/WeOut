@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
+import { useRouter} from 'expo-router';
+import {
+  LockKeyhole,
+  Mail,
+  ArrowRight
+} from '@tamagui/lucide-icons';
 
 // Tamagui & Lucide icons (Mail, Lock, Eye, EyeOff, ArrowRight)
 
 // Expo vector icons for social login
 import { FontAwesome } from '@expo/vector-icons';
-import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Logo asset import (local image)
 import { Button, Switch, Text, XStack, YStack } from 'tamagui';
@@ -13,6 +18,12 @@ import { Button, Switch, Text, XStack, YStack } from 'tamagui';
 // Custom components
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+
+// Pour le login "remember me":
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logInUser } from '@/services/logInUserService';
+
 
 
 
@@ -22,6 +33,7 @@ const SignInScreen: React.FC = () => {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+
   // Custom colors:
   const customColors = {
     background: "#F5F5F7",
@@ -30,6 +42,51 @@ const SignInScreen: React.FC = () => {
     textSecond: "#747688",
     textMain: "#1A1B41"
   };
+
+  // Router for navigation
+  const router = useRouter();
+
+
+  useEffect(() => {
+    const loadRememberedEmail = async () => {
+      const savedEmail = await AsyncStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRemember(true);
+      }
+    };
+    loadRememberedEmail();
+  }, []);
+
+
+
+
+
+  const handleSignIn = async () => {
+    if (remember) { // pour la prochaine fois
+      await AsyncStorage.setItem('rememberedEmail', email);
+    } else {
+      await AsyncStorage.removeItem('rememberedEmail');
+    }
+
+    // Log in user service :
+    try {
+      await logInUser(email, password);
+      router.push('/'); // Redirect to home page after successful Login
+    }
+    catch (error) {
+      console.error("Error during log in:", error);
+      alert('Sign in error');
+      router.replace('/login'); // Redirect to login page
+    }
+
+    // Redirect to home page after successful login
+    router.push('/'); 
+  }
+
+
+
+
 
 
 
@@ -42,15 +99,25 @@ const SignInScreen: React.FC = () => {
         style={{ width: 120, height: 120, marginBottom: 24, resizeMode: 'contain' }}
       />
 
-      <Text fontSize={28} fontWeight="700" marginBottom={24} color={customColors.textMain}>
+      <Text fontSize={28} fontFamily={"Raleway-Bold"} marginBottom={24} color={customColors.textMain}>
         Sign in
       </Text>
 
       <YStack width="100%" space={16}>
 
         {/* Email et Password */}
-        <CustomInput inputType="email" />
-        <CustomInput inputType="password" />
+        <CustomInput value={email}
+          leftIcon={<Mail />}
+          placeholder='Your mail'
+          inputType="email"
+          onChangeText={setEmail} />
+
+        <CustomInput value={password}
+          leftIcon={<LockKeyhole />}
+          placeholder='Your password'
+          inputType="password"
+          onChangeText={setPassword} />
+
 
 
 
@@ -63,15 +130,15 @@ const SignInScreen: React.FC = () => {
               size="$3"
               backgroundColor={remember ? customColors.purple : "#E5E5E5"}
             >
-              <XStack alignItems="center"  padding={2}>
+              <XStack alignItems="center" padding={2}>
                 <Switch.Thumb alignContent="center" animation="quick" backgroundColor="white" size="$2" />
               </XStack>
             </Switch>
-            <Text fontSize="$3" color={customColors.textMain}>Remember Me</Text>
+            <Text fontSize="$3" fontFamily={"Raleway-Regular"} color={customColors.textMain}>Remember Me</Text>
           </XStack>
 
-          <Pressable onPress={() => {/* TODO: forgot password */ }}>
-            <Text fontSize="$3" color={customColors.purple}>
+          <Pressable onPress={() => { router.push('/resetPassword'); }}>
+            <Text fontFamily={"Raleway-Regular"} fontSize="$3" color={customColors.purple}>
               Forgot Password?
             </Text>
           </Pressable>
@@ -89,15 +156,12 @@ const SignInScreen: React.FC = () => {
             borderRadius={15}
             fontSize={15}
             fontFamily={"Raleway-SemiBold"}
-    
-            endCircle={true}
-            // to do le onPress
-            onPress={() => {
-              console.log('Sign in button pressed');
-            }}
             pressStyle={{ backgroundColor: customColors.pink }}
             focusStyle={{ backgroundColor: customColors.pink }}
             hoverStyle={{ backgroundColor: customColors.pink }}
+            endCircle={true}
+
+            onPress={handleSignIn}
           />
         </XStack>
 
@@ -108,7 +172,7 @@ const SignInScreen: React.FC = () => {
         {/* Le OR et les deux barres */}
         <XStack alignItems="center" justifyContent="center" space={8} marginVertical={16} >
           <YStack flex={1} height={1} backgroundColor={customColors.textSecond} maxWidth={150} opacity={0.5} />
-          <Text fontSize="$3" color={customColors.textSecond} fontWeight={"200"}>
+          <Text fontSize="$3" color={customColors.textSecond} fontFamily={"Raleway-SemiBold"} >
             OR
           </Text>
           <YStack flex={1} height={1} opacity={0.5} backgroundColor={customColors.textSecond} maxWidth={150} />
@@ -120,6 +184,7 @@ const SignInScreen: React.FC = () => {
         {/* Google et Facebook */}
         <CustomButton
           title="Login with Google"
+          fontFamily={"Raleway-Regular"}
           startIcon={
             <FontAwesome name="google" size={20} color={customColors.purple} />
           }
@@ -137,6 +202,7 @@ const SignInScreen: React.FC = () => {
 
         <CustomButton
           title="Login with Facebook"
+          fontFamily={"Raleway-Regular"}
           startIcon={
             <FontAwesome name="facebook-square" size={20} color={customColors.purple} />
           }
@@ -157,9 +223,9 @@ const SignInScreen: React.FC = () => {
 
 
         <XStack justifyContent="center" alignItems="center" marginTop={24}>
-          <Text fontSize="$3" color="#000">Don’t have an account yet? </Text>
-          <Pressable onPress={() => {/* TODO: go to SignUp */ }}>
-            <Text fontSize="$3" color={customColors.purple}>
+          <Text fontFamily={"Raleway-Regular"} fontSize="$3" color="#000">Don’t have an account yet? </Text>
+          <Pressable onPress={() => { router.push('/signup'); }}>
+            <Text fontSize="$3" color={customColors.purple} fontFamily={"Raleway-Regular"}>
               Sign up
             </Text>
           </Pressable>

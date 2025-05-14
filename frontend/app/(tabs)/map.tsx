@@ -240,6 +240,7 @@ const Map = () => {
             )}
         </MapView>
         )}
+        
         {!selectedMarker && <MapBar 
           date={date}
           setDate={setDate}

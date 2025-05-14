@@ -1,10 +1,7 @@
 // IMPORTS
 import {
-  LockKeyhole,
-  Mail,
   Eye,
   EyeOff,
-  TextCursorInput,
 } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import {
@@ -40,9 +37,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 50,
   },
-  iconLeft: {
-    marginRight: 8,
-  },
   input: {
     flex: 1,
     fontSize: 16,
@@ -57,49 +51,53 @@ const styles = StyleSheet.create({
 
 interface CustomInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   /** Determines which icon, placeholder, and behavior to use */
-  inputType?: CustomInputType;
+  value: string;
+  placeholder?: string;
+  leftIcon?: React.ReactNode;
+  inputType?: CustomInputType; // password, email or text default is text
+  onChangeText: (text: string) => void; // function to update the state of the input
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ inputType = 'default', style, ...rest }) => {
-  const [value, setValue] = useState('');
+/* Pour vous aider a faire un input voici quelques templates: */
+
+// const inputConfig = {
+//   email: { IconLeft: Mail, placeholder: 'Your email', secure: false },
+//   password: { IconLeft: LockKeyhole, placeholder: 'Your password', secure: true },
+//   fullName: { IconLeft: User, placeholder: 'Full name', secure: false },
+//   username: { IconLeft: User, placeholder: 'Username', secure: false },
+//   confirmPassword: { IconLeft: LockKeyhole, placeholder: 'Confirm password', secure: true },
+//   text: { IconLeft: TextCursorInput, placeholder: '', secure: false },
+// };
+
+const CustomInput: React.FC<CustomInputProps> = ({ value='', placeholder = '', leftIcon = null, inputType = 'text', style, onChangeText, ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Configure per-type
-  let IconLeft = TextCursorInput;
-  let placeholder: string;
-  let secure: boolean = false;
-
-
-
-  switch (inputType) {
-    case 'email':
-      IconLeft = Mail;
-      placeholder = 'Your email';
-      break;
-    case 'password':
-      IconLeft = LockKeyhole;
-      placeholder = 'Your password';
-      secure = true;
-      break;
-    default:
-      IconLeft = TextCursorInput;
-      placeholder = rest.placeholder || '';
-  }
+  let secure: boolean = inputType === 'password'; // only needed for password
 
   return (
-    <View style={[styles.container, style] as any}>
-      <IconLeft size={20} color={customColors.textSecond} style={styles.iconLeft} marginRight={10}/>
+    <View style={[styles.container] as any}>
+      {leftIcon && // pour ajouter le style il faut cloner
+        React.isValidElement(leftIcon)
+        ? React.cloneElement(leftIcon, {
+          paddingRight: 8 ,
+          color: customColors.textSecond,
+        })
+        : leftIcon
+      }
       <TextInput
-        style={styles.input}
+        style={[styles.input]}
         placeholder={placeholder}
         value={value}
-        onChangeText={setValue}
+        onChangeText={onChangeText}
         keyboardType={inputType === 'email' ? 'email-address' : 'default'}
         autoCapitalize={inputType === 'email' ? 'none' : 'sentences'}
         secureTextEntry={secure && !showPassword}
+        // fontFamily is already handled in the styles.input
         {...rest}
       />
-      {inputType === 'password' && (
+
+      {(inputType === 'password') && (
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           {showPassword ? (
             <Eye size={20} color={customColors.textSecond} style={styles.iconRight} />
