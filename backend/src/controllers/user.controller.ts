@@ -239,10 +239,12 @@ export const signupUser = async (req: Request, res: Response) => {
         typeof password !== 'string' ||
         typeof email !== 'string'){
         res.status(400).json({error:'Invalid or missing field(s)'});
+        return;
     }
     const result = signupSchema.safeParse({email, password});
     if(!result.success){
         res.status(400).json({error: result.error.format()});
+        return;
     }
 
 
