@@ -23,10 +23,10 @@ const router : Router = Router();
 
 /**
  * @openapi
- * /signout:
+ * /users/signout:
  *   post:
  *     tags:
- *       - Authentification
+ *       - Utilisateurs
  *     summary: Déconnecte l’utilisateur
  *     description: Invalide le token côté client (aucune action serveur)
  *     responses:
