@@ -492,3 +492,16 @@ export const serviceGetCommentsBySoireeId = async (
       };
     }
   };
+
+
+
+
+export const serviceIsSoireeNow = async (eventId : number, prisma : PrismaClient | PrismaTransactionClient) : Promise<boolean> => {
+    const now = new Date();
+    try {
+        const soiree = await serviceGetSoireeById(eventId, prisma);
+        return (soiree.fin > now && soiree.debut < now);
+    } catch(error) {
+        throw error;
+    }
+}
