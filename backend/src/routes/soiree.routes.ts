@@ -22,7 +22,7 @@ const router : Router = Router();
 
 /**
  * @openapi
- * /api/soirees/{id}:
+ * /api/soirees/id/{id}:
  *   get:
  *     tags:
  *       - Soirées
@@ -46,7 +46,7 @@ const router : Router = Router();
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id', getSoireeById);
+router.get('/id/:id', getSoireeById);
 
 
 /**
@@ -130,7 +130,7 @@ router.get('/name/:name', getSoireeByName);
 
 /**
  * @openapi
- * /api/soirees/createSoiree/{id}:
+ * /api/soirees/id/{id}:
  *   put:
  *     summary: Met à jour une soirée existante
  *     tags:
@@ -182,12 +182,12 @@ router.get('/name/:name', getSoireeByName);
  *         description: Requête invalide
  */
 
-router.put("createSoiree/:id", putSoiree);
+router.put("/id/:id", putSoiree);
 
 
 /**
  * @openapi
- * /api/soirees/delete/{id}:
+ * /api/soirees/id/{id}:
  *   delete:
  *     tags:
  *       - Soirées
@@ -218,7 +218,7 @@ router.put("createSoiree/:id", putSoiree);
  *       500:
  *         description: Erreur serveur
  */
-router.delete('/delete/:id', deleteSoiree);
+router.delete('/id/:id', deleteSoiree);
 
 
 
