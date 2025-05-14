@@ -11,9 +11,12 @@ import {
     checkFriendshipStatus,
     signinUser,
     getMeUser,
+<<<<<<< HEAD
     signoutUser,
     unsubscribeEvent,
     isSubscribed,
+=======
+>>>>>>> b626b10 (recommendations ready)
     getSoireeRecommendations
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';

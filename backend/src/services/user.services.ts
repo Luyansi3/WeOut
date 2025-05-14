@@ -365,7 +365,6 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
 }
 
 
-
 type Genre = 'HOMME' | 'FEMME' | 'AUTRE';
 
 type UserUpdateData = {
@@ -753,3 +752,4 @@ export const serviceGetSoireeRecommendations = async (
         };
     }
 };
+
