@@ -7,10 +7,25 @@ import { ActivityIndicator, FlatList } from 'react-native';
 import { EventResponse, SoireeParams } from '@/types/Event';
 import { fetchLocationById } from '@/services/locationService';
 import { LocationResponse } from '@/types/Location';
+
+// hooks:
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
+// services:
+import { fetchLocationById } from '@/services/locationService';
+import { setMeService } from '@/services/setMeService';
+
+
 export default function IndexScreen() {
-    useAuthRedirect(); // check if user is logged in
+    
+    // CHECKING AUTHENTICATION:
+    try{
+        useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
+        setMeService(); // if there is a token in AsyncStorage, fetch the user data
+    }
+    catch (error) {
+        console.error('Error during authentication check:', error);
+    }
 
     const [events, setEvents] = useState([] as EventResponse[]);
     const [locations, setLocations] = useState([] as LocationResponse[]);

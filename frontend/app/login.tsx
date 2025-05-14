@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter} from 'expo-router';
 import {
   LockKeyhole,
   Mail,
@@ -22,6 +22,7 @@ import CustomInput from '../components/CustomInput';
 // Pour le login "remember me":
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logInUser } from '@/services/logInUserService';
 
 
 
@@ -67,13 +68,18 @@ const SignInScreen: React.FC = () => {
     } else {
       await AsyncStorage.removeItem('rememberedEmail');
     }
+
+    // Log in user service :
     try {
-      console.log("Call API TO DO for LOGIN");
+      await logInUser(email, password);
     }
     catch (error) {
-      console.error("Error during sign in:", error);
+      console.error("Error during log in:", error);
       alert('Sign in error');
     }
+
+    // Redirect to home page after successful login
+    router.push('/'); 
   }
 
 

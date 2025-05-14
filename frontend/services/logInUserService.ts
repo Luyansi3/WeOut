@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // npm ins
 // doc : https://react-native-async-storage.github.io/async-storage/docs/usage/
 
 
-export async function loginUser(
+export async function logInUser(
     email: string,
     password: string
 ): Promise<void> {
@@ -15,11 +15,10 @@ export async function loginUser(
             body: JSON.stringify({ email, password }),
         });
         if (!res.ok) throw new Error('Login failed');
-        const data = await res.json();
-        // TO DO MODIFY FOLLOWING:
-        // const token = data.token; 
-        // await AsyncStorage.setItem('token', token);
-        // suite...
+        const token = await res.json();
+
+        // Store the token in AsyncStorage
+        await AsyncStorage.setItem('token', token);  
     } catch (e) {
         alert('Login error');
     }
