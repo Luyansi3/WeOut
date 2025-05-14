@@ -10,6 +10,7 @@ export default () => ({
     newArchEnabled: false,
 
     ios: {
+      bundleIdentifier: "com.riad.weout",
       supportsTablet: true,
       config: {
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,

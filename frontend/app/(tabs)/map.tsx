@@ -161,7 +161,7 @@ const Map = () => {
             Icon={LocateFixed}
             style={{
               position: 'absolute',
-              top: 50,
+              top: "6%",
               right: 20,
             }}
         />
@@ -170,7 +170,7 @@ const Map = () => {
             Icon={Compass}
             style={{
               position: 'absolute',
-              top: 110,
+              top: "17%",
               right: 20,
             }}
         />
@@ -181,6 +181,7 @@ const Map = () => {
             initialRegion={region}
             showsUserLocation={true}
             showsMyLocationButton={false}
+            provider="google"
         >
             {locations.map((location: LocationResponse, index) => {
               const event = events[index];

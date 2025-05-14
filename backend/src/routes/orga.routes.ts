@@ -33,6 +33,6 @@ const router : Router = Router();
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id', getOrgaBySoireeId);
+router.get('/getOrgaBySoireeId/:id', getOrgaBySoireeId);
 
 export default router;
