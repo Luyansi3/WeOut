@@ -190,6 +190,8 @@ model Groupe {
   // Soirée à laquelle le groupe participe
   soiree   Soiree @relation(fields: [soireeId], references: [id], "Participe")
   soireeId Int
+
+  nombreParticipants Int @default(0)
 }
 model Photo {
   id   Int    @id @default(autoincrement())

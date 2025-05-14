@@ -9,6 +9,7 @@ import { DatabaseError, BadStateDataBase, ImpossibleToParticipate, UniqueAttribu
 import { hashPassword, comparePassword } from '../utils/hash';
 import { SECRET_KEY } from "../server";
 import jwt from 'jsonwebtoken';
+import { error } from "console";
 
 type PrismaTransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 
@@ -227,7 +228,10 @@ export const serviceAcceptFriendRequest = async (senderId: string, receiverId: s
                 },
                 ami: {
                     connect: { id: receiverId },
-                }
+                },
+                nombreAmis : {
+                    increment : 1
+                },
             },
         }),
         prisma.user.update({
@@ -238,7 +242,10 @@ export const serviceAcceptFriendRequest = async (senderId: string, receiverId: s
                 },
                 ami: {
                     connect: { id: senderId },
-                }
+                },
+                nombreAmis : {
+                    increment : 1
+                },
             },
         })
         ]);
@@ -274,8 +281,11 @@ export const serviceGetListFriends = async (id: string, prisma: PrismaClient | P
 export const serviceParticipateEvent = async (userId: string, partyId: number, prisma: PrismaClient) => {
     try {
         //Faire une transaction
-        await serviceGetUserById(userId, prisma);
         await prisma.$transaction( async(tx) => {
+
+        if (await serviceIsSubscribed(userId, partyId, tx)) {
+            throw new Error("The user already participate to the party");
+        }
         const soiree = await serviceGetSoireeById(partyId, tx);
         const user = await serviceGetUserById(userId, tx);
         const concurrentParties = await getSoireeInIntervalAndId(soiree.debut, soiree.fin, userId, tx);
@@ -291,8 +301,8 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
 
         if (soiree.dancing) {
             if (user.dancing) {
-                updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
                 updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing + user.dancing) / (soiree.nbNoteDancing + 1);
+                updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
             } 
         } else {
             updatesSoiree.dancing = user.dancing;
@@ -300,8 +310,8 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
 
         if (soiree.talking) {
             if (user.talking) {
-                updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
                 updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking + user.talking) / (soiree.nbNoteTalking + 1);
+                updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
             }
         }else {
             updatesSoiree.talking = user.talking;
@@ -318,38 +328,6 @@ export const serviceParticipateEvent = async (userId: string, partyId: number, p
 
         updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
         
-
-
-            if (soiree.dancing) {
-                if (user.dancing) {
-                    updatesSoiree.nbNoteDancing = soiree.nbNoteDancing + 1;
-                    updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing + user.dancing) / (soiree.nbNoteDancing + 1);
-                }
-            } else {
-                updatesSoiree.dancing = user.dancing;
-            }
-
-            if (soiree.talking) {
-                if (user.talking) {
-                    updatesSoiree.nbNoteTalking = soiree.nbNoteTalking + 1;
-                    updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking + user.talking) / (soiree.nbNoteTalking + 1);
-                }
-            } else {
-                updatesSoiree.talking = user.talking;
-            }
-
-            if (soiree.alcohool) {
-                if (user.alcohool) {
-                    updatesSoiree.alcohool = (soiree.alcohool * soiree.nbNoteAlcohool + user.alcohool) / (soiree.nbNoteAlcohool + 1);
-                    updatesSoiree.nbNoteAlcohool = soiree.nbNoteAlcohool + 1;
-                }
-            } else {
-                updatesSoiree.alcohool = user.alcohool;
-            }
-
-            updatesSoiree.nombreParticipants = soiree.nombreParticipants + 1;
-
-
             await tx.user.update({
                 where: { id: userId },
                 data: {
@@ -565,5 +543,148 @@ export const serviceGetMeUser = async (id: string, prisma: PrismaClient | Prisma
             throw new DatabaseError(id, "User", 400);
         else
             throw error;
+    }
+};
+
+export const serviceIsSubscribed = async (userId: string, eventId: number,
+     prisma : PrismaClient | PrismaTransactionClient) : Promise<boolean> => {
+
+    try {
+        await serviceGetUserById(userId, prisma);
+        await serviceGetSoireeById(eventId, prisma);
+
+        const result = await prisma.soiree.findFirst({
+            where: {
+                groupes : {
+                    some : {
+                        users : {
+                            some : {
+                                id : userId
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        return (result != null);
+    } catch(error) {
+        throw error;
+    }
+};
+
+
+export const serviceUnsubscribreEvent = async(userId: string, eventId: number, prisma: PrismaClient) => {
+    try {
+        
+
+        await prisma.$transaction( async (tx) => {
+        if (! await serviceIsSubscribed(userId, eventId, tx)) {
+            throw new Error("The user is not subscribed to the party");
+        }
+        const user = await serviceGetUserById(userId, tx);
+        const soiree = await serviceGetSoireeById(eventId, tx);
+
+        
+        const updatesSoiree : Partial<Soiree> = {};
+
+        
+        if (user.dancing) {
+            if (soiree.dancing && soiree.nbNoteDancing > 1) {
+                updatesSoiree.dancing = (soiree.dancing * soiree.nbNoteDancing - user.dancing) / (soiree.nbNoteDancing - 1);
+                updatesSoiree.nbNoteDancing = soiree.nbNoteDancing - 1;
+            } else {
+                updatesSoiree.dancing = null;
+                updatesSoiree.nbNoteDancing = 0;
+            }
+            
+        } 
+        
+
+        if (user.talking) {
+            if (soiree.talking && soiree.nbNoteTalking > 1) {
+                updatesSoiree.talking = (soiree.talking * soiree.nbNoteTalking - user.talking) / (soiree.nbNoteTalking - 1);
+                updatesSoiree.nbNoteTalking = soiree.nbNoteTalking - 1;
+            } else {
+                updatesSoiree.talking = null;
+                updatesSoiree.nbNoteTalking = 0;
+            }
+        }
+            
+        
+        
+        if (user.alcohool) {
+            if (soiree.alcohool && soiree.nbNoteAlcohool > 1) {
+                updatesSoiree.alcohool = (soiree.alcohool * soiree.nbNoteAlcohool + user.alcohool) / (soiree.nbNoteAlcohool - 1);
+                updatesSoiree.nbNoteAlcohool = soiree.nbNoteAlcohool - 1;
+            } else {
+                updatesSoiree.alcohool = null;
+                updatesSoiree.nbNoteTalking = 0;
+            }
+        }
+
+        updatesSoiree.nombreParticipants = soiree.nombreParticipants - 1;
+
+
+        const group = await tx.groupe.findFirst({
+            where : {
+                soiree : {
+                    id : eventId
+                },
+                users : {
+                    some : {
+                        id : userId
+                    },
+                },
+            },
+            include : {
+                _count: {
+                    select : {
+                        users : true
+                    }
+                }
+            }
+        });
+
+        if (group && group._count.users===1) {
+            await tx.groupe.delete({
+                where : {
+                    id: group.id
+                }
+            });
+        } else if (group) {
+            await tx.groupe.update({
+                where : {id: group.id},
+                data: {
+                    users : {
+                        disconnect : {id : userId},
+                    },
+                    nombreParticipants : {
+                        increment: 1
+                    },
+                },
+            });
+        }
+        tx.user.update({
+            where : {id: userId},
+            data : {
+                nombreSoiree : {
+                    increment : 1
+                },
+            },
+        });
+        tx.soiree.update({
+            where : {id: eventId},
+            data : {
+                nombreParticipants : {
+                    increment : 1
+                },
+            },
+        });
+            
+        });
+
+        return {success: true};
+    } catch(error) {
+        throw error;
     }
 };

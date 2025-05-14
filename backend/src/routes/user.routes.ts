@@ -10,12 +10,30 @@ import {
     signupUser,
     checkFriendshipStatus,
     signinUser,
-    getMeUser
+    getMeUser,
+    signoutUser,
+    unsubscribeEvent,
+    isSubscribed
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';
 import { authenticateToken } from '../middlewares/auth.middlewares';
 
 const router : Router = Router();
+
+
+/**
+ * @openapi
+ * /users/signout:
+ *   post:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Déconnecte l’utilisateur
+ *     description: Invalide le token côté client (aucune action serveur)
+ *     responses:
+ *       200:
+ *         description: Déconnexion réussie
+ */
+router.post('/signout', signoutUser);
 
 /**
  * @openapi
@@ -24,7 +42,7 @@ const router : Router = Router();
  *     tags:
  *       - Utilisateurs
  *     summary: Récupère les informations de l’utilisateur connecté
- *     description: Nécessite un token JWT valide dans l'en-tête Authorization
+ *     description: Nécessite un token JWT valide dans l'en-tête "Authorization  Bearer <token>"
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -37,20 +55,15 @@ const router : Router = Router();
  *               properties:
  *                 id:
  *                   type: string
- *                   example: clx123abc
  *                 prenom:
  *                   type: string
- *                   example: Luc
  *                 nom:
  *                   type: string
- *                   example: Martin
  *                 pseudo:
  *                   type: string
- *                   example: lucinho
  *                 bio:
  *                   type: string
  *                   nullable: true
- *                   example: J’aime sortir et danser
  *       401:
  *         description: Requête non autorisée (token manquant ou invalide)
  *       404:
@@ -198,7 +211,7 @@ router.post('/signin', requireBody, signinUser);
  *         description: Erreur serveur
  */
 
-router.post('/signup', signupUser);
+router.post('/signup', requireBody, signupUser);
 
 // GET /user/:id - récupérer un utilisateur par ID
 
@@ -269,7 +282,7 @@ router.get('/:id', getUserById);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/sendFriendRequest/:id', sendFriendRequest);
+router.post('/sendFriendRequest/:id', requireBody, sendFriendRequest);
 
 
 // POST /user/declineFriendRequest/:id - refuser relation d'amitié
@@ -309,7 +322,7 @@ router.post('/sendFriendRequest/:id', sendFriendRequest);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/declineFriendRequest/:id', declineFriendRequest);
+router.post('/declineFriendRequest/:id', requireBody, declineFriendRequest);
 
 
 
@@ -350,7 +363,7 @@ router.post('/declineFriendRequest/:id', declineFriendRequest);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/acceptFriendRequest/:id', acceptFriendRequest);
+router.post('/acceptFriendRequest/:id', requireBody, acceptFriendRequest);
 
 
 
@@ -421,7 +434,7 @@ router.get('/getListFriends/:id', getListFriends);
  *       500:
  *         description: Erreur serveur
  */
-router.post('/participate/:id', participateEvent);
+router.post('/participate/:id', requireBody, participateEvent);
 
 
 
@@ -511,5 +524,87 @@ router.patch('/updateUserInfo/:id', updateUserInfo);
  *         description: Erreur serveur
  */
 router.get('/friendhsipStatus/:id', checkFriendshipStatus);
+
+
+
+
+
+/**
+ * @openapi
+ * /api/users/unsubscribeFromEvent/{id}:
+ *   patch:
+ *     tags:
+ *       - Utilisateurs
+ *       - Soirees
+ *     summary: Désinscrit un user d'une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur que l'on cherche à désinscrire
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: ID unique de la soirée à laquelle on cherche à désinscrire le user
+ *     responses:
+ *       201:
+ *         description: Mise à jour réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/unsubscribeFromEvent/:id', unsubscribeEvent);
+
+
+
+
+
+/**
+ * @openapi
+ * /api/users/unsubscribeFromEvent/{id}:
+ *   patch:
+ *     tags:
+ *       - Utilisateurs
+ *       - Soirees
+ *     summary: Vérifie si un user est inscrit à une soirée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l’utilisateur
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: ID unique de la soirée
+ *     responses:
+ *       201:
+ *         description: Mise à jour réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *              result :
+ *                type: boolean
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/isSubscribed/:id', isSubscribed);
 
 export default router;

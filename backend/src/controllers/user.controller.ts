@@ -11,7 +11,9 @@ import {
     serviceSignupUser,
     serviceCheckFriendshipStatus,
     serviceSigninUser,
-    serviceGetMeUser
+    serviceGetMeUser,
+    serviceUnsubscribreEvent,
+    serviceIsSubscribed
  } from "../services/user.services"
 import { z } from 'zod';
 import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -111,8 +113,8 @@ export const declineFriendRequest = async(req: Request, res: Response) => {
     } catch(error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json(error);
-        else
-            res.status(500).json({error : 'Server error'});
+        else if (error instanceof Error)
+            res.status(500).json({error : 'Server error', message : error.message});
     }
 
     return;
@@ -147,8 +149,8 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json(error);
-        else
-            res.status(500).json({error : 'Server error'});
+        else if (error instanceof Error)
+            res.status(500).json({error : 'Server error', message : error.message});
     }
 };
 
@@ -251,8 +253,8 @@ export const signupUser = async (req: Request, res: Response) => {
     } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json({error: error.message});
-        else
-            res.status(500).json({ error: "Server error" });
+        else if (error instanceof Error)
+            res.status(500).json({ error: "Server error", message: error.message});
     }
 };
 
@@ -273,8 +275,8 @@ export const checkFriendshipStatus = async(req: Request, res: Response) => {
     catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json({error: error.message});
-        else
-            res.status(500).json({ error: "Server error" });
+        else if (error instanceof Error)
+            res.status(500).json({ error: "Server error", message: error.message});
     }
 };
 
@@ -292,8 +294,8 @@ export const signinUser = async (req: Request, res: Response) => {
     } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json({error: error.message});
-        else
-            res.status(500).json({ error: "Server error" });
+        else if (error instanceof Error)
+            res.status(500).json({ error: "Server error", message: error.message});
     }
 };
 
@@ -310,9 +312,60 @@ export const getMeUser = async (req: Request, res: Response) => {
     } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json(error);
-        else
-            res.status(500).json({error : 'Server error'});
+        else if (error instanceof Error)
+            res.status(500).json({error : 'Server error', message: error.message});
     }    
 
     return;
 };
+
+export const signoutUser = async (req: Request, res: Response) => {
+  res.status(200).json({ message: 'Déconnexion réussie' });
+}
+
+
+export const unsubscribeEvent = async(req: Request, res: Response) => {
+    const userId : string = req.params.id;
+    const partyIdRaw  = req.query.id;
+
+    if (!partyIdRaw || typeof partyIdRaw !== 'string'){
+        res.status(400).json({error: 'bad partyId format'});
+        return;
+    }
+    const partyIdString : string = partyIdRaw;
+    const partyId : number = parseInt(partyIdString, 10);
+
+
+    try {
+        const result = await serviceUnsubscribreEvent(userId, partyId, prisma);
+        res.status(201).json(result);
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else if (error instanceof Error)
+            res.status(500).json({error : 'Server error', message : error.message});
+    }
+};
+
+
+export const isSubscribed = async(req: Request, res: Response) => {
+    const userId : string = req.params.id;
+    const partyIdRaw  = req.query.id;
+
+    if (!partyIdRaw || typeof partyIdRaw !== 'string'){
+        res.status(400).json({error: 'bad partyId format'});
+        return;
+    }
+    const partyIdString : string = partyIdRaw;
+    const partyId : number = parseInt(partyIdString, 10);
+
+    try {
+        const result : boolean = await serviceIsSubscribed(userId, partyId, prisma);
+        res.status(200).json({result: result});
+    } catch (error) {
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else if (error instanceof Error)
+            res.status(500).json({error : 'Server error', message : error.message});
+    }
+}
