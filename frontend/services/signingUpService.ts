@@ -23,6 +23,7 @@ export async function signUpUser(
     // Call API
     try {
         let url: string = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/users/signup`
+        console.log(user_data);
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
