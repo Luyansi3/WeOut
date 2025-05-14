@@ -3,13 +3,14 @@ import {
     getLieuById,
     getLieux,
 } from '../controllers/lieu.controller';
+import { requireBody } from '../middlewares/requireBody.middlewares';
 
 const router: Router = Router();
 
 // GET /lieux/:id - récupérer un lieu par ID
 /**
  * @openapi
- * /api/lieux/id/{id}:
+ * /api/lieux/{id}:
  *   get:
  *     tags:
  *       - Lieux
@@ -39,28 +40,39 @@ router.get('/:id', getLieuById);
 /**
  * @openapi
  * /api/lieux:
- *   get:
+ *   post:
  *     tags:
  *       - Lieux
- *     summary: Récupère tous les lieux correspondant à une liste de tags
- *     parameters:
- *       - in: query
- *         name: isStrictTag
- *         required: true
- *         schema:
- *           type: string
- *           enum: [true, false]
- *         description: "'true' pour que tous les tags soient requis (hasEvery), 'false' pour qu'au moins un des tags soit requis (hasSome)"
- *       - in: query
- *         name: tags
- *         required: false
- *         schema:
- *           type: array
- *           items:
- *             type: string
- *         style: form
- *         explode: true
- *         description: Liste des tags à filtrer (ex. tags=HOUSE&tags=TECHNO)
+ *     summary: Met à jour la base de lieux depuis Google Places et retourne les lieux filtrés par tags
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isStrictTag:
+ *                 type: boolean
+ *                 description: true pour exiger tous les tags (hasEvery), false pour au moins un tag (hasSome)
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Liste des tags à filtrer (ex. ['HOUSE', 'TECHNO'])
+ *               location:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 minItems: 2
+ *                 maxItems: 2
+ *                 description: Coordonnées GPS sous forme [latitude, longitude]
+ *               radius:
+ *                 type: number
+ *                 description: Rayon de recherche autour de la position (en mètres)
+ *             required:
+ *               - isStrictTag
+ *               - location
+ *               - radius
  *     responses:
  *       200:
  *         description: Liste des lieux correspondant aux filtres
@@ -75,7 +87,8 @@ router.get('/:id', getLieuById);
  *       500:
  *         description: Erreur serveur
  */
-router.get('/', getLieux);
+
+router.post('/', requireBody, getLieux);
 
 
 export default router;
