@@ -77,6 +77,9 @@ model User {
   likes  Photo[] @relation("Likes")
   photos Photo[]
 
+  // Notes
+  notes Note[]
+
   // Compte associé
   compte   Compte @relation(fields: [compteId], references: [id])
   compteId String @unique
@@ -167,6 +170,9 @@ model Soiree {
 
   // Photos postées de la soirée
   photos Photo[]
+
+  // Notes
+  notes Note[]
 
   // Commentaires de la soirée
   commentaires Commentaire[]
