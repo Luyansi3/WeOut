@@ -13,7 +13,8 @@ import {
     serviceSigninUser,
     serviceGetMeUser,
     serviceUnsubscribreEvent,
-    serviceIsSubscribed
+    serviceIsSubscribed,
+    serviceGetSoireeRecommendations
  } from "../services/user.services"
 import { z } from 'zod';
 import { CustomErrors, BadStateDataBase, DatabaseError } from "../errors/customErrors";
@@ -371,3 +372,34 @@ export const isSubscribed = async(req: Request, res: Response) => {
             res.status(500).json({error : 'Server error', message : error.message});
     }
 }
+
+export const getSoireeRecommendations = async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+  
+    if (!userId || typeof userId !== 'string') {
+      res.status(400).json({
+        success: false,
+        reason: 'Missing or invalid userId',
+      });
+      return;
+    }
+    try {
+      const result = await serviceGetSoireeRecommendations(userId, prisma);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof CustomErrors) {
+        res.status(error.statusCode).json({
+          success: false,
+          reason: error.message,
+        });
+      } else {
+        console.error('Unexpected error in getSoireeRecommendations:', error);
+        res.status(500).json({
+          success: false,
+          reason: 'Server error',
+        });
+      }
+    }
+  };
+  
+  

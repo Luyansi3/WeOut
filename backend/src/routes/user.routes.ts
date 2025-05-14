@@ -11,9 +11,13 @@ import {
     checkFriendshipStatus,
     signinUser,
     getMeUser,
+<<<<<<< HEAD
     signoutUser,
     unsubscribeEvent,
-    isSubscribed
+    isSubscribed,
+=======
+>>>>>>> b626b10 (recommendations ready)
+    getSoireeRecommendations
 } from '../controllers/user.controller';
 import { requireBody } from '../middlewares/requireBody.middlewares';
 import { authenticateToken } from '../middlewares/auth.middlewares';
@@ -522,7 +526,7 @@ router.post('/participate/:id', requireBody, participateEvent);
  *       500:
  *         description: Erreur serveur
  */
-router.patch('/updateUserInfo/:id', updateUserInfo);
+router.patch('/updateUserInfo/:id',requireBody, updateUserInfo);
 
 
 
@@ -645,4 +649,67 @@ router.post('/unsubscribeFromEvent/:id', unsubscribeEvent);
  */
 router.get('/isSubscribed/:id', isSubscribed);
 
+/**
+ * @openapi
+ * /api/users/recommendations/{userId}:
+ *   get:
+ *     tags:
+ *       - Utilisateurs
+ *     summary: Recommande des soirées à un utilisateur donné
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID unique de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: Recommandations récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       score:
+ *                         type: integer
+ *                         example: 78
+ *                       soiree:
+ *                         $ref: '#/components/schemas/Soiree'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 reason:
+ *                   type: string
+ *                   example: "Invalid user ID"
+ *       500:
+ *         description: Erreur interne serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 reason:
+ *                   type: string
+ *                   example: "Server error"
+ */
+router.get('/recommendations/:userId', getSoireeRecommendations);
 export default router;
