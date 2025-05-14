@@ -29,7 +29,7 @@ export async function signUpUser(
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user_data),
         });
-        if (!res.ok) throw new Error('Registration failed');
+        if (!res.ok) throw new Error(await res.json());
         router.push('/login');
     } catch (e) {
         console.error('Error during signup:', e);

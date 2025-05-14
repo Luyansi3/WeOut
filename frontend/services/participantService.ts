@@ -10,3 +10,4 @@ export const fetchParticipantsByEventId = async (
   const { participants } = await res.json();
   return participants as Participant[];
 };
+

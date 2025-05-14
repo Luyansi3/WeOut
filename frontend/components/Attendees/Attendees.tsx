@@ -11,6 +11,18 @@ export default function Attendees({ avatars }: AttendeesProps) {
   const count = avatars.length;
   const displayed = avatars.slice(0, 3);
   const overlap = -12;
+  const extra = count > 3 ? count - 3 : 0;
+
+  let label: string;
+  if (count === 0) {
+    label = 'Nobody is going';
+  } else if (count === 1) {
+    label = 'is going';
+  } else if (extra > 0) {
+    label = `+${extra} are going`;
+  } else {
+    label = 'are going';
+  }
 
   return (
     <YStack alignItems="flex-start">
@@ -33,17 +45,15 @@ export default function Attendees({ avatars }: AttendeesProps) {
           );
         })}
 
-        {count > 3 && (
-          <Text
-            ml={8}
-            fontFamily="Raleway"
-            fontWeight="700"
-            fontSize={15}
-            color="#8F00FF"
-          >
-            +{count - 3} Going
-          </Text>
-        )}
+        <Text
+          ml={8}
+          fontFamily="Raleway"
+          fontWeight="700"
+          fontSize={15}
+          color="#8F00FF"
+        >
+          {label}
+        </Text>
       </XStack>
     </YStack>
   );

@@ -3,5 +3,6 @@ export type Participant = {
     id: string;
     nom: string;
     prenom: string;
+    pseudo: string;
     photoProfil: string;
   };
