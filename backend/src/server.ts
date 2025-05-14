@@ -13,7 +13,6 @@ import path from 'path';
 import cors from 'cors';
 
 
-
 dotenv.config();
 
 const port = process.env.NODE_PORT || 3000;
@@ -41,7 +40,7 @@ app.use('/static', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/users', UserRoutes);
 app.use('/api/soirees', SoireeRoutes);
-app.use('/api/lieux', LieuRoutes);
+app.use('/api/lieux/', LieuRoutes);
 app.use('/api/uploads', UploadRoutes);
 app.use('/api/orgas/', OrgaRoutes);
 app.use('/api/tags', TagRoutes);
