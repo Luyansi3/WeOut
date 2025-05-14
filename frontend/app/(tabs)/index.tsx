@@ -22,6 +22,7 @@ import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { fetchLocationById } from '@/services/locationService';
 import { setMe } from '@/services/setMeService';
 import { fetchEvents } from '@/services/eventService';
+import CustomButton from '@/components/CustomButton';
 
 
 export default function IndexScreen() {
@@ -32,6 +33,16 @@ export default function IndexScreen() {
     const [loading, setLoading] = useState(true);
 
     const router = useRouter();
+
+
+    
+    const customColors = {
+        background: "#F5F5F7",
+        pink: "#FF3C78",
+        purple: "#8F00FF",
+        textSecond: "#747688",
+        textMain: "#1A1B41"
+    };
 
     // HOOKS:
     // Checking authentication:
@@ -94,15 +105,18 @@ export default function IndexScreen() {
                             />
                         );
                     })}
-                    <Button
+                    <CustomButton
                         title="Log out"
 
-                        position="absolute"
-                        top={16}
-                        right={16}
-                        padding={8}
-                        backgroundColor="#FFF"
-                        borderRadius={8}
+                        backgroundColor={customColors.pink}
+                        minWidth={250}
+                        minHeight={60}
+                        borderRadius={15}
+                        fontSize={15}
+                        fontFamily={"Raleway-SemiBold"}
+                        pressStyle={{ backgroundColor: customColors.pink }}
+                        focusStyle={{ backgroundColor: customColors.pink }}
+                        hoverStyle={{ backgroundColor: customColors.pink }}
                         onPress={async () => {
                             await AsyncStorage.removeItem('token');
                             await AsyncStorage.removeItem('user'); // optionnel
