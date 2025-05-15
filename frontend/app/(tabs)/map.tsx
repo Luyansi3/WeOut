@@ -143,7 +143,7 @@ const Map = () => {
       <CustomMapButton
         onPress={resetToNorth}
         Icon={Compass}
-        style={{ position: 'absolute', top: '17%', right: 20 }}
+        style={{ position: 'absolute', top: '13%', right: 20 }}
       />
 
       {region && (

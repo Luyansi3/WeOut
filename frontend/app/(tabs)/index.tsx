@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { View, ScrollView, YStack } from 'tamagui';
@@ -6,62 +6,167 @@ import { View, ScrollView, YStack } from 'tamagui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@/components/Header/Header';
 import EventCard from '@/components/EventCard/EventCard';
-import CustomButton from '@/components/CustomButton';
 
+// types:
 import { EventResponse, SoireeParams } from '@/types/Event';
 import { LocationResponse } from '@/types/Location';
+
+// hooks:
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
-import { fetchEvents } from '@/services/eventService';
+
+// services:
 import { fetchLocationById } from '@/services/locationService';
 import { fetchParticipantsByEventId } from '@/services/participantService';
+import { setMe } from '@/services/setMeService';
+import { fetchEventByUserId, fetchEvents } from '@/services/eventService';
+import CustomButton from '@/components/CustomButton';
+import { isNearPlace } from '@/utils/isNearPlace';
+import HeaderWithNote from '@/components/HeaderWithNote/HeaderWithNote';
 
 export default function IndexScreen() {
-  const router = useRouter();
-  const [events, setEvents] = useState<EventResponse[]>([]);
-  const [locations, setLocations] = useState<LocationResponse[]>([]);
-  const [avatarsList, setAvatarsList] = useState<string[][]>([]);
-  const [loading, setLoading] = useState(true);
 
-  const customColors = {
-    background: '#F5F5F7',
-    pink: '#FF3C78',
-    purple: '#8F00FF',
-    textSecond: '#747688',
-    textMain: '#1A1B41',
-  };
+    // VARS:
+    const [events, setEvents] = useState([] as EventResponse[]);
+    const [locations, setLocations] = useState([] as LocationResponse[]);
+    const [loading, setLoading] = useState(true);
+    const [showNote, setShowNote] = useState(false);
+    const [event, setEvent] = useState({} as EventResponse);
+    const [location, setLocation] = useState({} as LocationResponse);
+    const [avatarsList, setAvatarsList] = useState([] as string[][]);
+    const [value, setValue] = useState(0);
 
-  useAuthRedirect();
+    const router = useRouter();
+    
+    const customColors = {
+        background: "#F5F5F7",
+        pink: "#FF3C78",
+        purple: "#8F00FF",
+        textSecond: "#747688",
+        textMain: "#1A1B41"
+    };
 
-  /**
-   * Charge les événements, lieux et participants.
-   * Sera rappelé à chaque focus de l’écran pour garantir des données fraîches.
-   */
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      // 1. Events
-      const params: SoireeParams = { isStrictTag: false, tags: [] };
-      const eventsData = await fetchEvents(params);
-      setEvents(eventsData);
+    // HOOKS:
+    // Checking authentication:
+    useAuthRedirect(); // check if there is a token in AsyncStorage otherwise redirect to login
 
-      // 2. Locations
-      const locPromises = eventsData.map(evt => fetchLocationById(evt.lieuId));
-      const locs = await Promise.all(locPromises);
-      setLocations(locs);
 
-      // 3. Participants → avatars
-      const partPromises = eventsData.map(evt => fetchParticipantsByEventId(evt.id));
-      const partsData = await Promise.all(partPromises);
-      const avArray = partsData.map(parts =>
-        parts.map(p => `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${p.photoProfil}`)
-      );
-      setAvatarsList(avArray);
-    } catch (err) {
-      console.error('Error fetching events, locations or participants:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    const loadData = useCallback(async () => {
+      try {
+        setLoading(true);
+        // 1. Events
+        const params: SoireeParams = { isStrictTag: false, tags: [] };
+        const eventsData = await fetchEvents(params);
+        setEvents(eventsData);
+
+        // 2. Locations
+        const locPromises = eventsData.map(evt => fetchLocationById(evt.lieuId));
+        const locs = await Promise.all(locPromises);
+        setLocations(locs);
+
+        // 3. Participants → avatars
+        const partPromises = eventsData.map(evt => fetchParticipantsByEventId(evt.id));
+        const partsData = await Promise.all(partPromises);
+        const avArray = partsData.map(parts =>
+          parts.map(p => `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${p.photoProfil}`)
+        );
+        setAvatarsList(avArray);
+      } catch (err) {
+        console.error('Error fetching events, locations or participants:', err);
+      } finally {
+        setLoading(false);
+      }
+    }, []);
+
+
+    useEffect(() => {
+        (async () => {
+            await setMe(router); // set the user in AsyncStorage
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            const userString = await AsyncStorage.getItem('user');
+            const user_obj = userString ? JSON.parse(userString) : {};
+            if (!user_obj.id) return;
+
+            console.log("fetching events for checking");
+            const events = await fetchEventByUserId(user_obj.id);
+
+            let minDist: number = Number.MAX_SAFE_INTEGER;
+            let closestEvent: EventResponse | null = null;
+            let closestLocation: LocationResponse | null = null;
+
+            for (const e of events) {
+            try {
+                const loc = await fetchLocationById(e.lieuId);
+                const dist = await isNearPlace(loc);
+
+                if (dist < minDist) {
+                minDist = dist;
+                closestEvent = e;
+                closestLocation = loc;
+                }
+            } catch (err) {
+                console.log("Error checking location/event:", err);
+            }
+            }
+
+            if (closestEvent && closestLocation && minDist <= 100) {
+                const now = Date.now();
+                const start = Date.parse(closestEvent.debut);
+                const end = Date.parse(closestEvent.fin);
+                if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
+                    setShowNote(true);
+                    setEvent(closestEvent);
+                    setLocation(closestLocation);
+                    console.log("Valid event found:", closestEvent);
+                    return;
+                }
+            }
+
+            setShowNote(false);
+        })();
+        }, []);
+
+    useEffect(() => {
+        (async () => {
+            const userString = await AsyncStorage.getItem('user');
+            const user_obj = userString ? JSON.parse(userString) : {};
+            if (!user_obj.id) return;
+            /* const events = await fetchEventByUserId(user_obj.id);
+            setEvents(events); */
+        })();
+    }, [value])
+
+
+
+    // Fetching events and locations:
+    useEffect(() => {
+        const fetchEventsWithLocations = async () => {
+            try {
+                const parameters: SoireeParams = {
+                    isStrictTag: false,
+                    tags: [],
+                };
+                const eventsData = await fetchEvents(parameters);
+                setEvents(eventsData);
+
+                const locationPromises = eventsData.map((event) =>
+                    fetchLocationById(event.lieuId)
+                );
+
+                const locationsData = await Promise.all(locationPromises);
+                setLocations(locationsData);
+            } catch (err) {
+                console.log("Error fetching events or locations:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEventsWithLocations();
+    }, []);
 
   // charge au premier rendu + chaque fois que l’écran reprend le focus
   useFocusEffect(
