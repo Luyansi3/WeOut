@@ -65,7 +65,7 @@ async function seedAll() {
         bloquant: [],
         demandeEnvoye: [],
         demandeRecue: [],
-        photoProfil: "pf_0.jpg",
+        photoProfil: "pf_10.jpg",
         lienInsta: faker.internet.url(),
         lienTwitter: faker.internet.url(),
         dancing: Math.floor(Math.random() * 100),
@@ -170,12 +170,10 @@ async function seedAll() {
     soirees.push(soiree);
 
     // Add group with 3–6 random users
+    const filteredUsers = users.filter((user) => user.id !== user_unique.id);
     const shuffled = faker.helpers.shuffle(users);
     const groupUsers = shuffled.slice(0, faker.number.int({ min: 3, max: 6 }));
-    const group = await seedGroupe({
-      users: [user_unique],
-      soireeId: soiree.id,
-    })
+
     await seedGroupe({
       users: groupUsers.map((u) => ({ id: u.id })),
       soireeId: soiree.id,
