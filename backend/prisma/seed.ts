@@ -386,3 +386,25 @@ export async function addFriendship(userId1: string, userId2: string) {
     },
   });
 }
+
+export async function seedNote({
+  userId,
+  soireeId,
+  note = faker.number.int({ min: 0, max: 100 }),
+}: {
+  userId: string;
+  soireeId: number;
+  note?: number;
+}) {
+  return await prisma.note.create({
+    data: {
+      note,
+      user: {
+        connect: { id: userId },
+      },
+      soiree: {
+        connect: { id: soireeId },
+      },
+    },
+  });
+}

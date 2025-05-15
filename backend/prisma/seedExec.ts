@@ -17,6 +17,7 @@ import {
   seedSoiree,
   seedGroupe,
   generateNightOutTime,
+  seedNote,
 } from './seed'; // Adjust path if needed
 import { hashPassword } from '../src/utils/hash';
 
@@ -178,6 +179,16 @@ async function seedAll() {
       users: groupUsers.map((u) => ({ id: u.id })),
       soireeId: soiree.id,
     });
+
+    for (const s of soirees) {
+    const randomUsers = faker.helpers.shuffle(users).slice(0, 5);
+    for (const u of randomUsers) {
+      await seedNote({
+        userId: u.id,
+        soireeId: s.id,
+      });
+    }
+  }
   }
   console.log("soirée id", soiree.id)
 

@@ -12,12 +12,16 @@ import {
   XStack,
   Image,
   Text,
+  View,
+  Button,
 } from 'tamagui';
 import {
   ChevronLeftCircle,
   CalendarDays,
   MapPinned,
   ArrowRightCircle,
+  Star,
+  Dot,
 } from '@tamagui/lucide-icons';
 import { LinearGradient } from 'tamagui/linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -43,6 +47,7 @@ import { Participant } from '@/types/Participant';
 import { Organizer } from '@/types/Organizer';
 import { truncateText } from '@/utils/truncateText';
 import { useMemo } from 'react';
+import { fetchNote } from '@/services/noteService';
 
 
 export default function EventDetailScreen() {
@@ -60,6 +65,8 @@ export default function EventDetailScreen() {
   const [location, setLocation] = useState<LocationResponse | null>(null);
   const [organizer, setOrganizer] = useState<Organizer | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [note, setNote] = useState(null as number | null);
+  const [live, setLive] = useState(false);
 
   const [isParticipating, setIsParticipating] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'About' | 'People'>('About');
@@ -235,6 +242,25 @@ export default function EventDetailScreen() {
       }
     }
   }, [me]);
+
+  useEffect(() => {
+  const loadNotes = async () => {
+      if (!me || !event) return;
+      try {
+        const note: number = await fetchNote(event.id);
+        console.log('[EventDetail] Restored note =', note);
+        setNote(note);
+
+        const now = new Date();
+        const l = now.getTime() >= Date.parse(event.debut) && now.getTime() <= Date.parse(event.fin);
+        setLive(l)
+      } catch (err) {
+        console.error('[EventDetail] fetchNotesByEventId error', err);
+      }
+    };
+
+    loadNotes();
+  }, [me, event]);
   
   
 
@@ -474,6 +500,51 @@ export default function EventDetailScreen() {
             />
           )}
         </YStack>
+
+          {note && <XStack mt={10 * scale} px={30 * scale} alignItems='center'>
+            
+          <YStack
+            width={48 * scale}
+            height={48 * scale}
+            borderRadius={12 * scale}
+            backgroundColor="rgba(255,60,120,0.1)"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Star
+              width={24 * scale}
+              height={24 * scale}
+              color="#FF3C78"
+            />
+          </YStack>
+          <XStack alignItems="center" gap={20}>
+          <YStack ml={14 * scale} justifyContent="center">
+            <Text
+              fontFamily="Raleway"
+              fontWeight="700"
+              fontSize={16 * scale}
+              color="#FF3C78"
+              opacity={0.84}
+            >
+              {Math.floor(note) + "/100"}
+            </Text>
+            </YStack>
+            {live && <Button
+              theme="red"
+              size="$3"
+              borderRadius="$8"
+              paddingHorizontal="$4"
+              alignItems='center'
+              justifyContent='center'
+              backgroundColor="$red10"
+            >
+              <XStack alignItems="center" space="$2">
+                <Text fontWeight="700" color="white">LIVE</Text>
+              </XStack>
+            </Button>}
+          </XStack>
+            </XStack>
+          }
 
         {/* DATE & TIME */}
         <XStack mt={10 * scale} px={30 * scale}>
