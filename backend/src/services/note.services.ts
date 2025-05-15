@@ -91,18 +91,27 @@ export const servicePostNote = async (
             },
         });
 
+        let newNote;
         if (recentNote) {
-            // Si une note existe déjà dans la dernière heure, on lève une erreur
-            throw new DatabaseError("Note", "Note déjà existante dans l'heure", 429);
+            newNote = await prisma.note.update({
+                where : {id: recentNote.id},
+                data: {
+                    userId,
+                    soireeId,
+                    note,
+                },
+            });
+        } else {
+            newNote = await prisma.note.create({
+                data: {
+                    userId,
+                    soireeId,
+                    note,
+                },
+            });
         }
 
-        const newNote = await prisma.note.create({
-            data: {
-                userId,
-                soireeId,
-                note,
-            },
-        });
+        
 
         return newNote;
     } catch (error) {
