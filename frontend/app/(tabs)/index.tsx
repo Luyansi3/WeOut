@@ -1,7 +1,6 @@
-// app/(tabs)/index.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { View, ScrollView, YStack } from 'tamagui';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,77 +13,86 @@ import { LocationResponse } from '@/types/Location';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { fetchEvents } from '@/services/eventService';
 import { fetchLocationById } from '@/services/locationService';
+import { fetchParticipantsByEventId } from '@/services/participantService';
 
 export default function IndexScreen() {
   const router = useRouter();
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [locations, setLocations] = useState<LocationResponse[]>([]);
+  const [avatarsList, setAvatarsList] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
 
   const customColors = {
-    background: "#F5F5F7",
-    pink: "#FF3C78",
-    purple: "#8F00FF",
-    textSecond: "#747688",
-    textMain: "#1A1B41"
+    background: '#F5F5F7',
+    pink: '#FF3C78',
+    purple: '#8F00FF',
+    textSecond: '#747688',
+    textMain: '#1A1B41',
   };
 
-  // redirect if not authenticated
   useAuthRedirect();
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const params: SoireeParams = { isStrictTag: false, tags: [] };
-        const eventsData = await fetchEvents(params);
-        setEvents(eventsData);
+  /**
+   * Charge les événements, lieux et participants.
+   * Sera rappelé à chaque focus de l’écran pour garantir des données fraîches.
+   */
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      // 1. Events
+      const params: SoireeParams = { isStrictTag: false, tags: [] };
+      const eventsData = await fetchEvents(params);
+      setEvents(eventsData);
 
-        // fetch each location in parallel
-        const locationPromises = eventsData.map(evt =>
-          fetchLocationById(evt.lieuId)
-        );
-        const locationsData = await Promise.all(locationPromises);
-        setLocations(locationsData);
+      // 2. Locations
+      const locPromises = eventsData.map(evt => fetchLocationById(evt.lieuId));
+      const locs = await Promise.all(locPromises);
+      setLocations(locs);
 
-      } catch (err) {
-        console.error("Error fetching events or locations:", err);
-      } finally {
-        setLoading(false);
-      }
+      // 3. Participants → avatars
+      const partPromises = eventsData.map(evt => fetchParticipantsByEventId(evt.id));
+      const partsData = await Promise.all(partPromises);
+      const avArray = partsData.map(parts =>
+        parts.map(p => `${process.env.EXPO_PUBLIC_BACKEND_URL_STATIC}/${p.photoProfil}`)
+      );
+      setAvatarsList(avArray);
+    } catch (err) {
+      console.error('Error fetching events, locations or participants:', err);
+    } finally {
+      setLoading(false);
     }
-    load();
   }, []);
+
+  // charge au premier rendu + chaque fois que l’écran reprend le focus
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   if (loading) {
     return (
-      <ActivityIndicator
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        size="large"
-      />
+      <ActivityIndicator style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} size="large" />
     );
   }
 
   return (
     <View flex={1} backgroundColor={customColors.background} alignItems="center">
       <Header />
-
       <ScrollView width="100%" backgroundColor={customColors.background} padding="$4">
         <YStack gap="$4">
           {events.map((event, idx) => {
             const loc = locations[idx];
+            const avatars = avatarsList[idx] ?? [];
             return (
-              <Pressable
-                key={event.id}
-                onPress={() => router.push(`/events/${event.id}`)}
-              >
+              <Pressable key={event.id} onPress={() => router.push(`/events/${event.id}`)}>
                 <EventCard
                   image={event.photoCouverturePath}
                   title={event.nom}
                   description={event.description}
-                  date={new Date(event.debut)
-                    .toLocaleDateString()
-                    .replace(/-/g, '/')}
+                  date={new Date(event.debut).toLocaleDateString().replace(/-/g, '/')}
                   location={loc?.adresse ?? 'Unknown location'}
+                  avatars={avatars}
                 />
               </Pressable>
             );

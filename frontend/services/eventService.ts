@@ -60,7 +60,7 @@ export const fetchEventByUserId = async (userId: string): Promise<EventResponse[
 export const fetchEventById = async (
   id: string | number
 ): Promise<EventResponse> => {
-  const url = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees/${id}`;
+  const url = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}/soirees/id/${id}`;
   try {
     const response = await fetch(url);
     console.log('[eventService] fetchEventById status =', response.status);
