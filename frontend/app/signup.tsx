@@ -84,7 +84,7 @@ const SignupScreen = () => {
 
 
     return (
-        <YStack flex={1} padding={24} backgroundColor={customColors.background}>
+        <YStack marginTop="10%"flex={1} padding={24} backgroundColor={customColors.background}>
             <XStack alignItems="center" marginBottom={8}>
                 <Pressable onPress={() => router.back()}>
                     <ArrowLeft size={24} color={customColors.textMain} />
