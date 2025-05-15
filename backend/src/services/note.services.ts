@@ -119,3 +119,23 @@ export const servicePostNote = async (
     }
 };
 
+
+
+export const serviceGetLatestNote = async (userId : string, soireeId: number, prisma : PrismaClient | PrismaTransactionClient) => {
+        
+    try {
+        const recentNote = await prisma.note.findFirst({
+            where: {
+                userId : userId,
+                soireeId :soireeId,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        }); 
+        return recentNote;
+    } catch(error) {
+        throw error
+    }
+} 
+

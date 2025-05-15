@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { serviceIsSoireeNow } from "../services/soiree.services";
-import { serviceGetNoteDef, serviceGetNoteLive, servicePostNote } from "../services/note.services";
+import { serviceGetLatestNote, serviceGetNoteDef, serviceGetNoteLive, servicePostNote } from "../services/note.services";
 import { serviceGetSoireeParticipants } from "../services/soiree.services";
 import { CustomErrors } from "../errors/customErrors";
+import { serviceIsSubscribed } from "../services/user.services";
 
 const prisma : PrismaClient = new PrismaClient();
 
@@ -45,21 +46,11 @@ export const postNote = async (req: Request, res: Response) => {
         }
 
         // Vérifier si l'utilisateur participe à la soirée
-        const participantsResult = await serviceGetSoireeParticipants(soireeId, prisma);
+        const doesParticipate = serviceIsSubscribed(userId, soireeId, prisma);
 
-        if (!participantsResult.success || !Array.isArray(participantsResult.participants)) {
-            res.status(404).json({ error: "Soirée non trouvée ou erreur base de données." });
-            return;
-        }
-
-        const isParticipant = participantsResult.participants.some(
-            (participant: any) => participant.id === userId
-        );
-
-        if (!isParticipant) {
-            res.status(403).json({ error: "L'utilisateur ne participe pas à cette soirée." });
-            return;
-        }
+        if (!doesParticipate) {
+            res.status(400).json({error: "Le user ne participe pas à la soirée"});
+        }        
 
         // Ajouter la note
         const createdNote = await servicePostNote(userId, soireeId, note, prisma);
@@ -67,6 +58,32 @@ export const postNote = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(error);
+        if (error instanceof CustomErrors)
+            res.status(error.statusCode).json(error);
+        else
+            res.status(500).json({ error: "Erreur serveur", message: error instanceof Error ? error.message : undefined });
+    }
+};
+
+
+
+
+export const getLatestNote = async (req: Request, res: Response) => {
+    const userIdRaw = req.query.userId;
+    const eventIdRaw = req.params.id;
+
+    if (!userIdRaw || typeof userIdRaw !== 'string') {
+        res.status(400).json({error: 'Bad arguments for user Id'});
+        return;
+    }
+    const userId : string = userIdRaw;
+    const eventId : number = parseInt(eventIdRaw, 10);
+
+
+    try {
+        const result = await serviceGetLatestNote(userId, eventId, prisma);
+        res.status(200).json(result);
+    } catch (error) {
         if (error instanceof CustomErrors)
             res.status(error.statusCode).json(error);
         else

@@ -1,6 +1,6 @@
 
 import { Router } from "express";
-import { postNote } from "../controllers/note.controller";
+import { getLatestNote, postNote } from "../controllers/note.controller";
 import { getNoteSoiree } from "../controllers/note.controller";
 
 const router: Router = Router();
@@ -82,5 +82,46 @@ router.post("/", postNote);
  *         description: Erreur serveur
  */
 router.get('/getNote/:id', getNoteSoiree);
+
+
+
+
+
+/**
+ * @openapi
+ * /api/notes/getLatestNote/{id}:
+ *   get:
+ *     tags:
+ *       - Notes
+ *     summary: Récupère la dernière note qu'un user a donné
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la soirée
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *            type: string
+ *         description: ID du user dont on cherche la dernière note
+ *     responses:
+ *       200:
+ *         description: derni_re note récupére
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               description: Contient la note
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Soirée non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/getLatestNote/:id', getLatestNote);
 export default router;
 
