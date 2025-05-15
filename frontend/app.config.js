@@ -7,7 +7,12 @@ export default () => ({
     icon: "./assets/images/we-out-logo-pink.png",
     scheme: "frontend",
     userInterfaceStyle: "automatic",
-    newArchEnabled: false,
+    newArchEnabled: true,
+    extra: {
+      eas: {
+        projectId: "c6b15518-e70e-4764-b04a-6a66e5cd4301"
+      }
+    },
 
     ios: {
       bundleIdentifier: "com.riad.weout",
@@ -18,6 +23,7 @@ export default () => ({
     },
 
     android: {
+      package: "com.remi.weout",
       adaptiveIcon: {
         foregroundImage: "./assets/images/we-out-logo-pink.png",
         backgroundColor: "#ffffff",

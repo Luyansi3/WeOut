@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { XStack, Image, YStack, View, Button } from 'tamagui';
+import { XStack, Image, YStack, View, Button, Text } from 'tamagui';
 import { Bell } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // services:
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+import SlidingSlider from '../SlidingSlider/SlidingSlider';
+import { EventResponse } from '@/types/Event';
 
 /**
  * Header component with fixed dimensions and absolute positioning.
@@ -15,13 +17,11 @@ import { useAuthRedirect } from '@/hooks/useAuthRedirect';
  * - Notification bell in semi-transparent circle left of profile
  * - Profile image in a circle (37.78x37.78) at right
  */
-const Header: React.FC = () => {
+const HeaderWithNote: React.FC<{ event: EventResponse; value: number; setValue: React.Dispatch<React.SetStateAction<number>> }> = ({ event, value, setValue }) => {
   // calculate offsets
   const profileRight = 24;
   const profileSize = 37.78;
-  const gap = 10;
   const bellCircleSize = profileSize;
-  const bellRight = profileRight + profileSize + gap;
 
   const router = useRouter();
 
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     (async () => {
       const userString = await AsyncStorage.getItem('user');
-      const user_obj = JSON.parse(userString);
+      const user_obj = userString ? JSON.parse(userString): {};
       setprofilePicturePath(user_obj.photoProfil);
     })();
   }, []);
@@ -43,13 +43,15 @@ const Header: React.FC = () => {
 
 
   return (
-    <View
+    <YStack
       width="100%"
-      height={"13%"}>
+      height={"20%"}
+      backgroundColor="#FF3C78"
+      gap={"5%"}
+      >
       <XStack
         width="100%"
-        height={"100%"}
-        backgroundColor="#FF3C78"
+        height={"70%"}
         zIndex={1}
         alignItems="flex-end"
         justifyContent="space-between"
@@ -116,10 +118,28 @@ const Header: React.FC = () => {
             zIndex={2}
           />
           </Button>
+          
         </XStack>
       </XStack>
-    </View>
+      <XStack
+          width="100%"
+          height={"10%"}
+          zIndex={1000}
+          justifyContent="center"
+        >
+          <View
+            width="80%"
+            height={"100%"}
+            justifyContent='center'
+            alignItems='center'
+            gap={"30%"}
+          >
+            <Text fontFamily={"Raleway-Bold"} fontSize={16} color="white">How is it like at {event.nom}</Text>
+            <SlidingSlider value={25} max={100} icon="🔥" gradientFrom='#32FFCE' gradientTo="#32FFCE" onValueChange={setValue}/>
+          </View>
+        </XStack>
+    </YStack>
   );
 };
 
-export default Header;
+export default HeaderWithNote;

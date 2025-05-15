@@ -1,8 +1,10 @@
+import { convertURLWithParams } from "@/utils/convertURLWithParams";
+
 // services/participationService.ts
 const API_BASE = `http://${process.env.EXPO_PUBLIC_BACKEND_URL_API}`;
 
 export async function participateUser(userId: string, partyId: number): Promise<void> {
-  const url = `${API_BASE}/users/participate/${userId}`;
+  const url = convertURLWithParams(`${API_BASE}/users/participate/${userId}`, { partyId : partyId });
   console.log('POST', url, 'body=', { partyId });
 
   const res = await fetch(url + `?partyId=${partyId}`, {
@@ -10,7 +12,6 @@ export async function participateUser(userId: string, partyId: number): Promise<
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ partyId }),
   });
 
   if (!res.ok) {

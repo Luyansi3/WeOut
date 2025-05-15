@@ -26,7 +26,7 @@ import MapCard from '@/components/MapCard/MapCard';
 import MapBar from '@/components/MapBar/MapBar';
 
 const { height } = Dimensions.get('window');
-export const MAP_CARD_HEIGHT = 0.9 * height;
+export const MAP_CARD_HEIGHT = 0.6 * height;
 
 const Map = () => {
   const router = useRouter();
@@ -143,7 +143,7 @@ const Map = () => {
       <CustomMapButton
         onPress={resetToNorth}
         Icon={Compass}
-        style={{ position: 'absolute', top: '17%', right: 20 }}
+        style={{ position: 'absolute', top: '13%', right: 20 }}
       />
 
       {region && (
