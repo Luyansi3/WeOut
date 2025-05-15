@@ -133,6 +133,7 @@ export const serviceGetLatestNote = async (userId : string, soireeId: number, pr
                 createdAt: "desc",
             },
         }); 
+        return recentNote;
     } catch(error) {
         throw error
     }
