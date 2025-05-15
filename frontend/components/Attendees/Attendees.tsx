@@ -4,11 +4,13 @@ import { XStack, Image, Text, YStack } from 'tamagui';
 
 export type AttendeesProps = {
   /** Liste des URLs des avatars des participants (dans l'ordre d'affichage) */
-  avatars: string[];
+  avatars?: string[];
 };
 
 export default function Attendees({ avatars }: AttendeesProps) {
+  
   const count = avatars.length;
+  if (count === 0) return null;
   const displayed = avatars.slice(0, 3);
   const overlap = -12;
   const extra = count > 3 ? count - 3 : 0;

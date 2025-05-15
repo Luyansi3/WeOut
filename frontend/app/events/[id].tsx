@@ -334,7 +334,7 @@ export default function EventDetailScreen() {
               flex={1}
               height="100%"
               alignItems="center"
-              justifyContent="space-between"
+              justifyContent={avatarUrls.length ? "space-between" : "center"}
             >
               <Attendees avatars={avatarUrls} />
 
