@@ -4,6 +4,7 @@ import { serviceIsSoireeNow } from "../services/soiree.services";
 import { serviceGetNoteDef, serviceGetNoteLive, servicePostNote } from "../services/note.services";
 import { serviceGetSoireeParticipants } from "../services/soiree.services";
 import { CustomErrors } from "../errors/customErrors";
+import { serviceIsSubscribed } from "../services/user.services";
 
 const prisma : PrismaClient = new PrismaClient();
 
@@ -45,21 +46,11 @@ export const postNote = async (req: Request, res: Response) => {
         }
 
         // Vérifier si l'utilisateur participe à la soirée
-        const participantsResult = await serviceGetSoireeParticipants(soireeId, prisma);
+        const doesParticipate = serviceIsSubscribed(userId, soireeId, prisma);
 
-        if (!participantsResult.success || !Array.isArray(participantsResult.participants)) {
-            res.status(404).json({ error: "Soirée non trouvée ou erreur base de données." });
-            return;
-        }
-
-        const isParticipant = participantsResult.participants.some(
-            (participant: any) => participant.id === userId
-        );
-
-        if (!isParticipant) {
-            res.status(403).json({ error: "L'utilisateur ne participe pas à cette soirée." });
-            return;
-        }
+        if (!doesParticipate) {
+            res.status(400).json({error: "Le user ne participe pas à la soirée"});
+        }        
 
         // Ajouter la note
         const createdNote = await servicePostNote(userId, soireeId, note, prisma);
@@ -73,3 +64,19 @@ export const postNote = async (req: Request, res: Response) => {
             res.status(500).json({ error: "Erreur serveur", message: error instanceof Error ? error.message : undefined });
     }
 };
+
+
+
+
+export const getLatestNote = async (req: Request, res: Response) => {
+    const userIdRaw = req.query.userId;
+    const eventIdRaw = req.params.eventId;
+
+    if (!userIdRaw || typeof userIdRaw !== 'string') {
+        res.status(400).json({error: 'Bad arguments for user Id'});
+    }
+    const eventId : number = parseInt(eventIdRaw, 10);
+
+
+
+}
