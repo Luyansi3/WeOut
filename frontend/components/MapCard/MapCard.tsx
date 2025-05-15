@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: MAP_CARD_HEIGHT,
+    height: "100%",
     backgroundColor: '#F5F5F7',
     padding: 20,
     borderTopLeftRadius: 20,

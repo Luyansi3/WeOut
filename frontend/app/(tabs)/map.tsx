@@ -26,7 +26,7 @@ import MapCard from '@/components/MapCard/MapCard';
 import MapBar from '@/components/MapBar/MapBar';
 
 const { height } = Dimensions.get('window');
-export const MAP_CARD_HEIGHT = 0.6 * height;
+export const MAP_CARD_HEIGHT = 0.65 * height;
 
 const Map = () => {
   const router = useRouter();

@@ -1,6 +1,6 @@
 // types/Event.ts
 export type EventResponse = {
-    id : string,
+    id : number,
     nom: string,
     description: string,
     photoCouverturePath: string,
@@ -9,6 +9,9 @@ export type EventResponse = {
     lieuId: string,
     organismeId: string,
     tags: string[]
+    dancing: number,
+    talking: number,
+    alcohool: number
 };
 
 export type SoireeParams = {
