@@ -111,7 +111,6 @@ export default function IndexScreen() {
                 console.log("Error checking location/event:", err);
             }
             }
-
             if (closestEvent && closestLocation && minDist <= 100) {
                 const now = Date.now();
                 const start = Date.parse(closestEvent.debut);
@@ -183,7 +182,9 @@ export default function IndexScreen() {
 
   return (
     <View flex={1} backgroundColor={customColors.background} alignItems="center">
-      <Header />
+      {!showNote && <Header />} 
+    {showNote && <HeaderWithNote event={event} value={value} setValue={setValue}/>}
+
       <ScrollView width="100%" backgroundColor={customColors.background} padding="$4">
         <YStack gap="$4">
           {events.map((event, idx) => {

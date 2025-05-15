@@ -738,7 +738,7 @@ export default function EventDetailScreen() {
         onPress={() => router.back()}
         style={{
           position: 'absolute',
-          top: 16 * scale,
+          top: 40 * scale,
           left: 16 * scale,
           zIndex: 10,
           padding: 8,
