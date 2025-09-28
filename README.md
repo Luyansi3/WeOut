@@ -35,3 +35,4 @@ The app allows users to discover events through interactive maps, track live KPI
 </p>
 
 ---
+Developed as part of the SMART Project – INSA Lyon (2025).
